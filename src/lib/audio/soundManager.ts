@@ -15,6 +15,8 @@ let pendingSfx: Sfx | null = null;
 
 // Samples MP3 incrustados (data URI) — funcionan también en build de archivo único / file://
 import { SFX_SELECT, SFX_COLLECT, SFX_ERROR, SFX_LOGO1, SFX_LOGO2, SFX_LOGO3, SFX_LOGO4 } from './samples';
+import bolivianoLogoSfx from '../../assets/audio/Boliviano.mp3';
+import uwuLogoSfx from '../../assets/audio/uwu_isolated_3db_boosted.mp3';
 
 const MP3_SFXS: Partial<Record<Sfx, string>> = {
   select: SFX_SELECT,
@@ -23,7 +25,7 @@ const MP3_SFXS: Partial<Record<Sfx, string>> = {
 };
 
 // Sonidos que suenan al azar al hacer hover sobre el logo.
-const LOGO_HOVER_SFXS = [SFX_LOGO1, SFX_LOGO2, SFX_LOGO3, SFX_LOGO4];
+const LOGO_HOVER_SFXS = [SFX_LOGO1, SFX_LOGO2, SFX_LOGO3, SFX_LOGO4, bolivianoLogoSfx, uwuLogoSfx];
 
 function playMp3(url: string): void {
   try {

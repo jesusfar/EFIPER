@@ -5,7 +5,7 @@ import './siggy.css';
 
 // Sprites de rotación general (sin Plomero ni el saludo inicial).
 const GENERAL_SPRITES = [
-  'Corriendo.png', 'DeathNote.png', 'Fumando.png', 'Furry.png', 'Hacker.png',
+  'Corriendo.png', 'DeathNote.png', 'Frieren.png', 'Fumando.png', 'Furry.png', 'Hacker.png',
   'Jujutsu.png', 'Libreta.png', 'Profesor.png', 'Pulgares_Arriba.png', 'Siggyexe.png',
 ];
 
