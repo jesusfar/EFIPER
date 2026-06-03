@@ -93,6 +93,65 @@
       linear-gradient(135deg, rgba(0,94,80,0.97), rgba(0,159,146,0.92) 58%, rgba(0,132,0,0.9));
   }
   .label { @apply text-xs uppercase tracking-[0.16em] text-stud font-display font-bold; }
+  .rich-answer {
+    @apply space-y-3 text-sm leading-relaxed text-ink;
+    -webkit-user-select: text;
+    user-select: text;
+  }
+  .rich-code {
+    @apply overflow-x-auto rounded-lg border border-stud/30 bg-stud-dim px-3 py-2 font-mono text-xs leading-relaxed text-white shadow-sm;
+  }
+  .rich-code code::before {
+    content: attr(data-lang);
+    @apply mb-2 block text-[10px] uppercase tracking-[0.18em] text-accent;
+  }
+  .rich-table-wrap {
+    @apply overflow-x-auto rounded-lg border border-stud/20 bg-white/90 shadow-sm;
+  }
+  .rich-table {
+    @apply min-w-full border-collapse text-left text-xs;
+  }
+  .rich-table th {
+    @apply border-b border-stud/20 bg-panel-2 px-3 py-2 font-display font-bold uppercase tracking-[0.12em] text-stud;
+  }
+  .rich-table td {
+    @apply border-t border-line px-3 py-2 align-top text-ink;
+  }
+  .rich-diagram {
+    @apply overflow-x-auto whitespace-pre rounded-xl border border-stud/25 bg-white px-4 py-3 font-mono text-[13px] leading-6 text-stud-dim shadow-sm;
+    tab-size: 2;
+  }
+  .gantt-block {
+    @apply overflow-hidden rounded-xl border border-stud/25 bg-white shadow-sm;
+  }
+  .gantt-title {
+    @apply border-b border-line bg-panel-2 px-3 py-2 font-display text-[11px] font-bold uppercase tracking-[0.16em] text-stud;
+  }
+  .gantt-track {
+    @apply flex min-w-max overflow-x-auto p-2;
+  }
+  .gantt-segment {
+    @apply min-w-20 border-y border-r border-stud/25 bg-go/10 px-3 py-2 text-center font-mono text-xs font-semibold text-stud-dim first:rounded-l-lg first:border-l last:rounded-r-lg;
+  }
 }
 
-.mermaid-host svg { max-width: 100%; height: auto; }
+.mermaid-host {
+  overflow-x: auto;
+  background:
+    linear-gradient(180deg, rgba(0,159,146,0.08), transparent 34%),
+    #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(0,94,80,0.08);
+}
+.mermaid-host svg {
+  display: block;
+  width: 100%;
+  max-width: 920px;
+  height: auto;
+  margin: 0 auto;
+}
+.mermaid-host .node rect,
+.mermaid-host .node polygon,
+.mermaid-host .node circle,
+.mermaid-host .node ellipse {
+  filter: drop-shadow(0 6px 10px rgba(0,63,58,0.08));
+}

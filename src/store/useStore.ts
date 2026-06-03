@@ -144,9 +144,12 @@ export const useStore = create<State>((set, get) => ({
 }));
 
 export const TOPIC_LABELS: Record<Topic, string> = {
-  analisis_diseno: 'Análisis y Diseño',
-  poo_algoritmos: 'POO y Algoritmos',
-  base_de_datos: 'Base de Datos',
-  redes_comunicaciones: 'Redes y Comunicaciones',
+  arquitectura_computadoras: 'Arquitectura de Computadoras',
   sistemas_operativos: 'Sistemas Operativos',
+  redes_comunicaciones: 'Comunicaciones y Redes',
+  base_de_datos: 'Bases de Datos',
+  algoritmos_estructuras: 'Algoritmos y Estructuras de Datos',
+  paradigmas_lenguajes: 'Paradigmas y Lenguajes (Java)',
+  analisis_diseno: 'Análisis y Diseño de Sistemas (UML)',
+  poo_algoritmos: 'POO y Algoritmos',
 };

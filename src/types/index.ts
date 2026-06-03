@@ -8,11 +8,14 @@ export type QuestionType =
   | 'matching';
 
 export type Topic =
-  | 'analisis_diseno'
-  | 'poo_algoritmos'
-  | 'base_de_datos'
+  | 'arquitectura_computadoras'
+  | 'sistemas_operativos'
   | 'redes_comunicaciones'
-  | 'sistemas_operativos';
+  | 'base_de_datos'
+  | 'algoritmos_estructuras'
+  | 'paradigmas_lenguajes'
+  | 'analisis_diseno'
+  | 'poo_algoritmos';
 
 export interface Question {
   id: string;
