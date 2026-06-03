@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp \"C:/Users/sofia/Music/menu-select-sound.mp3\" \"D:/EFIPER/public/sfx-select.mp3\")",
+      "Bash(cp \"C:/Users/sofia/Music/Respuesta correcta.mp3\" \"D:/EFIPER/public/sfx-collect.mp3\")",
+      "Bash(node -e ' *)",
+      "Bash(npm run *)",
+      "mcp__Claude_in_Chrome__list_connected_browsers",
+      "Bash(cp \"C:/Users/sofia/Music/select-button.mp3\" \"D:/EFIPER/public/sfx-select.mp3\")",
+      "Read(//c/Users/sofia/Music/**)",
+      "Bash(cp \"C:/Users/sofia/Music/error-1.mp3\" \"D:/EFIPER/public/sfx-error.mp3\" && ls -la --time-style=+%H:%M:%S \"C:/Users/sofia/Music/error-1.mp3\" \"D:/EFIPER/public/sfx-error.mp3\")",
+      "Bash(ls -la \"C:/Users/sofia/OneDrive/Desktop/Syggy_Sprites_Transparentes.rar\" \"C:/Users/sofia/OneDrive/Desktop/Dialogos Syggy.docx\" 2>&1; echo \"---tools---\"; which unrar 7z 7za winrar rar 2>&1 | head)",
+      "PowerShell($paths = @\\(\"C:\\\\Program Files\\\\7-Zip\\\\7z.exe\",\"C:\\\\Program Files \\(x86\\)\\\\7-Zip\\\\7z.exe\",\"C:\\\\Program Files\\\\WinRAR\\\\WinRAR.exe\",\"C:\\\\Program Files\\\\WinRAR\\\\UnRAR.exe\",\"C:\\\\Program Files \\(x86\\)\\\\WinRAR\\\\UnRAR.exe\"\\); foreach\\($p in $paths\\){ if\\(Test-Path $p\\){ \"FOUND: $p\" } }; \"---\"; Get-Command 7z,7za,unrar,WinRAR -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source)",
+      "PowerShell(& \"C:\\\\Program Files\\\\WinRAR\\\\UnRAR.exe\" lb \"C:\\\\Users\\\\sofia\\\\OneDrive\\\\Desktop\\\\Syggy_Sprites_Transparentes.rar\")",
+      "PowerShell($dest = \"D:\\\\EFIPER\\\\public\\\\siggy\"; New-Item -ItemType Directory -Force $dest | Out-Null; & \"C:\\\\Program Files\\\\WinRAR\\\\UnRAR.exe\" e -o+ \"C:\\\\Users\\\\sofia\\\\OneDrive\\\\Desktop\\\\Syggy_Sprites_Transparentes.rar\" \"$dest\\\\\"; \"---LISTO---\"; Get-ChildItem $dest | Select-Object Name,Length)",
+      "Read(//c/Users/sofia/**)",
+      "Bash(python -c \"import PIL; print\\('Pillow', PIL.__version__\\)\")",
+      "Bash(python -c \"import docx; print\\('python-docx OK'\\)\")"
+    ]
+  }
+}

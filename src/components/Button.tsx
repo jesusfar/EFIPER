@@ -1,0 +1,30 @@
+import { type ButtonHTMLAttributes } from 'react';
+import { playSfx } from '../lib/audio/soundManager';
+
+type Variant = 'primary' | 'ghost' | 'go' | 'danger' | 'missionTest' | 'missionOral' | 'missionCase' | 'missionReview';
+
+const styles: Record<Variant, string> = {
+  primary: 'bg-[linear-gradient(135deg,#005E50,#008400)] text-white hover:brightness-110 shadow-stud',
+  go: 'bg-go text-white border border-go hover:bg-[#005E50] shadow-stud',
+  ghost: 'bg-white text-ink border border-accent/50 hover:border-accent hover:bg-panel-2',
+  danger: 'bg-teal-card text-white border border-teal-card hover:bg-slate shadow-stud',
+  missionTest: 'text-white border border-[#009F92]/40 bg-[linear-gradient(135deg,#005E50_0%,#007A45_58%,#008400_100%)] shadow-[0_12px_24px_rgba(0,94,80,0.26)] hover:brightness-110',
+  missionOral: 'text-white border border-[#008400]/40 bg-[linear-gradient(135deg,#008400_0%,#009F22_48%,#005E50_100%)] shadow-[0_12px_24px_rgba(0,132,0,0.24)] hover:brightness-110',
+  missionCase: 'text-white border border-[#009F92]/45 bg-[linear-gradient(135deg,#009F92_0%,#005E50_52%,#003F3A_100%)] shadow-[0_12px_24px_rgba(0,159,146,0.23)] hover:brightness-110',
+  missionReview: 'text-white border border-[#1D544F]/45 bg-[linear-gradient(135deg,#1D544F_0%,#008400_55%,#009F92_100%)] shadow-[0_12px_24px_rgba(29,84,79,0.24)] hover:brightness-110',
+};
+
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: Variant;
+}
+
+export function Button({ variant = 'ghost', className = '', onClick, onMouseEnter, ...rest }: Props) {
+  return (
+    <button
+      {...rest}
+      onMouseEnter={(e) => { playSfx('hover'); onMouseEnter?.(e); }}
+      onClick={(e) => { onClick?.(e); }}
+      className={`px-4 py-2.5 rounded-xl font-semibold text-sm transition-all active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed ${styles[variant]} ${className}`}
+    />
+  );
+}

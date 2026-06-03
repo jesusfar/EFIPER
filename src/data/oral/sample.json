@@ -1,0 +1,37 @@
+[
+  {
+    "id": "o-001", "topic": "analisis_diseno", "subtopic": "Casos de uso",
+    "question": "¿Cuál es la diferencia entre include y extend en un diagrama de casos de uso?",
+    "modelAnswer": "include representa comportamiento OBLIGATORIO: el caso de uso base siempre ejecuta el incluido. extend representa comportamiento OPCIONAL o condicional: el caso extendido solo se ejecuta bajo ciertas condiciones. Ejemplo: «Registrar venta» include «Validar stock» (siempre); «Registrar venta» extend «Aplicar descuento» (solo si corresponde).",
+    "keywords": ["obligatorio", "opcional", "condicional", "siempre"],
+    "frequency": "recurrente", "difficulty": 2
+  },
+  {
+    "id": "o-002", "topic": "analisis_diseno", "subtopic": "Requerimientos",
+    "question": "¿Cómo distinguís un requerimiento funcional de uno no funcional?",
+    "modelAnswer": "El RF describe QUÉ hace el sistema: una acción observable («El sistema debe permitir registrar préstamos»). El RNF describe CÓMO debe comportarse: una cualidad o restricción con métrica («El sistema debe responder en menos de 2 segundos con 10.000 registros»). RF = acción; RNF = calidad/restricción medible.",
+    "keywords": ["accion", "calidad", "metrica", "rendimiento", "verificable"],
+    "frequency": "recurrente", "difficulty": 1
+  },
+  {
+    "id": "o-003", "topic": "redes_comunicaciones", "subtopic": "Dispositivos",
+    "question": "¿En qué capa OSI están el router y el switch, y por qué?",
+    "modelAnswer": "El router está en capa 3 (red) porque enruta paquetes entre redes distintas usando direcciones IP y la máscara de subred. El switch está en capa 2 (enlace) porque conmuta tramas dentro de la misma red usando direcciones MAC.",
+    "keywords": ["capa 3", "router", "ip", "capa 2", "switch", "mac"],
+    "frequency": "recurrente", "difficulty": 2
+  },
+  {
+    "id": "o-004", "topic": "redes_comunicaciones", "subtopic": "Seguridad",
+    "question": "¿Por qué y dónde ubicás un firewall en el diagrama de red?",
+    "modelAnswer": "El firewall se ubica entre Internet (red no confiable) y la red interna, para filtrar el tráfico entrante/saliente según reglas (permitir, bloquear, drop). Protege la LAN de accesos no autorizados. Puede trabajar en capa 3 (IP/puertos), capa 4 (estado de conexión) o capa 7 (contenido). Si hay servicios públicos, se aíslan en una DMZ entre dos firewalls.",
+    "keywords": ["entre internet y la red interna", "filtra", "reglas", "dmz"],
+    "frequency": "frecuente", "difficulty": 2
+  },
+  {
+    "id": "o-005", "topic": "base_de_datos", "subtopic": "Modelado",
+    "question": "¿Cuál es la diferencia entre un caso de uso y una entidad?",
+    "modelAnswer": "Un caso de uso representa un objetivo o funcionalidad que un actor logra con el sistema (verbo, en infinitivo: «Registrar socio»). Una entidad representa un objeto del dominio del que se almacenan datos (sustantivo: «Socio», con atributos y clave primaria). Uno modela comportamiento; la otra, datos.",
+    "keywords": ["objetivo", "funcionalidad", "actor", "objeto", "datos", "atributos"],
+    "frequency": "frecuente", "difficulty": 2
+  }
+]

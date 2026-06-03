@@ -1,0 +1,71 @@
+[
+  {
+    "id": "q-ad-001", "topic": "analisis_diseno", "subtopic": "Requerimientos",
+    "type": "multiple_choice", "difficulty": 1,
+    "statement": "¿Cuál es un requerimiento NO funcional?",
+    "options": ["El sistema debe permitir registrar socios", "El sistema debe responder en menos de 2 segundos", "El sistema debe emitir un comprobante", "El sistema debe permitir buscar libros"],
+    "correctAnswer": "El sistema debe responder en menos de 2 segundos",
+    "explanation": "Los RNF describen calidad/restricción con métrica (rendimiento, seguridad, usabilidad). El resto son acciones del sistema (RF).",
+    "active": true
+  },
+  {
+    "id": "q-ad-002", "topic": "analisis_diseno", "subtopic": "Casos de uso",
+    "type": "multiple_choice", "difficulty": 2,
+    "statement": "En un diagrama de casos de uso, «include» representa…",
+    "options": ["Comportamiento opcional", "Comportamiento obligatorio que siempre se ejecuta", "Una herencia entre actores", "Una relación con la base de datos"],
+    "correctAnswer": "Comportamiento obligatorio que siempre se ejecuta",
+    "explanation": "include = obligatorio (siempre ocurre). extend = opcional/condicional. Es la pregunta más repetida del tribunal.",
+    "active": true
+  },
+  {
+    "id": "q-red-001", "topic": "redes_comunicaciones", "subtopic": "Modelo OSI",
+    "type": "multiple_choice", "difficulty": 1,
+    "statement": "¿En qué capa del modelo OSI opera un router?",
+    "options": ["Capa 1 - Física", "Capa 2 - Enlace", "Capa 3 - Red", "Capa 4 - Transporte"],
+    "correctAnswer": "Capa 3 - Red",
+    "explanation": "El router opera en capa 3 (red): enruta paquetes según IP usando tablas de enrutamiento y la máscara de subred.",
+    "active": true
+  },
+  {
+    "id": "q-red-002", "topic": "redes_comunicaciones", "subtopic": "Dispositivos",
+    "type": "true_false", "difficulty": 1,
+    "statement": "El switch opera en la capa 2 (enlace de datos) del modelo OSI.",
+    "correctAnswer": "true",
+    "explanation": "Correcto. El switch conmuta tramas usando direcciones MAC en la capa 2.",
+    "active": true
+  },
+  {
+    "id": "q-red-003", "topic": "redes_comunicaciones", "subtopic": "Direccionamiento",
+    "type": "multiple_choice", "difficulty": 2,
+    "statement": "La máscara por defecto de una IP de clase C (ej. 192.168.1.0) es…",
+    "options": ["255.0.0.0", "255.255.0.0", "255.255.255.0", "255.255.255.255"],
+    "correctAnswer": "255.255.255.0",
+    "explanation": "Clase C usa máscara /24 = 255.255.255.0 (24 bits de red, 8 de host).",
+    "active": true
+  },
+  {
+    "id": "q-bd-001", "topic": "base_de_datos", "subtopic": "Claves",
+    "type": "short_answer", "difficulty": 1,
+    "statement": "¿Qué es una clave foránea (FK)?",
+    "correctAnswer": ["clave foranea", "foreign key", "referencia a la clave primaria de otra tabla", "atributo que referencia la pk de otra entidad"],
+    "explanation": "Una FK es un atributo que referencia la clave primaria de otra tabla, garantizando integridad referencial.",
+    "active": true
+  },
+  {
+    "id": "q-poo-001", "topic": "poo_algoritmos", "subtopic": "Conceptos",
+    "type": "short_answer", "difficulty": 1,
+    "statement": "¿Qué es un objeto en POO?",
+    "correctAnswer": ["instancia de una clase", "instancia", "ejemplar de una clase con estado y comportamiento"],
+    "explanation": "Un objeto es una instancia concreta de una clase, con su propio estado (atributos) y comportamiento (métodos).",
+    "active": true
+  },
+  {
+    "id": "q-so-001", "topic": "sistemas_operativos", "subtopic": "Elección de SO",
+    "type": "multiple_choice", "difficulty": 2,
+    "statement": "Una ventaja típica de Linux frente a Windows para servidores es…",
+    "options": ["Mayor familiaridad para usuarios finales", "Sin costo de licencia y estabilidad", "Mejor soporte de juegos", "Interfaz gráfica obligatoria"],
+    "correctAnswer": "Sin costo de licencia y estabilidad",
+    "explanation": "Linux suele elegirse en servidores por costo cero de licencia, estabilidad y bajo consumo de recursos.",
+    "active": true
+  }
+]

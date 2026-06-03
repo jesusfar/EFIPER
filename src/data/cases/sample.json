@@ -1,0 +1,41 @@
+[
+  {
+    "id": "case-001",
+    "title": "Sistema de Control de Stock — Distribuidora",
+    "domain": "Comercial / Logística",
+    "difficulty": 2,
+    "scenario": "Una distribuidora con sede central en Rosario y dos depósitos (Córdoba y un departamento adicional) necesita un sistema para controlar el stock de productos, registrar entradas y salidas de mercadería, gestionar pedidos de clientes y generar reportes. Los empleados de cada depósito consultan y actualizan stock; un administrador gestiona usuarios y emite reportes. El sistema debe funcionar en red, con un servidor de aplicación y un servidor de base de datos en el datacenter de Rosario, accesibles desde los depósitos. Se requiere protección frente a accesos externos desde Internet.",
+    "subCases": [
+      "Control de stock y movimientos de mercadería",
+      "Gestión de pedidos de clientes",
+      "Reportes para administración"
+    ],
+    "expectedActors": ["Empleado de depósito", "Administrador", "Cliente"],
+    "expectedFunctionalRequirements": [
+      "El sistema debe permitir registrar entradas de mercadería al stock.",
+      "El sistema debe permitir registrar salidas de mercadería del stock.",
+      "El sistema debe permitir consultar el stock disponible por producto y depósito.",
+      "El sistema debe permitir registrar pedidos de clientes.",
+      "El sistema debe permitir generar reportes de movimientos de stock."
+    ],
+    "expectedNonFunctionalRequirements": [
+      "El sistema debe responder las consultas de stock en menos de 2 segundos con hasta 50.000 productos.",
+      "El sistema debe estar disponible el 99% del horario laboral.",
+      "El sistema debe restringir el acceso mediante autenticación de usuarios.",
+      "El sistema debe ejecutarse en navegadores modernos sin instalación adicional."
+    ],
+    "expectedUseCases": ["Registrar entrada", "Registrar salida", "Consultar stock", "Registrar pedido", "Generar reporte", "Autenticar usuario (include)"],
+    "expectedClasses": ["PRODUCTO", "DEPOSITO", "MOVIMIENTO", "PEDIDO", "USUARIO", "CLIENTE"],
+    "expectedTables": ["producto", "deposito", "movimiento", "pedido", "usuario", "cliente"],
+    "expectedNetworkElements": ["Internet", "Firewall", "Router (capa 3)", "Switch (capa 2)", "Servidor de aplicación", "Servidor de base de datos", "PCs cliente", "IPs privadas /24 por depósito"],
+    "oralQuestionIds": ["o-001", "o-002", "o-003", "o-004", "o-005"],
+    "rubric": [
+      { "id": "r-rf", "kind": "rf", "label": "Requerimientos funcionales", "weight": 20 },
+      { "id": "r-rnf", "kind": "rnf", "label": "Requerimientos no funcionales", "weight": 15 },
+      { "id": "r-uc", "kind": "use_cases", "label": "Diagrama de casos de uso", "weight": 20 },
+      { "id": "r-cl", "kind": "classes", "label": "Diagrama de clases", "weight": 15 },
+      { "id": "r-der", "kind": "der", "label": "DER / modelo de datos", "weight": 10 },
+      { "id": "r-net", "kind": "network", "label": "Diagrama de red", "weight": 20 }
+    ]
+  }
+]

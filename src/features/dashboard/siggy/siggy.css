@@ -1,0 +1,149 @@
+/* Siggy — asistente holográfico estilo Clippy paródico. Solo en el Dashboard. */
+
+/* Panel inline dentro del Dashboard: sprite grande + globo holográfico. */
+.siggy-panel {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 20px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(0, 40, 32, 0.55), rgba(0, 60, 45, 0.28));
+  border: 1px solid rgba(0, 255, 179, 0.32);
+  box-shadow: inset 0 0 26px rgba(0, 255, 179, 0.08), 0 8px 20px rgba(0, 63, 58, 0.18);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  min-height: 168px;
+}
+
+.siggy-dialog-wrap {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Globo de diálogo: holograma verde, no burbuja clásica. */
+.siggy-dialog {
+  position: relative;
+  background: rgba(0, 60, 45, 0.78);
+  border: 1px solid #00ffb3;
+  color: #d8fff3;
+  box-shadow:
+    0 0 8px rgba(0, 255, 179, 0.7),
+    inset 0 0 12px rgba(0, 255, 179, 0.18);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  border-radius: 14px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  padding: 12px 15px;
+  font-size: 13.5px;
+  line-height: 1.45;
+  /* Se ajusta al texto y se expande a medida que se escribe. */
+  display: inline-block;
+  width: -moz-fit-content;
+  width: fit-content;
+  max-width: 100%;
+  min-width: 2.4rem;
+  min-height: 1.45em;
+  text-shadow: 0 0 6px rgba(0, 255, 179, 0.5);
+  overflow: hidden;
+  transition: none;
+}
+
+/* Scanlines sutiles. */
+.siggy-dialog::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 14px;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 255, 179, 0.07) 0px,
+    rgba(0, 255, 179, 0.07) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: screen;
+}
+
+/* Puntita apuntando hacia Siggy (a la izquierda). */
+.siggy-dialog::after {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 50%;
+  margin-top: -6px;
+  width: 13px;
+  height: 13px;
+  background: rgba(0, 60, 45, 0.78);
+  border-left: 1px solid #00ffb3;
+  border-bottom: 1px solid #00ffb3;
+  transform: rotate(45deg);
+}
+
+.siggy-text { position: relative; z-index: 1; }
+
+.siggy-caret {
+  display: inline-block;
+  width: 7px;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: -2px;
+  background: #00ffb3;
+  box-shadow: 0 0 6px #00ffb3;
+  animation: siggy-blink 1s steps(1) infinite;
+}
+
+@keyframes siggy-blink { 50% { opacity: 0; } }
+
+/* Aparición tipo proyección holográfica. */
+.siggy-project {
+  transform-origin: left center;
+  animation: siggy-project 0.42s ease-out;
+}
+
+@keyframes siggy-project {
+  0%   { opacity: 0; transform: perspective(420px) rotateX(-25deg) scaleY(0.4); filter: brightness(2.2); }
+  60%  { opacity: 1; }
+  100% { opacity: 1; transform: perspective(420px) rotateX(0deg) scaleY(1); filter: brightness(1); }
+}
+
+/* Sprite + flotación idle. */
+.siggy-sprite-wrap {
+  flex: 0 0 auto;
+  animation: siggy-float 4s ease-in-out infinite;
+}
+
+@keyframes siggy-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+.siggy-sprite {
+  width: 196px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 0 12px rgba(0, 255, 179, 0.45));
+  animation: siggy-glitch 0.6s ease-out;
+  -webkit-user-drag: none;
+}
+
+/* Glitch holográfico verde al cambiar de sprite. */
+@keyframes siggy-glitch {
+  0%   { opacity: 0; transform: translateX(-7px) skewX(8deg);  clip-path: inset(0 0 62% 0); filter: drop-shadow(0 0 12px rgba(0,255,179,0.95)) brightness(2.1) hue-rotate(85deg); }
+  18%  { opacity: 1; transform: translateX(7px) skewX(-6deg);  clip-path: inset(48% 0 0 0); }
+  36%  { transform: translateX(-5px) skewX(4deg);              clip-path: inset(0 42% 0 0); filter: drop-shadow(0 0 9px rgba(0,255,179,0.85)) brightness(1.7) hue-rotate(45deg); }
+  54%  { transform: translateX(4px);                            clip-path: inset(22% 0 22% 0); }
+  72%  { transform: translateX(-2px);                           clip-path: inset(0 0 0 28%); filter: drop-shadow(0 0 10px rgba(0,255,179,0.6)) brightness(1.25); }
+  100% { opacity: 1; transform: translateX(0) skewX(0);         clip-path: inset(0); filter: drop-shadow(0 0 10px rgba(0,255,179,0.45)) brightness(1); }
+}
+
+@media (max-width: 640px) {
+  .siggy-panel { flex-direction: column; gap: 12px; padding: 14px; min-height: 0; }
+  .siggy-sprite { width: 150px; }
+  .siggy-dialog { font-size: 12.5px; }
+  /* En columna, la puntita apunta hacia arriba (al sprite). */
+  .siggy-dialog::after { left: 50%; top: -7px; margin-top: 0; margin-left: -6px; }
+}
