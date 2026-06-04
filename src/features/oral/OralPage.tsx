@@ -1,199 +1,28 @@
 import { useMemo, useState } from 'react';
-import { useStore, TOPIC_LABELS } from '../../store/useStore';
+import { useStore } from '../../store/useStore';
 import { ORAL_QUESTIONS } from '../../data';
 import { sortQueue, isDue } from '../../lib/spaced-repetition/leitner';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
-import { MermaidView } from '../../components/MermaidView';
+import { TopicChip } from '../../components/TopicChip';
+import { TOPIC_THEME } from '../../lib/theme/topicTheme';
 import { playSfx } from '../../lib/audio/soundManager';
+import { RichAnswer, DIFFICULTY_LABELS, shuffled } from './RichAnswer';
+import { PingPongMode } from './PingPongMode';
 import type { OralQuestion } from '../../types';
 
-const DIFFICULTY_LABELS = { 1: 'Basico', 2: 'Medio', 3: 'Avanzado' } as const;
+type Mode = 'menu' | 'solo' | 'pingpong';
 
-function shuffled<T>(items: T[], seed: number): T[] {
-  const copy = [...items];
-  let state = Math.max(1, Math.floor(seed * 2147483647));
-  for (let i = copy.length - 1; i > 0; i -= 1) {
-    state = (state * 48271) % 2147483647;
-    const j = state % (i + 1);
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
-
-function CodeBlock({ lang, code }: { lang: string; code: string }) {
-  if (lang === 'mermaid') return <MermaidView code={code} />;
-
-  return (
-    <pre className="rich-code">
-      <code data-lang={lang || 'texto'}>{code}</code>
-    </pre>
-  );
-}
-
-function isDiagramLine(line: string): boolean {
-  return /[┌┐└┘│─▶◀▼▲●«»]/.test(line) || /^\s*(alt|else|loop|opt)\b/.test(line);
-}
-
-function DiagramBlock({ lines }: { lines: string[] }) {
-  return (
-    <pre className="rich-diagram" aria-label="Diagrama">
-      {lines.join('\n')}
-    </pre>
-  );
-}
-
-function isGanttLine(line: string): boolean {
-  return /\bGantt\b/i.test(line) && line.includes('|');
-}
-
-function GanttBlock({ line }: { line: string }) {
-  const [, rawTitle = 'Gantt', rawBody = line] = line.match(/^(.*?Gantt[^:]*):?\s*(.*)$/i) ?? [];
-  const segments = rawBody.split('|').map((item) => item.trim()).filter(Boolean);
-
-  if (!segments.length) return <DiagramBlock lines={[line]} />;
-
-  return (
-    <div className="gantt-block">
-      <div className="gantt-title">{rawTitle.trim()}</div>
-      <div className="gantt-track">
-        {segments.map((segment, idx) => (
-          <div key={`${segment}-${idx}`} className="gantt-segment">{segment}</div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function isTableSeparator(line: string): boolean {
-  return /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(line);
-}
-
-function isTableLine(line: string): boolean {
-  return ((line.match(/\|/g) ?? []).length >= 2) && !isGanttLine(line);
-}
-
-function TableBlock({ rows }: { rows: string[] }) {
-  const cells = rows.filter((row) => !isTableSeparator(row)).map((row) => {
-    const normalized = row.trim().replace(/^[-•]\s*/, '').replace(/^\|/, '').replace(/\|$/, '');
-    return normalized.split('|').map((cell) => cell.trim()).filter(Boolean);
-  });
-  const maxCols = Math.max(...cells.map((row) => row.length));
-  const hasHeader = rows.some(isTableSeparator);
-  const head = hasHeader ? cells[0] : Array.from({ length: maxCols }, (_, idx) => `Dato ${idx + 1}`);
-  const body = hasHeader ? cells.slice(1) : cells;
-
-  return (
-    <div className="rich-table-wrap">
-      <table className="rich-table">
-        <thead>
-          <tr>{head.map((cell) => <th key={cell}>{cell}</th>)}</tr>
-        </thead>
-        <tbody>
-          {body.map((row, rowIdx) => (
-            <tr key={rowIdx}>{row.map((cell, cellIdx) => <td key={`${rowIdx}-${cellIdx}`}>{cell}</td>)}</tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function RichAnswer({ text }: { text: string }) {
-  const blocks: JSX.Element[] = [];
-  const lines = text.split('\n');
-  let paragraph: string[] = [];
-  let codeLang = '';
-  let code: string[] = [];
-  let table: string[] = [];
-  let diagram: string[] = [];
-
-  const flushParagraph = () => {
-    const content = paragraph.join(' ').trim();
-    if (content) blocks.push(<p key={`p-${blocks.length}`}>{content}</p>);
-    paragraph = [];
-  };
-
-  const flushTable = () => {
-    if (table.length >= 1) {
-      flushParagraph();
-      blocks.push(<TableBlock key={`t-${blocks.length}`} rows={table} />);
-    } else {
-      paragraph.push(...table);
-    }
-    table = [];
-  };
-
-  const flushDiagram = () => {
-    if (diagram.length) blocks.push(<DiagramBlock key={`d-${blocks.length}`} lines={diagram} />);
-    diagram = [];
-  };
-
-  lines.forEach((line) => {
-    const fence = line.match(/^```(\w+)?\s*$/);
-    if (fence) {
-      if (codeLang) {
-        blocks.push(<CodeBlock key={`c-${blocks.length}`} lang={codeLang} code={code.join('\n')} />);
-        codeLang = '';
-        code = [];
-      } else {
-        flushParagraph();
-        codeLang = fence[1] ?? 'text';
-      }
-      return;
-    }
-
-    if (codeLang) {
-      code.push(line);
-      return;
-    }
-
-    if (isGanttLine(line)) {
-      flushParagraph();
-      flushTable();
-      flushDiagram();
-      blocks.push(<GanttBlock key={`g-${blocks.length}`} line={line} />);
-      return;
-    }
-
-    if (isDiagramLine(line)) {
-      flushParagraph();
-      flushTable();
-      diagram.push(line);
-      return;
-    }
-
-    if (diagram.length) flushDiagram();
-
-    if (isTableLine(line)) {
-      table.push(line);
-      return;
-    }
-
-    if (table.length) flushTable();
-
-    if (!line.trim()) {
-      flushParagraph();
-      return;
-    }
-
-    paragraph.push(line.trim());
-  });
-
-  if (codeLang) blocks.push(<CodeBlock key={`c-${blocks.length}`} lang={codeLang} code={code.join('\n')} />);
-  if (diagram.length) flushDiagram();
-  if (table.length) flushTable();
-  flushParagraph();
-
-  return <div className="rich-answer">{blocks}</div>;
-}
-
-export function OralPage() {
+// ── Modo individual: "Frente al tribunal" ──
+function SoloMode({ onBack }: { onBack: () => void }) {
   const { reviews, recordAnswer } = useStore();
+  const [finished, setFinished] = useState(false);
   const [idx, setIdx] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [startTs, setStartTs] = useState(Date.now());
   const [roundSeed, setRoundSeed] = useState(() => Math.random());
+  const [answered, setAnswered] = useState(0);
+  const [right, setRight] = useState(0);
 
   const queue = useMemo<OralQuestion[]>(() => {
     const due = reviews.filter((r) => r.refType === 'oral' && isDue(r));
@@ -204,6 +33,16 @@ export function OralPage() {
   }, [reviews, roundSeed]);
 
   const q = queue[idx];
+
+  function beginRound() {
+    setRoundSeed(Math.random());
+    setIdx(0);
+    setRevealed(false);
+    setAnswered(0);
+    setRight(0);
+    setFinished(false);
+    setStartTs(Date.now());
+  }
 
   function gradeSelf(correct: boolean) {
     if (!q) return;
@@ -217,32 +56,51 @@ export function OralPage() {
       topic: q.topic,
       mode: 'oral',
     });
+    setAnswered((n) => n + 1);
+    setRight((n) => n + (correct ? 1 : 0));
     setRevealed(false);
     setStartTs(Date.now());
-    setIdx((i) => i + 1);
+    // La tanda no termina sola: al agotar la cola se regenera otra vuelta.
+    setIdx((i) => {
+      const next = i + 1;
+      if (next >= queue.length) {
+        setRoundSeed(Math.random());
+        return 0;
+      }
+      return next;
+    });
   }
 
-  function restartRound() {
-    setRoundSeed(Math.random());
-    setIdx(0);
+  function finishRound() {
+    playSfx('confirm');
     setRevealed(false);
-    setStartTs(Date.now());
+    setFinished(true);
   }
 
-  if (!q || idx >= queue.length) {
+  // Pantalla final: solo se llega presionando "Terminar".
+  if (finished || !q) {
     return (
       <div className="space-y-4 animate-pop-in max-w-xl">
-        <h1 className="font-display text-2xl font-black">Defensa completada</h1>
-        <p className="text-muted text-sm">Las que marcaste como flojas vuelven antes segun el sistema Leitner.</p>
-        <Button variant="primary" onClick={restartRound}>Otra vuelta</Button>
+        <h1 className="font-display text-2xl font-black">Defensa terminada</h1>
+        <p className="text-muted text-sm">
+          {answered > 0
+            ? `Autoevaluaste ${answered} ${answered === 1 ? 'pregunta' : 'preguntas'} · ${right} marcadas como sabidas. Las flojas vuelven antes segun el sistema Leitner.`
+            : 'Las que marcaste como flojas vuelven antes segun el sistema Leitner.'}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="primary" onClick={beginRound}>Comenzar otra vez</Button>
+          <Button variant="ghost" onClick={onBack}>Volver a Defensa oral</Button>
+        </div>
       </div>
     );
   }
 
+  const th = TOPIC_THEME[q.topic];
+
   return (
     <div className="space-y-5 animate-rise max-w-4xl">
       <div className="flex items-center justify-between gap-3">
-        <span className="label">{TOPIC_LABELS[q.topic]} · {q.subtopic}</span>
+        <TopicChip topic={q.topic} subtopic={q.subtopic} />
         <div className="flex flex-wrap justify-end gap-2">
           <span className="pill pill-muted">{DIFFICULTY_LABELS[q.difficulty]}</span>
           <span className={`pill ${q.frequency === 'recurrente' ? 'pill-active' : 'pill-muted'}`}>{q.frequency}</span>
@@ -250,30 +108,75 @@ export function OralPage() {
       </div>
 
       <Card>
-        <div className="label mb-2">El tribunal pregunta</div>
+        <div className="label mb-2" style={{ color: th.color }}>El tribunal pregunta</div>
         <h2 className="text-xl font-semibold leading-snug">{q.question}</h2>
 
         {!revealed ? (
           <div className="mt-6">
             <p className="text-sm text-muted mb-3">Responde en voz alta como si estuvieras frente al tribunal. Despues revela la respuesta modelo y autoevaluate con honestidad.</p>
-            <Button variant="primary" className="sfx-mute" onClick={() => { playSfx('confirm'); setRevealed(true); }}>Revelar respuesta modelo</Button>
+            <Button variant="primary" className="sfx-mute" onClick={() => { playSfx('modelAnswer'); setRevealed(true); }}>Revelar respuesta modelo</Button>
           </div>
         ) : (
           <div className="mt-5 animate-pop-in">
-            <div className="rounded-xl border border-go/40 bg-go/10 p-4">
-              <div className="label text-go mb-1">Respuesta modelo</div>
+            <div className="rounded-xl border p-4" style={{ borderColor: th.border, background: th.soft }}>
+              <div className="label mb-1" style={{ color: th.color }}>Respuesta modelo</div>
               <RichAnswer text={q.modelAnswer} />
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {q.keywords.map((k) => <span key={k} className="pill pill-muted">{k}</span>)}
               </div>
             </div>
             <div className="mt-4 grid grid-cols-3 gap-2">
-              <Button variant="danger" className="sfx-mute" onClick={() => gradeSelf(false)}>No la sabia</Button>
-              <Button className="sfx-mute" onClick={() => gradeSelf(false)}>Mas o menos</Button>
-              <Button variant="go" className="sfx-mute" onClick={() => gradeSelf(true)}>La sabia</Button>
+              <Button variant="selfBad" className="sfx-mute" onClick={() => gradeSelf(false)}>No la sabia</Button>
+              <Button variant="selfMid" className="sfx-mute" onClick={() => gradeSelf(false)}>Mas o menos</Button>
+              <Button variant="selfGood" className="sfx-mute" onClick={() => gradeSelf(true)}>La sabia</Button>
             </div>
           </div>
         )}
+      </Card>
+
+      <Button variant="ghost" className="w-full sfx-mute" onClick={finishRound}>Terminar</Button>
+    </div>
+  );
+}
+
+// ── Menú de modos de la Defensa oral ──
+export function OralPage() {
+  const [mode, setMode] = useState<Mode>('menu');
+
+  if (mode === 'solo') return <SoloMode onBack={() => setMode('menu')} />;
+  if (mode === 'pingpong') return <PingPongMode onBack={() => setMode('menu')} />;
+
+  return (
+    <div className="space-y-5 animate-rise max-w-2xl">
+      <Card>
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <div className="label">Defensa oral</div>
+            <h1 className="font-display text-2xl font-black mt-1">Frente al tribunal</h1>
+          </div>
+          <span className="text-3xl leading-none" aria-hidden>👨‍⚖️</span>
+        </div>
+        <p className="text-muted text-sm mt-2">
+          Vas a responder preguntas en voz alta y autoevaluarte con honestidad. La tanda sigue hasta que vos
+          decidas: presioná <span className="text-ink font-semibold">Terminar</span> cuando quieras cerrarla.
+        </p>
+        <Button variant="primary" className="mt-4" onClick={() => setMode('solo')}>Comenzar</Button>
+      </Card>
+
+      <Card>
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <div className="label">Modo grupal</div>
+            <h1 className="font-display text-2xl font-black mt-1">Ping - Pong</h1>
+          </div>
+          <span className="text-3xl leading-none" aria-hidden>🏓</span>
+        </div>
+        <p className="text-muted text-sm mt-2">
+          Practicá la defensa oral con hasta 4 participantes. Asigná nombres y avatares de colores, respondan
+          preguntas por turnos y marquen cada respuesta como No la sabía, Más o menos o La sabía. Al finalizar,
+          EFIPER muestra el rendimiento temporal de cada participante y sus áreas débiles por eje temático.
+        </p>
+        <Button variant="primary" className="mt-4" onClick={() => setMode('pingpong')}>Comenzar</Button>
       </Card>
     </div>
   );

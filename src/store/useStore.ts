@@ -151,5 +151,4 @@ export const TOPIC_LABELS: Record<Topic, string> = {
   algoritmos_estructuras: 'Algoritmos y Estructuras de Datos',
   paradigmas_lenguajes: 'Paradigmas y Lenguajes (Java)',
   analisis_diseno: 'Análisis y Diseño de Sistemas (UML)',
-  poo_algoritmos: 'POO y Algoritmos',
 };

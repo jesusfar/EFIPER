@@ -14,8 +14,7 @@ export type Topic =
   | 'base_de_datos'
   | 'algoritmos_estructuras'
   | 'paradigmas_lenguajes'
-  | 'analisis_diseno'
-  | 'poo_algoritmos';
+  | 'analisis_diseno';
 
 export interface Question {
   id: string;

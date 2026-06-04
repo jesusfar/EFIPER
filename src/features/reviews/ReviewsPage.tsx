@@ -3,6 +3,7 @@ import { useStore, TOPIC_LABELS } from '../../store/useStore';
 import { isDue, BOX_INTERVAL_DAYS } from '../../lib/spaced-repetition/leitner';
 import { Card, Stat } from '../../components/Card';
 import { Button } from '../../components/Button';
+import { TOPIC_THEME } from '../../lib/theme/topicTheme';
 import type { LeitnerBox } from '../../types';
 
 export function ReviewsPage() {
@@ -53,7 +54,11 @@ export function ReviewsPage() {
           <div className="mt-4 space-y-1">
             {due.slice(0, 8).map((r) => (
               <div key={r.id} className="text-xs text-muted flex justify-between border-b border-line/50 py-1">
-                <span>{TOPIC_LABELS[r.topic]} · {r.refType === 'oral' ? 'oral' : 'teoría'}</span>
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: TOPIC_THEME[r.topic].color }} />
+                  <span style={{ color: TOPIC_THEME[r.topic].color }} className="font-semibold">{TOPIC_LABELS[r.topic]}</span>
+                  <span>· {r.refType === 'oral' ? 'oral' : 'teoría'}</span>
+                </span>
                 <span className="font-mono">caja {r.box} · {r.failures} fallos</span>
               </div>
             ))}

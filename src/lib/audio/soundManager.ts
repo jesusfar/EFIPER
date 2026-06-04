@@ -1,7 +1,7 @@
 // Gestor de sonido arcade ORIGINAL, sintetizado con Web Audio API.
 // Timbre de glockenspiel/mazas + reverb (estilo menú LEGO). Sin samples con copyright.
 
-export type Sfx = 'hover' | 'select' | 'confirm' | 'error' | 'collect' | 'levelUp' | 'streak';
+export type Sfx = 'hover' | 'select' | 'confirm' | 'error' | 'collect' | 'levelUp' | 'streak' | 'modelAnswer';
 
 let ctx: AudioContext | null = null;
 let master: GainNode | null = null;
@@ -16,12 +16,14 @@ let pendingSfx: Sfx | null = null;
 // Samples MP3 incrustados (data URI) — funcionan también en build de archivo único / file://
 import { SFX_SELECT, SFX_COLLECT, SFX_ERROR, SFX_LOGO1, SFX_LOGO2, SFX_LOGO3, SFX_LOGO4 } from './samples';
 import bolivianoLogoSfx from '../../assets/audio/Boliviano.mp3';
+import modelAnswerSfx from '../../assets/audio/Medio.mp3';
 import uwuLogoSfx from '../../assets/audio/uwu_isolated_3db_boosted.mp3';
 
 const MP3_SFXS: Partial<Record<Sfx, string>> = {
   select: SFX_SELECT,
   collect: SFX_COLLECT,
   error: SFX_ERROR,
+  modelAnswer: modelAnswerSfx,
 };
 
 // Sonidos que suenan al azar al hacer hover sobre el logo.
@@ -237,6 +239,7 @@ const PATTERNS: Record<Sfx, (ac: AudioContext) => void> = {
   error: (ac) => { mallet(ac, N.A4, 0, 0.34, 0.45, 0, 'triangle'); mallet(ac, N.E4, 0.11, 0.42, 0.45, 0, 'triangle'); },
   collect: (ac) => { mallet(ac, N.D6, 0, 0.5, 0.55, 1.06, 'sine', 0.6); mallet(ac, N.D6 * 2, 0, 0.22, 0.18, 0, 'sine', 0.6); },
   streak: (ac) => { mallet(ac, N.G5, 0, 0.4, 0.5); mallet(ac, N.C6, 0.07, 0.5, 0.55); mallet(ac, N.E6, 0.14, 0.55, 0.45); },
+  modelAnswer: () => {},
   levelUp: (ac) => {
     pad(ac, [N.C5, N.E5, N.G5], 1.2, 0.16);
     [N.C5, N.E5, N.G5, N.C6, N.E6].forEach((f, i) => mallet(ac, f, 0.05 + i * 0.09, 0.7, 0.5, 0, 'sine', 0.65));

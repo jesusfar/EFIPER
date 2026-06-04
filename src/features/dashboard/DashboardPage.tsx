@@ -4,6 +4,7 @@ import { Card, Stat } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { ProgressBar } from '../../components/ProgressBar';
 import { downloadBackup, importBackup } from '../../lib/import-export/backup';
+import { TOPIC_THEME } from '../../lib/theme/topicTheme';
 import { Siggy } from './siggy/Siggy';
 import type { Topic } from '../../types';
 
@@ -70,7 +71,9 @@ export function DashboardPage() {
         <ProgressBar value={progress.xp % 200} max={200} />
         <p className="mt-3 text-sm text-muted">
           Tema más débil:{' '}
-          <span className="text-ink font-semibold">{weakest ? TOPIC_LABELS[weakest] : 'aún sin datos suficientes'}</span>
+          <span className="font-semibold" style={weakest ? { color: TOPIC_THEME[weakest].color } : undefined}>
+            {weakest ? TOPIC_LABELS[weakest] : 'aún sin datos suficientes'}
+          </span>
         </p>
       </Card>
 

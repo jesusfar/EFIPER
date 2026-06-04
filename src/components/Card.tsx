@@ -1,7 +1,7 @@
-import { type ReactNode } from 'react';
+import { type CSSProperties, type ReactNode } from 'react';
 
-export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <div className={`panel p-5 ${className}`}>{children}</div>;
+export function Card({ children, className = '', style }: { children: ReactNode; className?: string; style?: CSSProperties }) {
+  return <div className={`panel p-5 ${className}`} style={style}>{children}</div>;
 }
 
 export function Stat({ label, value, accent = false }: { label: string; value: ReactNode; accent?: boolean }) {

@@ -52,7 +52,7 @@
     "active": true
   },
   {
-    "id": "q-poo-001", "topic": "poo_algoritmos", "subtopic": "Conceptos",
+    "id": "q-poo-001", "topic": "paradigmas_lenguajes", "subtopic": "POO: Conceptos",
     "type": "short_answer", "difficulty": 1,
     "statement": "¿Qué es un objeto en POO?",
     "correctAnswer": ["instancia de una clase", "instancia", "ejemplar de una clase con estado y comportamiento"],

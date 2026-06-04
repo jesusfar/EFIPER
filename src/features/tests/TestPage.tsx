@@ -3,6 +3,8 @@ import { useStore, TOPIC_LABELS } from '../../store/useStore';
 import { questionsByTopic } from '../../data';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
+import { TopicChip } from '../../components/TopicChip';
+import { TOPIC_THEME } from '../../lib/theme/topicTheme';
 import { playSfx } from '../../lib/audio/soundManager';
 import type { Question, Topic } from '../../types';
 
@@ -59,9 +61,18 @@ export function TestPage() {
         <p className="text-muted text-sm">10 preguntas. Elegí un tema o mezclá todo.</p>
         <div className="flex flex-wrap gap-2">
           <button onClick={() => setTopic('all')} className={`pill ${topic === 'all' ? 'pill-active' : 'pill-muted'}`}>Mixto EFIP</button>
-          {(Object.keys(TOPIC_LABELS) as Topic[]).map((t) => (
-            <button key={t} onClick={() => setTopic(t)} className={`pill ${topic === t ? 'pill-active' : 'pill-muted'}`}>{TOPIC_LABELS[t]}</button>
-          ))}
+          {(Object.keys(TOPIC_LABELS) as Topic[]).map((t) => {
+            const th = TOPIC_THEME[t];
+            const active = topic === t;
+            return (
+              <button key={t} onClick={() => setTopic(t)} className="pill sfx-mute"
+                style={active
+                  ? { color: '#fff', background: th.gradient, border: `1px solid ${th.color}` }
+                  : { color: th.color, background: th.soft, border: `1px solid ${th.border}` }}>
+                {TOPIC_LABELS[t]}
+              </button>
+            );
+          })}
         </div>
         <div>
           <div className="label mb-2">Cantidad de preguntas</div>
@@ -96,7 +107,7 @@ export function TestPage() {
   return (
     <div className="space-y-5 animate-rise max-w-2xl">
       <div className="flex items-center justify-between">
-        <span className="label">{TOPIC_LABELS[q.topic]} · {q.subtopic}</span>
+        <TopicChip topic={q.topic} subtopic={q.subtopic} />
         <span className="font-mono text-sm text-muted">{idx + 1}/{pool.length}</span>
       </div>
       <Card>

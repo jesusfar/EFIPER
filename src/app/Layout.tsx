@@ -5,6 +5,7 @@ import efiperLogo from '../assets/logo-efiper-cropped.png';
 
 const NAV = [
   { to: '/', label: 'Inicio', end: true },
+  { to: '/teoria', label: 'Teoría' },
   { to: '/test', label: 'Test' },
   { to: '/oral', label: 'Oral' },
   { to: '/caso/case-001', label: 'Caso' },
