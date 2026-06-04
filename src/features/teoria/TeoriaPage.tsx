@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
+import type { CSSProperties } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { THEORY_MODULES } from '../../data/theory/modules';
 import { playBackButton } from '../../lib/audio/soundManager';
 import { TOPIC_THEME } from '../../lib/theme/topicTheme';
 import { TOPIC_LABELS } from '../../store/useStore';
 import type { Topic } from '../../types';
+import type { TheoryVisual } from '../../data/theory/modules';
 
 import imgArquitectura from '../../assets/modulos/Siggy Arquitectura del Computador.png';
 import imgSistemasOperativos from '../../assets/modulos/Siggy Sistemas Operativos.png';
@@ -65,6 +67,127 @@ const MODULES: ModuleCard[] = [
     num: '07',
   },
 ];
+
+function TheoryVisualBlock({ visual, color, border, soft }: { visual: TheoryVisual; color: string; border: string; soft: string }) {
+  const shellStyle = { '--theory-accent': color, '--theory-border': border, '--theory-soft': soft } as CSSProperties;
+
+  if (visual.type === 'cards') {
+    return (
+      <div className="theory-visual theory-card-grid" style={shellStyle}>
+        <h3>{visual.title}</h3>
+        <div className="theory-cards">
+          {visual.items.map((item) => (
+            <div key={item.label} className="theory-card">
+              <strong>{item.label}</strong>
+              <span>{item.text}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (visual.type === 'formulaGrid') {
+    return (
+      <div className="theory-visual theory-formulas" style={shellStyle}>
+        <h3>{visual.title}</h3>
+        <div className="theory-formula-grid">
+          {visual.items.map((item) => (
+            <div key={item.label} className="theory-formula">
+              <span>{item.label}</span>
+              <code>{item.formula}</code>
+              <small>{item.example}</small>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (visual.type === 'flow') {
+    return (
+      <div className="theory-visual theory-flow" style={shellStyle}>
+        <h3>{visual.title}</h3>
+        <div className="theory-flow-track">
+          {visual.steps.map((step, index) => (
+            <div key={`${step}-${index}`} className="theory-flow-step">
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <strong>{step}</strong>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (visual.type === 'stack') {
+    return (
+      <div className="theory-visual theory-stack" style={shellStyle}>
+        <h3>{visual.title}</h3>
+        <div className="theory-stack-list">
+          {visual.items.map((item, index) => (
+            <div key={item.label} className="theory-stack-item" style={{ '--stack-index': index } as CSSProperties}>
+              <strong>{item.label}</strong>
+              <span>{item.detail}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (visual.type === 'compare') {
+    return (
+      <div className="theory-visual theory-compare" style={shellStyle}>
+        <h3>{visual.title}</h3>
+        <div className="theory-table-wrap">
+          <table>
+            <thead>
+              <tr>{visual.columns.map((column) => <th key={column}>{column}</th>)}</tr>
+            </thead>
+            <tbody>
+              {visual.rows.map((row, index) => (
+                <tr key={index}>{row.map((cell, cellIndex) => <td key={`${index}-${cellIndex}`}>{cell}</td>)}</tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
+
+  if (visual.type === 'bus') {
+    return (
+      <div className="theory-visual theory-bus" style={shellStyle}>
+        <h3>{visual.title}</h3>
+        <div className="theory-bus-board">
+          {visual.items.map((item) => (
+            <div key={item.label} className="theory-bus-node">
+              <strong>{item.label}</strong>
+              <span>{item.text}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="theory-visual theory-raid" style={shellStyle}>
+      <h3>{visual.title}</h3>
+      <div className="theory-raid-grid">
+        {visual.items.map((item) => (
+          <div key={item.level} className="theory-raid-card">
+            <strong>{item.level}</strong>
+            <span>Capacidad: {item.capacity}</span>
+            <span>Tolerancia: {item.tolerance}</span>
+            <small>{item.text}</small>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export function TeoriaPage() {
   return (
@@ -149,14 +272,26 @@ export function TheoryReaderPage() {
         </header>
 
         <div className="theory-content">
-          {mod.sections.map((section, index) => (
-            <section key={`${section.title}-${index}`} className="theory-section">
-              <h2 style={{ color: theme.color }}>{section.title}</h2>
-              {section.paragraphs.map((paragraph, pIndex) => (
-                <p key={pIndex}>{paragraph}</p>
-              ))}
-            </section>
-          ))}
+          {mod.sections.map((section, index) => {
+            const visuals = 'visuals' in section ? section.visuals : undefined;
+            return (
+              <section key={`${section.title}-${index}`} className="theory-section">
+                <h2 style={{ color: theme.color }}>{section.title}</h2>
+                {section.paragraphs.map((paragraph, pIndex) => (
+                  <p key={pIndex}>{paragraph}</p>
+                ))}
+                {visuals?.map((visual: TheoryVisual, visualIndex: number) => (
+                  <TheoryVisualBlock
+                    key={`${section.title}-visual-${visualIndex}`}
+                    visual={visual}
+                    color={theme.color}
+                    border={theme.border}
+                    soft={theme.soft}
+                  />
+                ))}
+              </section>
+            );
+          })}
         </div>
       </section>
     </article>

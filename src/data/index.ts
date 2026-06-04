@@ -1,12 +1,13 @@
-import questionsJson from './questions/sample.json';
 import oralEfip700Json from './oral/efip-700.json';
 import oralBanco130Json from './oral/efip-banco-130.json';
 import casesJson from './cases/sample.json';
 import type { CaseStudy, OralQuestion, Question } from '../types';
+import { ALL_QUESTIONS } from './questions';
 
-// Carga del contenido estático. Para ampliar el banco, agregá más archivos
-// JSON y concatenalos acá; el núcleo no necesita cambios.
-export const QUESTIONS = questionsJson as Question[];
+// Carga del contenido estático. El banco del Test rápido se arma en
+// ./questions (a mano + generadores). Solo se usan preguntas de opción
+// múltiple y verdadero/falso (ninguna de escribir).
+export const QUESTIONS = ALL_QUESTIONS;
 export const ORAL_QUESTIONS = [
   ...(oralEfip700Json as OralQuestion[]),
   ...(oralBanco130Json as OralQuestion[]),

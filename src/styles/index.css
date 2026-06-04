@@ -217,6 +217,126 @@
     user-select: text;
     -webkit-user-select: text;
   }
+  .theory-visual {
+    --theory-accent: #4F46E5;
+    --theory-border: rgba(79,70,229,0.42);
+    --theory-soft: rgba(79,70,229,0.12);
+    @apply my-7 overflow-hidden rounded-lg border bg-white shadow-sm;
+    border-color: var(--theory-border);
+    box-shadow: 0 14px 34px rgba(17, 24, 39, 0.08);
+  }
+  .theory-visual h3 {
+    @apply m-0 border-b px-4 py-3 font-display text-[12px] font-black uppercase tracking-[0.16em];
+    color: var(--theory-accent);
+    border-color: var(--theory-border);
+    background:
+      linear-gradient(90deg, var(--theory-soft), transparent 68%),
+      linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.84));
+  }
+  .theory-cards,
+  .theory-formula-grid,
+  .theory-raid-grid {
+    @apply grid gap-3 p-4 sm:grid-cols-2;
+  }
+  .theory-card,
+  .theory-formula,
+  .theory-raid-card {
+    @apply rounded-md border bg-white p-3;
+    border-color: color-mix(in srgb, var(--theory-accent) 24%, white);
+    box-shadow: inset 3px 0 0 var(--theory-accent);
+  }
+  .theory-card strong,
+  .theory-formula span,
+  .theory-raid-card strong {
+    @apply mb-1 block font-display text-sm font-black;
+    color: var(--theory-accent);
+  }
+  .theory-card span,
+  .theory-raid-card span,
+  .theory-raid-card small {
+    @apply block text-sm leading-6 text-[#374151];
+  }
+  .theory-formula code {
+    @apply mb-2 block rounded-md px-3 py-2 font-mono text-[13px] font-bold;
+    color: #312E81;
+    background: var(--theory-soft);
+  }
+  .theory-formula small {
+    @apply block text-sm leading-6 text-[#4B5563];
+  }
+  .theory-flow-track {
+    @apply flex gap-3 overflow-x-auto p-4;
+  }
+  .theory-flow-step {
+    @apply relative min-w-[150px] rounded-md border bg-white px-3 py-3;
+    border-color: var(--theory-border);
+  }
+  .theory-flow-step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: -18px;
+    top: 50%;
+    width: 22px;
+    height: 2px;
+    background: var(--theory-accent);
+  }
+  .theory-flow-step span {
+    @apply mb-2 block font-mono text-[11px] font-bold;
+    color: var(--theory-accent);
+  }
+  .theory-flow-step strong {
+    @apply block text-sm leading-5 text-[#111827];
+  }
+  .theory-stack-list {
+    @apply p-4;
+  }
+  .theory-stack-item {
+    @apply mx-auto mb-2 flex max-w-[620px] items-center justify-between gap-4 rounded-md border px-4 py-3;
+    width: calc(100% - (var(--stack-index) * 5%));
+    min-width: min(100%, 260px);
+    border-color: var(--theory-border);
+    background: linear-gradient(90deg, var(--theory-soft), #fff);
+  }
+  .theory-stack-item strong {
+    @apply font-display text-sm font-black;
+    color: var(--theory-accent);
+  }
+  .theory-stack-item span {
+    @apply text-right text-sm text-[#4B5563];
+  }
+  .theory-table-wrap {
+    @apply overflow-x-auto p-4;
+  }
+  .theory-table-wrap table {
+    @apply min-w-full border-collapse text-left text-sm;
+  }
+  .theory-table-wrap th {
+    @apply border-b px-3 py-2 font-display text-[11px] font-black uppercase tracking-[0.14em];
+    color: var(--theory-accent);
+    border-color: var(--theory-border);
+    background: var(--theory-soft);
+  }
+  .theory-table-wrap td {
+    @apply border-b px-3 py-3 align-top leading-6 text-[#374151];
+    border-color: rgba(17,24,39,0.08);
+  }
+  .theory-bus-board {
+    @apply grid gap-3 p-4 sm:grid-cols-2;
+    background:
+      linear-gradient(90deg, transparent 0 48%, color-mix(in srgb, var(--theory-accent) 18%, transparent) 48% 52%, transparent 52%),
+      linear-gradient(180deg, transparent 0 48%, color-mix(in srgb, var(--theory-accent) 18%, transparent) 48% 52%, transparent 52%);
+  }
+  .theory-bus-node {
+    @apply rounded-md border bg-white/95 p-4;
+    border-color: var(--theory-border);
+  }
+  .theory-bus-node strong {
+    @apply mb-1 block font-display text-sm font-black;
+    color: var(--theory-accent);
+  }
+  .theory-bus-node span {
+    @apply block text-sm leading-6 text-[#374151];
+  }
   @media (max-width: 640px) {
     .theory-reader-top {
       @apply px-4;
@@ -226,6 +346,13 @@
     }
     .theory-section p {
       @apply text-[16px] leading-[1.75];
+    }
+    .theory-stack-item {
+      width: 100%;
+      @apply block;
+    }
+    .theory-stack-item span {
+      @apply mt-1 block text-left;
     }
   }
 }

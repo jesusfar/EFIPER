@@ -18,9 +18,15 @@ import { SFX_SELECT, SFX_COLLECT, SFX_ERROR, SFX_LOGO1, SFX_LOGO2, SFX_LOGO3, SF
 import akuAkuLogoSfx from '../../assets/audio/aku_aku.mp3';
 import backButtonSfx from '../../assets/audio/back-button.mp3';
 import bolivianoLogoSfx from '../../assets/audio/Boliviano.mp3';
+import barbaNegraLogoSfx from '../../assets/audio/barba-negra.mp3';
 import dekuLogoSfx from '../../assets/audio/oi-oi-oi-deku.mp3';
 import jazwareLogoSfx from '../../assets/audio/lo-que-se-dano-fue-el-jazware.mp3';
+import meowLogoSfx from '../../assets/audio/Meow.mp3';
 import modelAnswerSfx from '../../assets/audio/Medio.mp3';
+import levelCompleteSfx from '../../assets/audio/level-complete.mp3';
+import levelFailedSfx from '../../assets/audio/level-failed.mp3';
+import sapeeeLogoSfx from '../../assets/audio/sapeee-el-bananero.mp3';
+import spiderman2099LogoSfx from '../../assets/audio/spiderman-2099-theme.mp3';
 import uwuLogoSfx from '../../assets/audio/uwu_isolated_3db_boosted.mp3';
 import specialLogoSfx from '../../assets/audio/you-are-my-special.mp3';
 
@@ -43,6 +49,10 @@ const LOGO_HOVER_SFXS: Array<{ url: string; volumeBoost?: number }> = [
   { url: jazwareLogoSfx },
   { url: specialLogoSfx },
   { url: dekuLogoSfx },
+  { url: sapeeeLogoSfx },
+  { url: barbaNegraLogoSfx },
+  { url: spiderman2099LogoSfx },
+  { url: meowLogoSfx },
 ];
 
 function playMp3(url: string, volumeBoost = 1): void {
@@ -68,6 +78,30 @@ export function playLogoHover(): void {
 export function playBackButton(): void {
   if (!enabled) return;
   playMp3(backButtonSfx);
+}
+
+// Sonido de fin de test: se guarda la referencia para poder cortarlo si el
+// usuario abandona la pantalla de resultados antes de que termine.
+let resultAudio: HTMLAudioElement | null = null;
+
+export function playResult(passed: boolean): void {
+  stopResult();
+  if (!enabled) return;
+  try {
+    const el = new Audio(passed ? levelCompleteSfx : levelFailedSfx);
+    el.volume = Math.max(0.05, Math.min(1, volume));
+    resultAudio = el;
+    void el.play();
+  } catch { /* audio no disponible */ }
+}
+
+export function stopResult(): void {
+  if (!resultAudio) return;
+  try {
+    resultAudio.pause();
+    resultAudio.currentTime = 0;
+  } catch { /* ignorar */ }
+  resultAudio = null;
 }
 
 function init(): AudioContext | null {

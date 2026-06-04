@@ -17,7 +17,15 @@
       "Bash(python -c \"import PIL; print\\('Pillow', PIL.__version__\\)\")",
       "Bash(python -c \"import docx; print\\('python-docx OK'\\)\")",
       "PowerShell(Start-Process \"msedge\" \"http://localhost:5173/efiper/teoria\")",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(npx tsc *)",
+      "Bash(npx vite *)",
+      "Bash(cp \"C:/Users/sofia/Music/level-complete.mp3\" \"src/assets/audio/level-complete.mp3\")",
+      "Bash(cp \"C:/Users/sofia/Music/level-failed.mp3\" \"src/assets/audio/level-failed.mp3\")",
+      "Bash(npx tsx *)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(git rm *)",
+      "Bash(git add *)"
     ]
   }
 }

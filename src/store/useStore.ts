@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { Attempt, ReviewItem, Topic, UserProgress } from '../types';
-import { db, loadProgress, saveProgress } from '../lib/storage/db';
+import { db, loadProgress, saveProgress, ensureFreshStart } from '../lib/storage/db';
 import { newReviewItem, grade } from '../lib/spaced-repetition/leitner';
 import { configureSound, playSfx } from '../lib/audio/soundManager';
 import { saveMirror, restoreFromMirrorIfNeeded } from '../lib/import-export/mirror';
@@ -35,6 +35,7 @@ export const useStore = create<State>((set, get) => ({
   ready: false,
 
   init: async () => {
+    await ensureFreshStart();
     await restoreFromMirrorIfNeeded();
     const loadedProgress = await loadProgress();
     const shouldFixSound = !loadedProgress.settings.soundEnabled || loadedProgress.settings.volume < 0.55;

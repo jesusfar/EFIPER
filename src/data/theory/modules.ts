@@ -1,9 +1,21 @@
 import type { Topic } from '../../types';
+import { ARCHITECTURE_THEORY_MODULE } from './architecture';
+import { EXPANDED_THEORY_MODULES } from './expandedModules';
 
 export interface TheorySection {
   title: string;
   paragraphs: string[];
+  visuals?: TheoryVisual[];
 }
+
+export type TheoryVisual =
+  | { type: 'cards'; title: string; items: Array<{ label: string; text: string }> }
+  | { type: 'formulaGrid'; title: string; items: Array<{ label: string; formula: string; example: string }> }
+  | { type: 'flow'; title: string; steps: string[] }
+  | { type: 'stack'; title: string; items: Array<{ label: string; detail: string }> }
+  | { type: 'compare'; title: string; columns: string[]; rows: string[][] }
+  | { type: 'bus'; title: string; items: Array<{ label: string; text: string }> }
+  | { type: 'raid'; title: string; items: Array<{ level: string; capacity: string; tolerance: string; text: string }> };
 
 export interface TheoryModule {
   topic: Topic;
@@ -11,7 +23,7 @@ export interface TheoryModule {
   sections: TheorySection[];
 }
 
-export const THEORY_MODULES = {
+const BASE_THEORY_MODULES = {
   arquitectura_computadoras: {
     topic: 'arquitectura_computadoras',
     title: 'Arquitectura de Computadoras',
@@ -403,4 +415,10 @@ export const THEORY_MODULES = {
       },
     ],
   },
+} satisfies Record<Topic, TheoryModule>;
+
+export const THEORY_MODULES = {
+  ...BASE_THEORY_MODULES,
+  ...EXPANDED_THEORY_MODULES,
+  arquitectura_computadoras: ARCHITECTURE_THEORY_MODULE,
 } satisfies Record<Topic, TheoryModule>;
