@@ -1,0 +1,912 @@
+[
+  {
+    "id": "banco-001", "topic": "arquitectura_computadoras", "subtopic": "HDD vs SSD",
+    "question": "¿Cuál es la diferencia fundamental entre un HDD y un SSD en cuanto a tecnología de almacenamiento?",
+    "modelAnswer": "El HDD almacena datos en platos magnéticos giratorios leídos por un cabezal mecánico móvil; tiene partes móviles. El SSD almacena en chips de memoria flash NAND sin partes móviles, con acceso puramente electrónico. Por eso el SSD tiene una latencia hasta 100 veces menor en accesos aleatorios, aunque mayor costo por GB.",
+    "keywords": ["platos magnéticos", "flash nand", "partes móviles", "latencia", "electrónico"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 1, pregunta 1"
+  },
+  {
+    "id": "banco-002", "topic": "arquitectura_computadoras", "subtopic": "HDD vs SSD",
+    "question": "¿Por qué un SSD tiene menor latencia que un HDD? Mencioná el componente físico responsable.",
+    "modelAnswer": "El componente responsable en el HDD es el actuador mecánico del cabezal: para leer debe posicionarse sobre la pista (seek time, 3-10 ms) y esperar la rotación del plato (latencia rotacional). El SSD no tiene seek time ni latencia rotacional: el controlador accede a cualquier celda NAND en ~0.05 ms por direccionamiento directo, igual que la RAM.",
+    "keywords": ["actuador", "cabezal", "seek time", "latencia rotacional", "direccionamiento"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 1, pregunta 2"
+  },
+  {
+    "id": "banco-003", "topic": "arquitectura_computadoras", "subtopic": "HDD vs SSD",
+    "question": "Explicá qué es el wear leveling en los SSD y por qué es necesario.",
+    "modelAnswer": "Es un algoritmo del controlador que distribuye las escrituras uniformemente entre todas las celdas NAND. Es necesario porque cada celda soporta un número limitado de ciclos de escritura (~3000 MLC, ~1000 TLC); sin él, las celdas donde el SO escribe constantemente se agotarían en semanas mientras el resto queda sin uso. Existe wear leveling estático (mueve datos fríos) y dinámico (solo celdas libres).",
+    "keywords": ["escrituras", "celdas nand", "ciclos", "uniforme", "controlador"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 1, pregunta 3"
+  },
+  {
+    "id": "banco-004", "topic": "arquitectura_computadoras", "subtopic": "HDD vs SSD",
+    "question": "¿Cómo afecta el uso de memoria virtual con swapping intensivo al desgaste de un SSD comparado con un HDD?",
+    "modelAnswer": "En el SSD cada swap consume ciclos P/E de las celdas NAND; con thrashing severo puede agotar su TBW (Terabytes Written) en meses en lugar de años. En el HDD el desgaste es mecánico y no existe un límite de ciclos de escritura equivalente, soportando escrituras prácticamente ilimitadas. Por eso para swap intensivo se prefiere HDD o SSD enterprise con TBW alto.",
+    "keywords": ["swap", "ciclos p/e", "tbw", "desgaste", "thrashing"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 1, pregunta 4"
+  },
+  {
+    "id": "banco-005", "topic": "arquitectura_computadoras", "subtopic": "HDD vs SSD",
+    "question": "Una empresa procesa backups nocturnos secuenciales de 2 TB. ¿Qué tipo de almacenamiento recomendarías y por qué?",
+    "modelAnswer": "HDD, idealmente en RAID 6. En transferencia secuencial los HDD modernos alcanzan 200-250 MB/s, similar a un SSD SATA; la ventaja del SSD está en el acceso aleatorio, no en el secuencial. Además el HDD cuesta 3-4x menos por GB, las escrituras secuenciales minimizan su desgaste mecánico y llegan a 20 TB por unidad. Solo si la ventana de backup fuera crítica se justificaría un SSD NVMe.",
+    "keywords": ["secuencial", "hdd", "costo por gb", "raid 6", "backup"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 1, pregunta 5"
+  },
+  {
+    "id": "banco-006", "topic": "arquitectura_computadoras", "subtopic": "RAID",
+    "question": "¿Qué significa RAID? Explicá la diferencia entre RAID por hardware y por software.",
+    "modelAnswer": "RAID = Redundant Array of Independent Disks: combina varios discos para lograr rendimiento, capacidad y/o tolerancia a fallos. En RAID por hardware una controladora dedicada (ASIC) calcula la paridad sin usar la CPU del servidor y suele tener batería de respaldo; el SO ve un único disco lógico. En RAID por software el SO (mdadm, Storage Spaces) calcula con la CPU del servidor: más económico pero más lento para niveles con paridad.",
+    "keywords": ["redundant array", "controladora", "paridad", "cpu", "asic"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 1, pregunta 6"
+  },
+  {
+    "id": "banco-007", "topic": "arquitectura_computadoras", "subtopic": "RAID",
+    "question": "¿Qué nivel de RAID ofrece redundancia sin paridad y cuántos discos como mínimo requiere?",
+    "modelAnswer": "RAID 1 (mirroring o espejado): escribe los mismos datos en dos o más discos simultáneamente, sin cálculo de paridad. Requiere mínimo 2 discos y la capacidad útil es el 50% del total. Es el único nivel que se recupera de un fallo sin reconstrucción matemática: basta reemplazar el disco y copiar.",
+    "keywords": ["raid 1", "mirroring", "espejado", "2 discos", "50%"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 1, pregunta 7"
+  },
+  {
+    "id": "banco-008", "topic": "arquitectura_computadoras", "subtopic": "RAID",
+    "question": "RAID 0 mejora el rendimiento, ¿pero qué riesgo crítico introduce?",
+    "modelAnswer": "RAID 0 (striping) distribuye los datos en bloques entre todos los discos, multiplicando el rendimiento, pero no tiene ninguna redundancia. Si falla cualquier disco se pierden TODOS los datos del array, incluso los de los discos sanos, porque los bloques están intercalados. La probabilidad de fallo crece con el número de discos; solo se usa para datos efímeros o con respaldo externo.",
+    "keywords": ["striping", "sin redundancia", "pérdida total", "rendimiento", "bloques"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 1, pregunta 8"
+  },
+  {
+    "id": "banco-009", "topic": "arquitectura_computadoras", "subtopic": "RAID",
+    "question": "¿Cuántos discos pueden fallar simultáneamente en RAID 6 sin perder datos? Explicá el mecanismo.",
+    "modelAnswer": "RAID 6 tolera la falla de hasta 2 discos simultáneos. Escribe dos bloques de paridad independientes distribuidos: P por XOR estándar (como RAID 5) y Q mediante Reed-Solomon en campo de Galois. Con dos ecuaciones independientes puede resolver dos incógnitas, recuperando 2 discos perdidos. Requiere mínimo 4 discos y la capacidad útil es (N-2) × tamaño de disco.",
+    "keywords": ["raid 6", "dos paridades", "reed-solomon", "2 discos", "galois"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 1, pregunta 9"
+  },
+  {
+    "id": "banco-010", "topic": "arquitectura_computadoras", "subtopic": "RAID",
+    "question": "Calculá la capacidad útil de 6 discos de 4 TB cada uno configurados en RAID 5.",
+    "modelAnswer": "RAID 5 reserva el equivalente a 1 disco para paridad distribuida: capacidad útil = (N-1) × tamaño = (6-1) × 4 TB = 20 TB. La paridad no ocupa un disco físico completo, sino que cada disco almacena 5/6 de datos y 1/6 de paridad, pero el total de paridad equivale a un disco.",
+    "keywords": ["raid 5", "n-1", "20 tb", "paridad distribuida", "capacidad"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 1, pregunta 10"
+  },
+  {
+    "id": "banco-011", "topic": "arquitectura_computadoras", "subtopic": "RAID",
+    "question": "Calculá la capacidad útil de los mismos 6 discos de 4 TB configurados en RAID 10.",
+    "modelAnswer": "RAID 10 (1+0) crea N/2 pares espejados y luego hace striping entre ellos: capacidad útil = (N/2) × tamaño = (6/2) × 4 TB = 12 TB, con eficiencia del 50%. Cada dato se escribe dos veces, lo que ofrece máximo rendimiento de I/O aleatorio y la reconstrucción más rápida tras un fallo.",
+    "keywords": ["raid 10", "n/2", "12 tb", "espejado", "striping"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 1, pregunta 11"
+  },
+  {
+    "id": "banco-012", "topic": "arquitectura_computadoras", "subtopic": "RAID",
+    "question": "Compará RAID 5 vs RAID 6: ¿cuándo elegirías uno sobre el otro?",
+    "modelAnswer": "RAID 5 conviene con discos pequeños-medianos (1-4 TB), presupuesto limitado y bajo riesgo de doble fallo, por su mejor eficiencia de espacio. RAID 6 conviene con discos grandes (8+ TB) cuya reconstrucción tarda 48+ horas —tiempo en que otro disco puede fallar— y cuando la disponibilidad es crítica. RAID 6 tiene mayor penalización de escritura porque calcula dos paridades (P y Q).",
+    "keywords": ["reconstrucción", "doble fallo", "penalización escritura", "discos grandes", "ure"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 1, pregunta 12"
+  },
+  {
+    "id": "banco-013", "topic": "arquitectura_computadoras", "subtopic": "RAID",
+    "question": "Un servidor de BD OLTP requiere alta disponibilidad, máximo I/O aleatorio y tolerancia a un fallo. ¿Qué RAID recomendás? ¿Cambia con SSD NVMe?",
+    "modelAnswer": "RAID 10. El OLTP son muchas transacciones pequeñas con acceso aleatorio; RAID 10 ofrece el mejor rendimiento de escritura aleatoria (sin penalización de paridad, latencia de un solo disco) y recuperación casi instantánea. Con SSD NVMe la recomendación se refuerza: agregar la penalización Read-Modify-Write de paridad de RAID 5/6 desperdiciaría la baja latencia del NVMe.",
+    "keywords": ["oltp", "raid 10", "i/o aleatorio", "penalización paridad", "nvme"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 1, pregunta 13"
+  },
+  {
+    "id": "banco-014", "topic": "arquitectura_computadoras", "subtopic": "Caché y Buses",
+    "question": "¿Qué es el principio de localidad temporal y espacial en el contexto de la caché?",
+    "modelAnswer": "Localidad temporal: un dato accedido recientemente probablemente se vuelva a acceder pronto (ej: la variable contador en un loop). Localidad espacial: si se accede a una dirección, probablemente se acceda a direcciones cercanas (ej: recorrer un array). La caché explota ambas cargando una línea completa (~64 bytes) en lugar de solo el byte solicitado.",
+    "keywords": ["temporal", "espacial", "línea de caché", "loop", "array"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 1, pregunta 14"
+  },
+  {
+    "id": "banco-015", "topic": "arquitectura_computadoras", "subtopic": "Caché y Buses",
+    "question": "Describí los niveles L1, L2 y L3 de caché: ubicación física y latencia relativa.",
+    "modelAnswer": "L1 está dentro del núcleo (on-die), 32-64 KB, exclusiva por núcleo, latencia ~1-4 ciclos. L2 también on-die, 256 KB-1 MB, exclusiva por núcleo, ~10-12 ciclos. L3 está en el chip fuera de los núcleos, 8-64 MB, compartida por todos los núcleos, ~30-50 ciclos. Si el dato no está en ninguna, se va a RAM (~200+ ciclos). Es una jerarquía que equilibra velocidad, tamaño y costo.",
+    "keywords": ["l1", "l2", "l3", "ciclos", "jerarquía"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 1, pregunta 15"
+  },
+  {
+    "id": "banco-016", "topic": "arquitectura_computadoras", "subtopic": "Caché y Buses",
+    "question": "¿Qué es un cache miss y cómo impacta en el rendimiento del procesador?",
+    "modelAnswer": "Un cache miss ocurre cuando el dato solicitado no está en la caché y el procesador debe buscarlo en un nivel inferior (L2, L3, RAM), quedando potencialmente stalled. Hay misses compulsory (primer acceso), capacity (caché chica) y conflict. Como la diferencia L1-RAM es ~200x, un 1% de miss rate puede multiplicar varias veces el tiempo de ejecución; los compiladores optimizan el layout de datos para minimizarlos.",
+    "keywords": ["miss", "stalled", "ram", "miss rate", "cpi"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 1, pregunta 16"
+  },
+  {
+    "id": "banco-017", "topic": "arquitectura_computadoras", "subtopic": "Caché y Buses",
+    "question": "Explicá la diferencia entre bus de datos, bus de direcciones y bus de control. ¿Qué determina el ancho de cada uno?",
+    "modelAnswer": "El bus de datos transporta el dato real; su ancho (8/16/32/64 bits) determina cuántos bits se transfieren por ciclo y el ancho de banda. El bus de direcciones indica QUÉ posición de memoria se accede; su ancho determina el espacio direccionable (32 bits = 4 GB). El bus de control lleva señales de coordinación (READ/WRITE, CLOCK, INTERRUPT). Transportan el qué, el dónde y el cómo/cuándo.",
+    "keywords": ["datos", "direcciones", "control", "ancho de banda", "espacio direccionable"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 1, pregunta 17"
+  },
+  {
+    "id": "banco-018", "topic": "arquitectura_computadoras", "subtopic": "Caché y Buses",
+    "question": "¿Qué ventaja tiene PCIe sobre el bus PCI clásico en cuanto a arquitectura de transferencia?",
+    "modelAnswer": "El PCI clásico es un bus paralelo compartido: los dispositivos arbitran por el bus y dividen el ancho de banda total. PCIe es punto a punto serial con lanes dedicados: cada dispositivo tiene su canal exclusivo al controlador, sin arbitraje ni colisiones. Es escalable (x1, x4, x8, x16), soporta hot-plug nativo y alcanza decenas de GB/s. Es la diferencia entre una calle de un carril y una autopista con carriles exclusivos.",
+    "keywords": ["pcie", "punto a punto", "lanes", "sin arbitraje", "serial"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 1, pregunta 18"
+  },
+  {
+    "id": "banco-019", "topic": "sistemas_operativos", "subtopic": "Kernel",
+    "question": "¿Cuál es la diferencia entre un kernel monolítico y un microkernel?",
+    "modelAnswer": "En el monolítico todos los servicios del SO (memoria, archivos, drivers, red, planificador) corren en modo kernel, en el mismo espacio de direcciones, comunicándose por llamadas de función directas (muy rápido). En el microkernel solo lo mínimo (planificador, IPC, memoria básica) corre en modo kernel; drivers y archivos corren en modo usuario como procesos separados que se comunican por mensajes (IPC), con mayor aislamiento pero overhead.",
+    "keywords": ["modo kernel", "modo usuario", "ipc", "monolítico", "microkernel"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 2, pregunta 19"
+  },
+  {
+    "id": "banco-020", "topic": "sistemas_operativos", "subtopic": "Kernel",
+    "question": "Mencioná dos ventajas y dos desventajas de cada arquitectura de kernel.",
+    "modelAnswer": "Monolítico — ventajas: alto rendimiento por llamadas directas y menor complejidad de comunicación; desventajas: un driver defectuoso causa kernel panic y hay menor aislamiento/seguridad. Microkernel — ventajas: mayor estabilidad (un driver que falla no tumba el sistema) y mejor aislamiento/seguridad; desventajas: overhead de IPC entre componentes y mayor complejidad de diseño.",
+    "keywords": ["rendimiento", "aislamiento", "kernel panic", "ipc overhead", "estabilidad"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 2, pregunta 20"
+  },
+  {
+    "id": "banco-021", "topic": "sistemas_operativos", "subtopic": "Kernel",
+    "question": "¿Linux es monolítico o microkernel? ¿Y MINIX? Justificá.",
+    "modelAnswer": "Linux es un kernel monolítico modular: todos los subsistemas (VFS, drivers, TCP/IP, planificador) corren en espacio kernel, pero soporta módulos cargables (LKM) que se insertan/remueven en caliente sin recompilar. Es modular en diseño pero monolítico en ejecución. MINIX es un microkernel creado por Tanenbaum: solo IPC, planificador y memoria en modo kernel, con drivers como procesos de usuario altamente tolerantes a fallos.",
+    "keywords": ["linux", "monolítico modular", "lkm", "minix", "microkernel"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 2, pregunta 21"
+  },
+  {
+    "id": "banco-022", "topic": "sistemas_operativos", "subtopic": "Kernel",
+    "question": "En un sistema embebido de tiempo real con recursos limitados, ¿qué arquitectura de kernel preferirías y por qué?",
+    "modelAnswer": "Un microkernel o RTOS (FreeRTOS, QNX). Los sistemas de tiempo real exigen respuesta determinista: atender una interrupción dentro de un deadline garantizado, siempre. El microkernel tiene un planificador mínimo con latencia de interrupción predecible, un driver que falla puede terminarse sin afectar el tiempo real, y un footprint de memoria muy bajo (QNX arranca en 32 KB). Lo crítico es el determinismo, no la velocidad promedio.",
+    "keywords": ["tiempo real", "rtos", "determinista", "deadline", "footprint"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 2, pregunta 22"
+  },
+  {
+    "id": "banco-023", "topic": "sistemas_operativos", "subtopic": "Procesos e Hilos",
+    "question": "Listá los 5 estados de un proceso y describí las transiciones posibles entre ellos.",
+    "modelAnswer": "Nuevo (creándose), Listo (tiene todo menos la CPU), Ejecutando (usa la CPU), Bloqueado (espera un evento/I-O) y Terminado. Transiciones: Nuevo→Listo (admisión), Listo→Ejecutando (dispatch), Ejecutando→Listo (preempción por quantum o mayor prioridad), Ejecutando→Bloqueado (solicita I/O), Bloqueado→Listo (el evento ocurrió), Ejecutando→Terminado (exit). Solo hay un proceso Ejecutando por núcleo de CPU.",
+    "keywords": ["nuevo", "listo", "ejecutando", "bloqueado", "terminado"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 2, pregunta 23"
+  },
+  {
+    "id": "banco-024", "topic": "sistemas_operativos", "subtopic": "Procesos e Hilos",
+    "question": "¿Qué es un PCB (Process Control Block)? Listá 5 campos que contiene.",
+    "modelAnswer": "El PCB es la estructura de datos donde el SO guarda toda la información de un proceso para gestionarlo y reanudarlo tras una conmutación de contexto. Campos típicos: identificador del proceso (PID), estado del proceso, contador de programa (PC), contenido de los registros de CPU, información de planificación (prioridad), información de gestión de memoria (tablas de páginas) e información de I/O y archivos abiertos.",
+    "keywords": ["pcb", "pid", "registros", "contador de programa", "estado"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 2, pregunta 24"
+  },
+  {
+    "id": "banco-025", "topic": "sistemas_operativos", "subtopic": "Procesos e Hilos",
+    "question": "¿Cuál es la diferencia entre un KLT (Kernel-Level Thread) y un ULT (User-Level Thread)?",
+    "modelAnswer": "El KLT es conocido y planificado por el kernel; cada hilo tiene su PCB y, si uno se bloquea por I/O, el kernel ejecuta otro hilo del mismo proceso, permitiendo paralelismo real en multicore (pero el context switch es costoso, vía syscall). El ULT lo gestiona una biblioteca en espacio de usuario; el kernel ve un solo hilo, el switch es barato pero un hilo bloqueado bloquea todo el proceso y no hay paralelismo real.",
+    "keywords": ["klt", "ult", "kernel", "context switch", "paralelismo"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 2, pregunta 25"
+  },
+  {
+    "id": "banco-026", "topic": "sistemas_operativos", "subtopic": "Procesos e Hilos",
+    "question": "¿Por qué un ULT bloqueado puede bloquear todo el proceso, pero un KLT bloqueado no?",
+    "modelAnswer": "Porque el kernel solo puede planificar lo que conoce. Con ULT, el kernel ve el proceso como un único hilo; si uno hace una llamada bloqueante (read()), el kernel bloquea el proceso entero porque no sabe que internamente hay otros hilos listos. Con KLT, el kernel conoce cada hilo individualmente, así que bloquea solo el hilo que esperó I/O y sigue ejecutando los demás.",
+    "keywords": ["visibilidad", "kernel", "bloqueante", "syscall", "hilos"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 2, pregunta 26"
+  },
+  {
+    "id": "banco-027", "topic": "sistemas_operativos", "subtopic": "Procesos e Hilos",
+    "question": "Explicá qué ocurre durante una conmutación de contexto (context switch). ¿Qué se guarda y dónde?",
+    "modelAnswer": "Cuando el SO le quita la CPU a un proceso: 1) guarda los registros (PC, SP, PSW, generales) en el PCB del saliente; 2) actualiza estados (saliente a Ready/Blocked, entrante a Running); 3) restaura los registros desde el PCB del entrante; 4) cambia el espacio de memoria (registro CR3 en x86), lo que invalida el TLB. Tarda ~1-10 µs, pero su costo real es la invalidación de TLB y caché que provoca misses posteriores.",
+    "keywords": ["context switch", "pcb", "registros", "tlb", "overhead"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 2, pregunta 27"
+  },
+  {
+    "id": "banco-028", "topic": "sistemas_operativos", "subtopic": "Procesos e Hilos",
+    "question": "Un servidor web atiende 10.000 conexiones concurrentes. ¿Usarías procesos, hilos KLT o hilos ULT? Justificá.",
+    "modelAnswer": "Ninguno en modelo uno-por-conexión: 10.000 procesos o KLTs consumen ~10 GB solo en overhead/stacks y disparan el scheduling overhead. La solución óptima es event-driven con I/O no bloqueante (epoll/kqueue): pocos KLTs (uno por núcleo), cada uno atendiendo miles de conexiones, donde epoll notifica solo las conexiones con datos listos. Es la respuesta al problema C10K.",
+    "keywords": ["c10k", "event-driven", "epoll", "i/o no bloqueante", "escalabilidad"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 2, pregunta 28"
+  },
+  {
+    "id": "banco-029", "topic": "sistemas_operativos", "subtopic": "Planificación CPU",
+    "question": "¿Qué significa que un algoritmo de planificación sea preemptivo? Dá un ejemplo.",
+    "modelAnswer": "Preemptivo significa que el SO puede quitarle forzosamente la CPU a un proceso en ejecución aunque no haya terminado su ráfaga (al llegar uno de mayor prioridad o al vencer el quantum). Ejemplo: Round Robin. No preemptivo/cooperativo es cuando el proceso mantiene la CPU hasta que la libera voluntariamente (ejemplo: FCFS). La preempción se implementa con el timer interrupt del hardware.",
+    "keywords": ["preemptivo", "quantum", "round robin", "fcfs", "timer interrupt"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 2, pregunta 29"
+  },
+  {
+    "id": "banco-030", "topic": "sistemas_operativos", "subtopic": "Planificación CPU",
+    "question": "¿Cuál es la diferencia entre FCFS y Round Robin?",
+    "modelAnswer": "FCFS (First Come First Served) es no preemptivo: ejecuta los procesos en orden de llegada hasta que cada uno termina, lo que puede causar efecto convoy (un proceso largo retrasa a los cortos). Round Robin es preemptivo: asigna a cada proceso un quantum fijo y, si no termina, lo manda al final de la cola y atiende al siguiente. RR es más justo y mejora el tiempo de respuesta interactivo.",
+    "keywords": ["fcfs", "round robin", "quantum", "efecto convoy", "preemptivo"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 2, pregunta 30"
+  },
+  {
+    "id": "banco-031", "topic": "sistemas_operativos", "subtopic": "Planificación CPU",
+    "question": "¿Por qué SJF puede producir inanición (starvation)? ¿Cómo se mitiga?",
+    "modelAnswer": "SJF elige siempre la ráfaga más corta, así que un proceso largo puede esperar indefinidamente si llegan continuamente procesos más cortos (starvation). Se mitiga con envejecimiento (aging): el SO incrementa gradualmente la prioridad de los procesos que llevan mucho esperando, hasta que terminan ejecutándose sin importar su duración. También con un límite máximo de espera.",
+    "keywords": ["sjf", "starvation", "aging", "envejecimiento", "prioridad"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 2, pregunta 31"
+  },
+  {
+    "id": "banco-032", "topic": "sistemas_operativos", "subtopic": "Planificación CPU",
+    "question": "Para P1(0,6), P2(1,4), P3(2,2), P4(3,8), calculá el tiempo de espera y retorno promedio con FCFS y Round Robin (q=2).",
+    "modelAnswer": "FCFS ejecuta P1[0-6], P2[6-10], P3[10-12], P4[12-20]: espera promedio 5.5 ms, retorno 10.5 ms. Round Robin q=2 intercala P1,P2,P3,P4,P1,P2,P1,P4,P4,P4: espera promedio 6.5 ms, retorno 11.5 ms. FCFS favorece a P1 pero castiga a P3 (efecto convoy); RR es más justo en tiempo de respuesta aunque su espera promedio puede ser mayor.",
+    "keywords": ["fcfs", "round robin", "tiempo de espera", "retorno", "gantt"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 2, pregunta 32"
+  },
+  {
+    "id": "banco-033", "topic": "sistemas_operativos", "subtopic": "Planificación CPU",
+    "question": "Repetí el ejercicio con SRTF (Shortest Remaining Time First). Dibujá el Gantt y calculá el tiempo de espera promedio.",
+    "modelAnswer": "SRTF es SJF preemptivo: en cada llegada compara la ráfaga nueva con el tiempo restante del actual. Gantt: P1[0-1], P2[1-2], P3[2-4], P2[4-7], P1[7-12], P4[12-20]. Esperas: P1=6, P2=2, P3=0, P4=9, promedio 4.25 ms. Es el óptimo para minimizar la espera promedio (4.25 vs 5.5 FCFS vs 6.5 RR), a costa de más context switches e inanición de procesos largos.",
+    "keywords": ["srtf", "preemptivo", "tiempo restante", "óptimo", "4.25"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 2, pregunta 33"
+  },
+  {
+    "id": "banco-034", "topic": "sistemas_operativos", "subtopic": "Gestión de Memoria",
+    "question": "¿Qué problema resuelve la paginación respecto a la fragmentación externa?",
+    "modelAnswer": "La fragmentación externa aparece con asignación contigua: el espacio libre queda dividido en fragmentos no contiguos y, aunque haya memoria total suficiente, no hay una región continua grande para un proceso nuevo. La paginación divide el espacio lógico (páginas) y la memoria física (marcos) en bloques de igual tamaño, así un proceso puede ocupar marcos dispersos. Al ser todos iguales, cualquier marco libre sirve, eliminando la fragmentación externa (a costa de una fragmentación interna leve).",
+    "keywords": ["fragmentación externa", "paginación", "marcos", "páginas", "contigua"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 2, pregunta 34"
+  },
+  {
+    "id": "banco-035", "topic": "sistemas_operativos", "subtopic": "Gestión de Memoria",
+    "question": "¿Cuál es la diferencia entre segmentación y paginación?",
+    "modelAnswer": "La paginación divide la memoria en bloques de tamaño fijo (páginas/marcos) sin relación con la estructura lógica del programa; es transparente al programador y evita la fragmentación externa. La segmentación divide el espacio en segmentos de tamaño variable con significado lógico (código, datos, pila), visibles al programador, pero sufre fragmentación externa. Muchos sistemas combinan ambas (segmentación paginada).",
+    "keywords": ["paginación", "segmentación", "tamaño fijo", "tamaño variable", "lógico"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 2, pregunta 35"
+  },
+  {
+    "id": "banco-036", "topic": "sistemas_operativos", "subtopic": "Gestión de Memoria",
+    "question": "Explicá el concepto de memoria virtual. ¿Qué rol cumple el TLB (Translation Lookaside Buffer)?",
+    "modelAnswer": "La memoria virtual da a cada proceso un espacio de direcciones lógico propio, potencialmente mayor que la RAM física, manteniendo en memoria solo las páginas necesarias y el resto en disco. La MMU traduce direcciones lógicas a físicas mediante la tabla de páginas. El TLB es una caché de las traducciones más recientes; sin él, cada acceso requeriría leer la tabla de páginas en RAM, así que acelera enormemente la traducción.",
+    "keywords": ["memoria virtual", "tlb", "mmu", "tabla de páginas", "traducción"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 2, pregunta 36"
+  },
+  {
+    "id": "banco-037", "topic": "sistemas_operativos", "subtopic": "Gestión de Memoria",
+    "question": "¿Qué es el thrashing? ¿Cómo puede el SO detectarlo y mitigarlo?",
+    "modelAnswer": "El thrashing es la condición en que el SO pasa más tiempo manejando fallos de página y haciendo swapping que ejecutando trabajo útil, porque la suma de los working sets supera la RAM. Síntomas: CPU casi al 0%, I/O de disco al 100%. Se detecta monitoreando la tasa de page faults o con el modelo del working set. Se mitiga suspendiendo procesos (bajar la multiprogramación), agregando RAM o mejorando el algoritmo de reemplazo.",
+    "keywords": ["thrashing", "page faults", "working set", "swapping", "multiprogramación"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 2, pregunta 37"
+  },
+  {
+    "id": "banco-038", "topic": "sistemas_operativos", "subtopic": "Gestión de Memoria",
+    "question": "¿Cuál es la diferencia entre swapping y paginación por demanda?",
+    "modelAnswer": "El swapping mueve un proceso entero entre RAM y disco (granularidad de proceso completo, costo muy alto). La paginación por demanda carga solo la página específica que el proceso necesita en el momento que la necesita (granularidad de 4 KB); cuando accede a una página ausente ocurre un page fault y el SO la trae desde disco. Funciona gracias al principio de localidad: un proceso solo usa activamente una fracción de sus páginas.",
+    "keywords": ["swapping", "paginación por demanda", "page fault", "granularidad", "localidad"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 2, pregunta 38"
+  },
+  {
+    "id": "banco-039", "topic": "sistemas_operativos", "subtopic": "Gestión de Memoria",
+    "question": "Un proceso tiene espacio de direcciones de 32 bits con páginas de 4 KB. ¿Cuántas entradas tiene la tabla de páginas y cuánta memoria ocupa con entradas de 4 bytes?",
+    "modelAnswer": "Espacio = 2^32 bytes (4 GB), página = 2^12 bytes (4 KB). Número de entradas = 2^32 / 2^12 = 2^20 = 1.048.576 entradas. Tamaño = 1.048.576 × 4 bytes = 4 MB por proceso. Con 100 procesos serían 400 MB solo en tablas; por eso se usan tablas de páginas multinivel, que solo crean las regiones del espacio realmente usadas.",
+    "keywords": ["2^20", "1048576 entradas", "4 mb", "multinivel", "tabla de páginas"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 2, pregunta 39"
+  },
+  {
+    "id": "banco-040", "topic": "sistemas_operativos", "subtopic": "Gestión de Memoria",
+    "question": "Explicá cómo el thrashing interactúa con el desgaste de un disco SSD configurado en RAID 5 y sus implicaciones de disponibilidad.",
+    "modelAnswer": "El thrashing genera escrituras de swap masivas; cada escritura lógica en RAID 5 implica 4 operaciones físicas (write penalty), multiplicando el consumo de ciclos P/E de cada SSD. Esto puede agotar el TBW en semanas; cuando un SSD se marca como malo, el array entra en modo degradado y si otro SSD (desgastado por el mismo thrashing) falla durante el rebuild, se pierde todo. Solución: no usar el array de producción como swap, monitorear TBW vía SMART y dimensionar la RAM.",
+    "keywords": ["thrashing", "write penalty", "ciclos p/e", "degradado", "disponibilidad"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 2, pregunta 40"
+  },
+  {
+    "id": "banco-041", "topic": "sistemas_operativos", "subtopic": "Sistemas de Archivos",
+    "question": "¿Qué es la FAT (File Allocation Table)? ¿Cuál es su principal limitación?",
+    "modelAnswer": "FAT es un sistema de archivos que mantiene una tabla central donde cada entrada corresponde a un cluster e indica el siguiente cluster del archivo, funcionando como una lista enlazada. Su principal limitación es el tamaño máximo de archivo de 4 GB en FAT32 (campo de 32 bits), inviable para video moderno. Además no soporta permisos de usuario, journaling ni links simbólicos, y sufre fragmentación severa.",
+    "keywords": ["fat", "cluster", "lista enlazada", "4 gb", "sin journaling"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 2, pregunta 41"
+  },
+  {
+    "id": "banco-042", "topic": "sistemas_operativos", "subtopic": "Sistemas de Archivos",
+    "question": "¿Qué ventajas ofrece NTFS sobre FAT32 en cuanto a seguridad y recuperación ante fallos?",
+    "modelAnswer": "NTFS soporta permisos granulares mediante ACLs (control de acceso por usuario/grupo) y cifrado nativo (EFS/BitLocker), mientras FAT32 no tiene ningún control de acceso. Para recuperación, NTFS implementa journaling de metadatos en su $LogFile, permitiendo recuperación automática al reiniciar tras un fallo; FAT32 carece de journaling y puede corromperse permanentemente ante un corte. NTFS también soporta archivos mucho mayores y compresión.",
+    "keywords": ["ntfs", "acl", "cifrado", "journaling", "logfile"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 2, pregunta 42"
+  },
+  {
+    "id": "banco-043", "topic": "sistemas_operativos", "subtopic": "Sistemas de Archivos",
+    "question": "Explicá el concepto de journaling en ext4 y NTFS. ¿Qué tipos de journaling existen?",
+    "modelAnswer": "El journaling registra los cambios pendientes en un área especial (journal) ANTES de aplicarlos al sistema de archivos real, para poder completar o deshacer operaciones incompletas tras un fallo, aplicando atomicidad al FS. En ext4 hay tres modos: journal (registra datos y metadatos, máxima seguridad), ordered (solo metadatos pero escribe datos primero, el default) y writeback (solo metadatos, más rápido pero menos seguro). NTFS usa journaling de metadatos similar a ordered.",
+    "keywords": ["journaling", "journal", "ordered", "writeback", "atomicidad"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 2, pregunta 43"
+  },
+  {
+    "id": "banco-044", "topic": "sistemas_operativos", "subtopic": "Sistemas de Archivos",
+    "question": "Compará FAT32, NTFS y ext4 considerando tamaño máximo de archivo, permisos, journaling y compatibilidad.",
+    "modelAnswer": "FAT32: máx 4 GB por archivo, sin permisos, sin journaling, compatible con Windows/Mac/Linux (uso en USB/SD). NTFS: hasta 16 EB, permisos ACL, journaling de metadatos, nativo de Windows. ext4: hasta 16 TB por archivo, permisos POSIX, journaling de 3 modos, nativo de Linux. Cada uno refleja las prioridades de su ecosistema: FAT32 compatibilidad universal, NTFS seguridad Windows, ext4 rendimiento/confiabilidad Linux.",
+    "keywords": ["fat32", "ntfs", "ext4", "permisos", "journaling"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 2, pregunta 44"
+  },
+  {
+    "id": "banco-045", "topic": "sistemas_operativos", "subtopic": "Deadlocks",
+    "question": "Enunciá las 4 condiciones necesarias de Coffman para que ocurra un deadlock.",
+    "modelAnswer": "Deben cumplirse simultáneamente: 1) Exclusión mutua (al menos un recurso es no compartible); 2) Hold and Wait (un proceso retiene recursos mientras espera otros); 3) No preempción (los recursos no se quitan forzosamente); 4) Espera circular (existe un ciclo de procesos donde cada uno espera un recurso del siguiente). Si se elimina cualquiera de las cuatro, el deadlock no puede ocurrir.",
+    "keywords": ["coffman", "exclusión mutua", "hold and wait", "no preempción", "espera circular"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 2, pregunta 45"
+  },
+  {
+    "id": "banco-046", "topic": "sistemas_operativos", "subtopic": "Deadlocks",
+    "question": "¿Cuál es la diferencia entre prevención, evitación y detección de deadlocks?",
+    "modelAnswer": "Prevención: diseña el sistema para que una de las 4 condiciones de Coffman nunca se cumpla (ej: pedir todos los recursos al inicio u ordenar la adquisición); es estática y restrictiva. Evitación: permite las condiciones pero analiza cada solicitud para no entrar en estado inseguro (Algoritmo del Banquero), requiriendo conocer los máximos. Detección y recuperación: deja ocurrir el deadlock, lo detecta periódicamente buscando ciclos en el grafo y lo rompe matando procesos o haciendo rollback.",
+    "keywords": ["prevención", "evitación", "detección", "banquero", "estado seguro"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 2, pregunta 46"
+  },
+  {
+    "id": "banco-047", "topic": "sistemas_operativos", "subtopic": "Deadlocks",
+    "question": "Describí el Algoritmo del Banquero. ¿Qué determina si un estado es 'seguro'?",
+    "modelAnswer": "Es un algoritmo de evitación que, como un banquero prudente, solo concede recursos si el sistema queda en estado seguro. Usa los vectores Available, Max, Allocation y Need (=Max-Allocation). Simula la ejecución: busca un proceso cuyo Need pueda satisfacerse con los recursos disponibles, asume que termina y devuelve sus recursos, y repite. Si existe una secuencia en la que todos terminan, el estado es seguro; si no, hay riesgo de deadlock y la solicitud se rechaza.",
+    "keywords": ["banquero", "estado seguro", "need", "available", "secuencia segura"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 2, pregunta 47"
+  },
+  {
+    "id": "banco-048", "topic": "sistemas_operativos", "subtopic": "Deadlocks",
+    "question": "P1 tiene R1 y solicita R2; P2 tiene R2 y solicita R1. ¿Hay deadlock? Dibujá el grafo y explicá cómo lo romperías.",
+    "modelAnswer": "Sí, hay deadlock: en el grafo de asignación se forma el ciclo P1→R2→P2→R1→P1 y, con una instancia por recurso, el ciclo garantiza deadlock; se cumplen las 4 condiciones de Coffman. Para romperlo: matar un proceso (P2 libera R2), preempción de recurso (quitar R2 a P2), rollback a un checkpoint previo, o prevención futura imponiendo un orden de adquisición (siempre pedir R1 antes que R2).",
+    "keywords": ["deadlock", "ciclo", "grafo de asignación", "matar proceso", "orden de adquisición"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 2, pregunta 48"
+  },
+  {
+    "id": "banco-049", "topic": "redes_comunicaciones", "subtopic": "Modelo OSI",
+    "question": "Listá las 7 capas del modelo OSI con su número, nombre y función principal.",
+    "modelAnswer": "7 Aplicación (interfaz con el usuario: HTTP, DNS), 6 Presentación (formato/cifrado/compresión: TLS, JPEG), 5 Sesión (establece y mantiene sesiones), 4 Transporte (entrega extremo a extremo: TCP, UDP), 3 Red (enrutamiento lógico por IP), 2 Enlace de datos (acceso al medio, dirección MAC: Ethernet), 1 Física (transmisión de bits). Cada capa sirve a la superior y la encapsulación agrega cabeceras de arriba hacia abajo.",
+    "keywords": ["osi", "7 capas", "transporte", "red", "encapsulación"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 3, pregunta 49"
+  },
+  {
+    "id": "banco-050", "topic": "redes_comunicaciones", "subtopic": "Modelo OSI",
+    "question": "¿Cómo se mapean las capas del modelo OSI al modelo TCP/IP? ¿Qué capas se fusionan?",
+    "modelAnswer": "TCP/IP tiene 4 capas. Aplicación de TCP/IP fusiona las capas OSI 7, 6 y 5 (Aplicación, Presentación, Sesión). Transporte se corresponde 1:1 (capa 4, TCP/UDP). Internet equivale a la capa 3 de OSI (Red, IP). Acceso a la red fusiona las capas OSI 2 y 1 (Enlace y Física). TCP/IP es el modelo de implementación real; OSI es de referencia teórica.",
+    "keywords": ["tcp/ip", "4 capas", "aplicación", "fusión", "internet"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 3, pregunta 50"
+  },
+  {
+    "id": "banco-051", "topic": "redes_comunicaciones", "subtopic": "Modelo OSI",
+    "question": "¿En qué capa opera un router? ¿Y un switch gestionado? ¿Y un hub? Justificá.",
+    "modelAnswer": "El hub opera en capa 1 (física): repite la señal a todos los puertos sin leer direcciones. El switch opera en capa 2 (enlace): lee direcciones MAC para enviar tramas solo al puerto destino; un switch gestionado de capa 3 además enruta por IP entre VLANs. El router opera en capa 3 (red): lee direcciones IP para enrutar entre redes distintas y separa dominios de broadcast. A mayor capa, mayor inteligencia.",
+    "keywords": ["hub", "switch", "router", "capa 2", "capa 3"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 3, pregunta 51"
+  },
+  {
+    "id": "banco-052", "topic": "redes_comunicaciones", "subtopic": "Modelo OSI",
+    "question": "Seguí el camino de un paquete HTTP desde el navegador hasta el servidor: ¿qué se añade en cada capa?",
+    "modelAnswer": "En Aplicación se genera la petición HTTP; en Presentación se cifra con TLS; en Sesión se mantiene la sesión TCP. En Transporte, TCP añade su cabecera con puertos y números de secuencia (segmento). En Red, IP añade IP origen y destino (paquete). En Enlace, Ethernet añade direcciones MAC y forma la trama. En Física se transmite como bits. Cada capa encapsula el PDU de la superior agregando su cabecera.",
+    "keywords": ["http", "encapsulación", "tcp", "ip", "ethernet"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 3, pregunta 52"
+  },
+  {
+    "id": "banco-053", "topic": "redes_comunicaciones", "subtopic": "Cables",
+    "question": "¿Cuál es la diferencia entre cable UTP y STP? ¿Cuándo preferirías uno sobre el otro?",
+    "modelAnswer": "El UTP (par trenzado sin blindaje) se protege solo por el trenzado de los pares, que cancela campos opuestos. El STP añade un blindaje metálico contra interferencia electromagnética (EMI). Se prefiere STP en entornos con alta EMI (fábricas, hospitales, aeropuertos), pero requiere puesta a tierra correcta. Se prefiere UTP en oficinas normales por su menor costo y fácil instalación; Cat6 UTP basta para gigabit.",
+    "keywords": ["utp", "stp", "blindaje", "emi", "puesta a tierra"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 3, pregunta 53"
+  },
+  {
+    "id": "banco-054", "topic": "redes_comunicaciones", "subtopic": "Cables",
+    "question": "Compará fibra óptica monomodo vs multimodo: distancia, ancho de banda y costo.",
+    "modelAnswer": "La monomodo (SMF) tiene núcleo delgado (8-10 µm), usa láser, alcanza 100 km con ancho de banda virtualmente ilimitado, pero sus transceptores son más caros. La multimodo (MMF) tiene núcleo ancho (50-62.5 µm), usa LED/VCSEL más económicos, pero la dispersión modal limita la distancia (~550 m a 10G) y el ancho de banda. SMF para WAN/campus; MMF para LAN corta y conexiones servidor-switch.",
+    "keywords": ["monomodo", "multimodo", "dispersión modal", "láser", "distancia"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 3, pregunta 54"
+  },
+  {
+    "id": "banco-055", "topic": "redes_comunicaciones", "subtopic": "Cables",
+    "question": "¿En qué escenarios todavía se usa cable coaxial en redes modernas?",
+    "modelAnswer": "El coaxial sigue usándose en distribución de internet por cable (DOCSIS) desde el proveedor al hogar, en televisión por cable (CATV), en conexiones de antenas y algunos enlaces de banda base/radiofrecuencia. Su construcción con conductor central y malla le da buena resistencia a interferencias en distribución de señal, aunque en LAN fue reemplazado por par trenzado y fibra.",
+    "keywords": ["coaxial", "docsis", "catv", "cable módem", "radiofrecuencia"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 3, pregunta 55"
+  },
+  {
+    "id": "banco-056", "topic": "redes_comunicaciones", "subtopic": "Dispositivos",
+    "question": "¿Cuál es la diferencia funcional entre un router y un switch de capa 3?",
+    "modelAnswer": "El switch de capa 3 combina switching por hardware (ASIC) con enrutamiento IP, enrutando entre VLANs a velocidad de wire (10/40/100 Gbps) sin la latencia de un router; ideal para el core/distribución de una LAN. El router procesa en software, es más lento pero tiene interfaces WAN (seriales, DSL), NAT completo y ruteo dinámico avanzado; se ubica en el borde con Internet/WAN.",
+    "keywords": ["switch l3", "router", "asic", "vlan", "wan"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 3, pregunta 56"
+  },
+  {
+    "id": "banco-057", "topic": "redes_comunicaciones", "subtopic": "Dispositivos",
+    "question": "¿Qué es un firewall de estado (stateful) vs uno sin estado (stateless)?",
+    "modelAnswer": "El firewall stateless evalúa cada paquete de forma aislada según reglas estáticas (IP/puerto), sin recordar conexiones previas; es rápido pero limitado. El stateful mantiene una tabla de estado de las conexiones activas y evalúa cada paquete en el contexto de su conexión (sabe si pertenece a una sesión establecida), lo que permite reglas más seguras, como permitir respuestas solo a conexiones iniciadas internamente.",
+    "keywords": ["stateful", "stateless", "tabla de estado", "conexión", "filtrado"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 3, pregunta 57"
+  },
+  {
+    "id": "banco-058", "topic": "redes_comunicaciones", "subtopic": "Dispositivos",
+    "question": "Diseñá una topología de red para una empresa con 3 departamentos, servidor web público y BD interna. ¿Dónde ubicás firewall, switch, router y DMZ?",
+    "modelAnswer": "El router con un firewall perimetral conecta la empresa a Internet. El servidor web público va en una DMZ entre el firewall externo y un firewall interno, accesible desde Internet pero aislado de la red interna. Los 3 departamentos se separan en VLANs mediante switches gestionados (idealmente un switch L3 para el ruteo inter-VLAN). La base de datos interna va en la red de confianza, detrás del firewall interno, sin acceso directo desde Internet.",
+    "keywords": ["dmz", "vlan", "firewall perimetral", "switch l3", "topología"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 3, pregunta 58"
+  },
+  {
+    "id": "banco-059", "topic": "redes_comunicaciones", "subtopic": "Subnetting",
+    "question": "¿Cuál es la diferencia entre dirección IP pública y privada? Listá los rangos privados.",
+    "modelAnswer": "Las IP públicas son únicas y enrutables en Internet, asignadas por la autoridad; las privadas se usan dentro de redes locales, no son enrutables en Internet y requieren NAT para salir. Los rangos privados (RFC 1918) son: 10.0.0.0/8, 172.16.0.0/12 (172.16 a 172.31) y 192.168.0.0/16. Permiten reutilizar direcciones en millones de redes privadas.",
+    "keywords": ["pública", "privada", "rfc 1918", "nat", "rangos"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 3, pregunta 59"
+  },
+  {
+    "id": "banco-060", "topic": "redes_comunicaciones", "subtopic": "Subnetting",
+    "question": "Dada la red 192.168.10.0/24, dividila en 4 subredes iguales (red, máscara, rango de hosts y broadcast).",
+    "modelAnswer": "Para 4 subredes se piden 2 bits (2^2=4): máscara /26 = 255.255.255.192, con 62 hosts útiles cada una e incremento de bloque 64. S1: red .0, hosts .1-.62, broadcast .63. S2: red .64, hosts .65-.126, broadcast .127. S3: red .128, hosts .129-.190, broadcast .191. S4: red .192, hosts .193-.254, broadcast .255. La dirección de red y la de broadcast no son asignables.",
+    "keywords": ["subnetting", "/26", "62 hosts", "broadcast", "máscara"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 3, pregunta 60"
+  },
+  {
+    "id": "banco-061", "topic": "redes_comunicaciones", "subtopic": "Subnetting",
+    "question": "¿Cuántos hosts útiles admite una subred /27? ¿Y una /30?",
+    "modelAnswer": "Una /27 deja 5 bits de host (32-27): 2^5-2 = 30 hosts útiles, restando red y broadcast. Una /30 deja 2 bits: 2^2-2 = 2 hosts útiles, ideal para enlaces punto a punto entre routers. La fórmula general es hosts útiles = 2^(32-prefijo) - 2.",
+    "keywords": ["/27", "/30", "30 hosts", "2 hosts", "punto a punto"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 3, pregunta 61"
+  },
+  {
+    "id": "banco-062", "topic": "redes_comunicaciones", "subtopic": "Subnetting",
+    "question": "Realizá un VLSM desde 10.0.0.0/24 para subredes de 50, 25, 10 y 2 hosts. Justificá cada asignación.",
+    "modelAnswer": "Se ordena de mayor a menor y se asigna el bloque más justo. A (50h): /26, 62 útiles, 10.0.0.0-.63. B (25h): /27, 30 útiles, 10.0.0.64-.95. C (10h): /28, 14 útiles, 10.0.0.96-.111. D (2h): /30, 2 útiles, 10.0.0.112-.115. VLSM usa máscaras de tamaño variable según la necesidad real de cada subred, desperdiciando mínimas direcciones frente a una máscara fija única.",
+    "keywords": ["vlsm", "/26", "/27", "/28", "/30"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 3, pregunta 62"
+  },
+  {
+    "id": "banco-063", "topic": "redes_comunicaciones", "subtopic": "DMZ/VPN/MPLS",
+    "question": "¿Qué es una DMZ y qué tipo de servidores suele alojar?",
+    "modelAnswer": "La DMZ (zona desmilitarizada) es un segmento de red separado entre Internet y la red interna, típicamente entre dos firewalls. Aloja servidores que deben ser accesibles desde Internet pero que no deben tener acceso a la red interna: servidor web, correo (SMTP), DNS público, FTP, reverse proxy/balanceador y gateway VPN. Nunca se ponen ahí bases de datos ni controladores de dominio. Si un servidor de la DMZ es comprometido, el atacante queda confinado.",
+    "keywords": ["dmz", "dos firewalls", "servidor web", "aislamiento", "defensa en profundidad"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 3, pregunta 63"
+  },
+  {
+    "id": "banco-064", "topic": "redes_comunicaciones", "subtopic": "DMZ/VPN/MPLS",
+    "question": "Explicá la diferencia entre VPN site-to-site y VPN de acceso remoto.",
+    "modelAnswer": "La VPN site-to-site conecta permanentemente dos redes enteras (sedes) mediante los routers/firewalls de cada sede; los usuarios no necesitan software y acceden a la otra sede como red local (típicamente IPsec). La VPN de acceso remoto conecta un usuario individual: instala un cliente VPN en su PC y se autentica al gateway (SSL/OpenVPN, IKEv2); su tráfico parece originarse en la red interna. Una conecta infraestructura, la otra usuarios.",
+    "keywords": ["site-to-site", "acceso remoto", "ipsec", "túnel", "gateway"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 3, pregunta 64"
+  },
+  {
+    "id": "banco-065", "topic": "redes_comunicaciones", "subtopic": "DMZ/VPN/MPLS",
+    "question": "¿Qué ventaja ofrece MPLS sobre el enrutamiento IP tradicional en redes WAN corporativas?",
+    "modelAnswer": "En el enrutamiento IP cada router analiza la cabecera IP y consulta su tabla (lookup costoso y variable). MPLS asigna una etiqueta corta en el router de entrada (LER) y los routers intermedios reenvían solo por esa etiqueta (lookup O(1)). Esto da mayor velocidad, QoS garantizado con LSPs (ideal para VoIP), traffic engineering para forzar caminos, y VPNs gestionadas por el ISP con tablas VRF separadas. Separa el control del reenvío.",
+    "keywords": ["mpls", "etiqueta", "lsp", "qos", "vrf"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 3, pregunta 65"
+  },
+  {
+    "id": "banco-066", "topic": "redes_comunicaciones", "subtopic": "Seguridad",
+    "question": "Definí la tríada CIA: Confidencialidad, Integridad y Disponibilidad.",
+    "modelAnswer": "Confidencialidad: solo las partes autorizadas pueden acceder a la información, se logra con cifrado y control de acceso. Integridad: la información no es alterada de forma no autorizada y se puede detectar cualquier cambio, mediante hash y firmas. Disponibilidad: los sistemas y datos están accesibles cuando se los necesita, mediante redundancia, backups y protección anti-DDoS. Es el modelo base de la seguridad de la información.",
+    "keywords": ["confidencialidad", "integridad", "disponibilidad", "cia", "seguridad"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 3, pregunta 66"
+  },
+  {
+    "id": "banco-067", "topic": "redes_comunicaciones", "subtopic": "Seguridad",
+    "question": "¿Cuál es la diferencia entre cifrado simétrico y asimétrico? Dá un ejemplo de algoritmo de cada tipo.",
+    "modelAnswer": "El cifrado simétrico usa la misma clave para cifrar y descifrar (ej: AES, ChaCha20); es muy rápido pero tiene el problema de distribuir la clave de forma segura. El asimétrico usa un par de claves matemáticamente relacionadas, pública y privada (ej: RSA, ECC, Diffie-Hellman); resuelve la distribución porque la clave pública se publica libremente, pero es ~1000x más lento, inviable para grandes volúmenes.",
+    "keywords": ["simétrico", "asimétrico", "aes", "rsa", "distribución de claves"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 3, pregunta 67"
+  },
+  {
+    "id": "banco-068", "topic": "redes_comunicaciones", "subtopic": "Seguridad",
+    "question": "¿Para qué se usa una función hash en seguridad? ¿Por qué no es lo mismo que cifrar?",
+    "modelAnswer": "Una función hash produce una huella de tamaño fijo a partir de datos de cualquier tamaño, de forma unidireccional: sirve para verificar integridad, almacenar contraseñas y construir firmas digitales. No es cifrar porque el cifrado es reversible (con la clave se recupera el original), mientras que el hash es irreversible: no existe forma de obtener el dato original a partir del hash. Además debe ser resistente a colisiones.",
+    "keywords": ["hash", "unidireccional", "integridad", "irreversible", "colisiones"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 3, pregunta 68"
+  },
+  {
+    "id": "banco-069", "topic": "redes_comunicaciones", "subtopic": "Seguridad",
+    "question": "Explicá cómo funciona el intercambio de claves en TLS/HTTPS: qué parte usa cifrado asimétrico y qué parte simétrico.",
+    "modelAnswer": "TLS tiene dos fases. En el handshake usa cifrado asimétrico: el servidor envía su certificado con la clave pública, el cliente lo valida contra la CA, y se acuerda una clave de sesión simétrica (Diffie-Hellman en TLS 1.3). En la transmisión de datos usa cifrado simétrico (ej: AES-256-GCM) con esa clave de sesión. Es híbrido: asimétrico para resolver la distribución de claves sin secreto previo, simétrico porque es ~1000x más rápido para los datos.",
+    "keywords": ["tls", "handshake", "asimétrico", "simétrico", "clave de sesión"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 3, pregunta 69"
+  },
+  {
+    "id": "banco-070", "topic": "base_de_datos", "subtopic": "Modelo Relacional",
+    "question": "¿Qué es una clave primaria y qué es una clave foránea? ¿Qué integridad garantizan?",
+    "modelAnswer": "La clave primaria (PK) identifica unívocamente cada fila; es UNIQUE y NOT NULL, y garantiza la integridad de entidad (cada fila es identificable). La clave foránea (FK) es un atributo que referencia la PK de otra tabla (o la misma) y garantiza la integridad referencial: no puede existir una FK que apunte a un valor de PK inexistente, evitando filas huérfanas. Se gestionan con ON DELETE CASCADE o RESTRICT.",
+    "keywords": ["clave primaria", "clave foránea", "integridad de entidad", "integridad referencial", "pk fk"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 4, pregunta 70"
+  },
+  {
+    "id": "banco-071", "topic": "base_de_datos", "subtopic": "Modelo Relacional",
+    "question": "¿Cuál es la diferencia entre una relación 1:N y una N:M? ¿Cómo se implementa la N:M en SQL?",
+    "modelAnswer": "En 1:N una fila de A se relaciona con muchas de B, pero cada fila de B con una sola de A; se implementa con una FK en el lado N. En N:M muchas filas de A se relacionan con muchas de B. La N:M no se puede representar con una sola FK: se implementa con una tabla intermedia (de unión) que contiene las FK a ambas tablas, formando habitualmente una PK compuesta.",
+    "keywords": ["1:n", "n:m", "tabla intermedia", "fk", "pk compuesta"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 4, pregunta 71"
+  },
+  {
+    "id": "banco-072", "topic": "base_de_datos", "subtopic": "DER",
+    "question": "Diseñá un DER para una plataforma de gestión de mods (Juego, Mod, Usuario/Autor, Categoría, Comentario, Valoración).",
+    "modelAnswer": "Entidades: JUEGO(id, nombre); MOD(id, titulo, descripcion, fecha, juego_id FK, autor_id FK); USUARIO(id, email, password_hash); CATEGORIA(id, nombre); COMENTARIO(id, contenido, fecha, mod_id FK, usuario_id FK); VALORACION(id, puntuacion, mod_id FK, usuario_id FK). Cardinalidades: Juego 1:N Mod; Usuario 1:N Mod como autor; Mod 1:N Comentario y 1:N Valoración; Mod N:M Categoria vía tabla MOD_CATEGORIA. Cada Comentario y Valoración pertenece a un Mod y un Usuario.",
+    "keywords": ["der", "entidades", "cardinalidad", "fk", "n:m"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 4, pregunta 72"
+  },
+  {
+    "id": "banco-073", "topic": "base_de_datos", "subtopic": "DER",
+    "question": "Extendé el DER anterior para soportar versiones de mods, dependencias entre mods y colecciones de usuarios.",
+    "modelAnswer": "VERSION_MOD(id, mod_id FK, numero, fecha, archivo_url) con relación de composición (Mod 1:N Version; borrar el mod borra sus versiones). DEPENDENCIA_MOD(mod_id FK, mod_requerido_id FK, version_minima): relación recursiva N:M donde ambas FK apuntan a MOD (cuidando dependencias circulares). COLECCION(id, usuario_id FK, nombre, publica) y la tabla intermedia COLECCION_MOD(coleccion_id FK, mod_id FK, orden) para la N:M entre colecciones y mods.",
+    "keywords": ["versión", "recursiva", "colección", "composición", "tabla intermedia"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 4, pregunta 73"
+  },
+  {
+    "id": "banco-074", "topic": "base_de_datos", "subtopic": "Normalización",
+    "question": "Enunciá los requisitos de la Primera Forma Normal (1FN).",
+    "modelAnswer": "Una tabla está en 1FN si: 1) cada celda contiene un único valor atómico, sin listas ni grupos repetitivos; 2) todos los valores de una columna son del mismo dominio/tipo; 3) no hay columnas repetidas con el mismo nombre; 4) el orden de filas y columnas es irrelevante. Una violación típica es una columna «Teléfonos» con varios valores separados por coma; se resuelve creando una tabla separada de teléfonos.",
+    "keywords": ["1fn", "atomicidad", "valor atómico", "dominio", "grupos repetitivos"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 4, pregunta 74"
+  },
+  {
+    "id": "banco-075", "topic": "base_de_datos", "subtopic": "Normalización",
+    "question": "¿Qué anomalía elimina la 2FN que no elimina la 1FN? Dá un ejemplo de dependencia parcial.",
+    "modelAnswer": "La 2FN elimina las anomalías de actualización causadas por dependencias parciales: cuando un atributo no clave depende solo de PARTE de una clave primaria compuesta. Ejemplo: en DETALLE(PedidoID, ProductoID, Cantidad, ProdNombre), ProdNombre depende solo de ProductoID (parte de la clave), no de toda la clave. Eso obliga a repetir el nombre del producto en cada fila; se separa creando una tabla PRODUCTO.",
+    "keywords": ["2fn", "dependencia parcial", "clave compuesta", "anomalía de actualización", "atributo no clave"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 4, pregunta 75"
+  },
+  {
+    "id": "banco-076", "topic": "base_de_datos", "subtopic": "Normalización",
+    "question": "¿Cuál es la diferencia entre 3FN y BCNF? ¿En qué caso una tabla en 3FN puede no estar en BCNF?",
+    "modelAnswer": "La 3FN elimina dependencias transitivas (un atributo no clave que depende de otro atributo no clave). BCNF es más estricta: exige que en TODA dependencia funcional el determinante sea una superclave. Una tabla puede estar en 3FN pero no en BCNF cuando tiene claves candidatas compuestas que se solapan y un determinante que no es superclave determina un atributo que pertenece a una de esas claves.",
+    "keywords": ["3fn", "bcnf", "dependencia transitiva", "superclave", "clave candidata"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 4, pregunta 76"
+  },
+  {
+    "id": "banco-077", "topic": "base_de_datos", "subtopic": "Normalización",
+    "question": "Llevá a 3FN paso a paso la tabla Pedido(PedidoID, ClienteNom, ClienteDni, ProductoID, ProdNombre, Cantidad, PrecioUnit).",
+    "modelAnswer": "Clave compuesta {PedidoID, ProductoID}. A 1FN ya es atómica. A 2FN se eliminan dependencias parciales: PEDIDO(PedidoID, ClienteDni), DETALLE(PedidoID, ProductoID, Cantidad) y PRODUCTO(ProductoID, ProdNombre, PrecioUnit). A 3FN se elimina la transitiva ClienteDni→ClienteNom: se crea CLIENTE(ClienteDni, ClienteNom) y PEDIDO queda (PedidoID, ClienteDni FK). Resultado: CLIENTE, PEDIDO, DETALLE_PEDIDO y PRODUCTO.",
+    "keywords": ["normalización", "1fn", "2fn", "3fn", "dependencia transitiva"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 4, pregunta 77"
+  },
+  {
+    "id": "banco-078", "topic": "base_de_datos", "subtopic": "SQL",
+    "question": "Escribí el DDL para crear CLIENTE(id, nombre, email) y PEDIDO(id, fecha, cliente_id, total) con sus restricciones (PK, FK, NOT NULL, UNIQUE).",
+    "modelAnswer": "CREATE TABLE CLIENTE (id INT PRIMARY KEY, nombre VARCHAR(100) NOT NULL, email VARCHAR(150) UNIQUE NOT NULL); CREATE TABLE PEDIDO (id INT PRIMARY KEY, fecha DATE NOT NULL, cliente_id INT NOT NULL, total DECIMAL(10,2), CONSTRAINT fk_cliente FOREIGN KEY (cliente_id) REFERENCES CLIENTE(id)); La PK garantiza unicidad, la FK la integridad referencial, NOT NULL la obligatoriedad y UNIQUE evita emails duplicados.",
+    "keywords": ["ddl", "create table", "primary key", "foreign key", "constraint"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 4, pregunta 78"
+  },
+  {
+    "id": "banco-079", "topic": "base_de_datos", "subtopic": "SQL",
+    "question": "Escribí una consulta que liste cada cliente con su cantidad de pedidos y total acumulado, solo con más de 2 pedidos, ordenado por total.",
+    "modelAnswer": "SELECT c.nombre, COUNT(p.id) AS cantidad_pedidos, SUM(p.total) AS total_acumulado FROM CLIENTE c INNER JOIN PEDIDO p ON p.cliente_id = c.id GROUP BY c.id, c.nombre HAVING COUNT(p.id) > 2 ORDER BY total_acumulado DESC. El GROUP BY agrupa por cliente, las funciones de agregación cuentan y suman, HAVING filtra grupos tras la agregación (no WHERE), y ORDER BY ordena el resultado de mayor a menor.",
+    "keywords": ["join", "group by", "having", "count", "order by"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 4, pregunta 79"
+  },
+  {
+    "id": "banco-080", "topic": "base_de_datos", "subtopic": "SQL",
+    "question": "Explicá la diferencia entre INNER JOIN, LEFT JOIN y FULL OUTER JOIN con un ejemplo de cada uno.",
+    "modelAnswer": "INNER JOIN devuelve solo las filas con coincidencia en ambas tablas (clientes que tienen pedidos). LEFT JOIN devuelve todas las filas de la tabla izquierda y las coincidentes de la derecha, con NULL donde no hay match (todos los clientes, tengan o no pedidos). FULL OUTER JOIN devuelve todas las filas de ambas tablas, con NULL en los lados sin coincidencia (todos los clientes y todos los pedidos, casen o no).",
+    "keywords": ["inner join", "left join", "full outer join", "null", "coincidencia"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 4, pregunta 80"
+  },
+  {
+    "id": "banco-081", "topic": "base_de_datos", "subtopic": "SQL",
+    "question": "¿Cuál es la diferencia entre WHERE y HAVING? ¿Cuándo es obligatorio usar HAVING?",
+    "modelAnswer": "WHERE filtra filas individuales ANTES de la agrupación (GROUP BY); HAVING filtra grupos DESPUÉS de agregar. Es obligatorio usar HAVING cuando la condición se basa en una función de agregación (COUNT, SUM, AVG), porque WHERE se evalúa antes de que esas funciones existan; por ejemplo «HAVING COUNT(*) > 2» no podría escribirse en un WHERE.",
+    "keywords": ["where", "having", "agregación", "group by", "filtrado"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 4, pregunta 81"
+  },
+  {
+    "id": "banco-082", "topic": "base_de_datos", "subtopic": "SQL",
+    "question": "Escribí una consulta para encontrar los productos que nunca fueron pedidos, de tres formas: LEFT JOIN, NOT IN y NOT EXISTS.",
+    "modelAnswer": "LEFT JOIN: SELECT p.nombre FROM PRODUCTO p LEFT JOIN DETALLE_PEDIDO dp ON dp.producto_id=p.id WHERE dp.producto_id IS NULL. NOT IN: SELECT nombre FROM PRODUCTO WHERE id NOT IN (SELECT producto_id FROM DETALLE_PEDIDO WHERE producto_id IS NOT NULL). NOT EXISTS: SELECT p.nombre FROM PRODUCTO p WHERE NOT EXISTS (SELECT 1 FROM DETALLE_PEDIDO dp WHERE dp.producto_id=p.id). NOT EXISTS suele ser el más eficiente; NOT IN tiene la trampa de los NULL.",
+    "keywords": ["left join", "not in", "not exists", "is null", "anti-join"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 4, pregunta 82"
+  },
+  {
+    "id": "banco-083", "topic": "base_de_datos", "subtopic": "PL/SQL",
+    "question": "Escribí un trigger PL/SQL que registre en AUDITORIA cada cambio de precio de un producto (valor anterior, nuevo, usuario y fecha).",
+    "modelAnswer": "CREATE OR REPLACE TRIGGER trg_auditoria_precio AFTER UPDATE OF precio ON PRODUCTO FOR EACH ROW BEGIN INSERT INTO AUDITORIA (tabla, campo, valor_anterior, valor_nuevo, usuario_bd, fecha_hora) VALUES ('PRODUCTO','precio', TO_CHAR(:OLD.precio), TO_CHAR(:NEW.precio), USER, SYSTIMESTAMP); END. El AFTER UPDATE OF precio solo dispara al cambiar esa columna, FOR EACH ROW lo ejecuta por fila, :OLD y :NEW son los valores antes/después, USER es el usuario de BD y SYSTIMESTAMP la fecha. El trigger es inviolable aunque la app omita la auditoría.",
+    "keywords": ["trigger", "after update", "old new", "for each row", "auditoría"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 4, pregunta 83"
+  },
+  {
+    "id": "banco-084", "topic": "base_de_datos", "subtopic": "PL/SQL",
+    "question": "Escribí un procedimiento que reciba un ID de cliente y devuelva el total de sus compras del último mes, manejando con excepción el cliente inexistente.",
+    "modelAnswer": "CREATE OR REPLACE PROCEDURE obtener_total_mes(p_cliente_id IN NUMBER, p_total OUT NUMBER) IS v_existe NUMBER; BEGIN SELECT COUNT(*) INTO v_existe FROM CLIENTE WHERE id=p_cliente_id; IF v_existe=0 THEN RAISE_APPLICATION_ERROR(-20001,'Cliente no existe'); END IF; SELECT NVL(SUM(total),0) INTO p_total FROM PEDIDO WHERE cliente_id=p_cliente_id AND fecha >= ADD_MONTHS(TRUNC(SYSDATE,'MM'),-1) AND fecha < TRUNC(SYSDATE,'MM'); END. Usa un parámetro OUT, excepción personalizada (-20001), NVL para 0 filas y ADD_MONTHS/TRUNC para el rango.",
+    "keywords": ["procedimiento", "out", "raise_application_error", "nvl", "excepción"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 4, pregunta 84"
+  },
+  {
+    "id": "banco-085", "topic": "base_de_datos", "subtopic": "PL/SQL",
+    "question": "Escribí una función PL/SQL que determine si un número es primo y devuelva TRUE o FALSE.",
+    "modelAnswer": "CREATE OR REPLACE FUNCTION es_primo(p_numero IN NUMBER) RETURN BOOLEAN IS v_divisor NUMBER:=3; BEGIN IF p_numero<2 THEN RETURN FALSE; END IF; IF p_numero=2 THEN RETURN TRUE; END IF; IF MOD(p_numero,2)=0 THEN RETURN FALSE; END IF; WHILE v_divisor <= FLOOR(SQRT(p_numero)) LOOP IF MOD(p_numero,v_divisor)=0 THEN RETURN FALSE; END IF; v_divisor:=v_divisor+2; END LOOP; RETURN TRUE; END. Optimiza verificando solo hasta la raíz cuadrada y saltando los pares, reduciendo de O(n) a O(raíz de n).",
+    "keywords": ["función", "primo", "sqrt", "mod", "raíz cuadrada"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 4, pregunta 85"
+  },
+  {
+    "id": "banco-086", "topic": "base_de_datos", "subtopic": "PL/SQL",
+    "question": "Escribí un cursor explícito que recorra los empleados de un departamento, aumente 10% el salario a los que ganan menos de 50.000 y cuente cuántos actualizó.",
+    "modelAnswer": "DECLARE CURSOR cur(p_dept NUMBER) IS SELECT emp_id, salario FROM EMPLEADO WHERE departamento_id=p_dept; v_cont NUMBER:=0; BEGIN FOR v_emp IN cur(10) LOOP IF v_emp.salario<50000 THEN UPDATE EMPLEADO SET salario=salario*1.10 WHERE emp_id=v_emp.emp_id; v_cont:=v_cont+1; END IF; END LOOP; DBMS_OUTPUT.PUT_LINE('Actualizados: '||v_cont); END. El cursor pasa por DECLARE/OPEN/FETCH/CLOSE (el FOR lo gestiona automáticamente); para una actualización masiva sin lógica condicional sería mejor un UPDATE directo.",
+    "keywords": ["cursor", "fetch", "loop", "update", "contador"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 4, pregunta 86"
+  },
+  {
+    "id": "banco-087", "topic": "base_de_datos", "subtopic": "Índices y ACID",
+    "question": "¿Qué es un índice de base de datos y cómo mejora el rendimiento de las consultas?",
+    "modelAnswer": "Un índice es una estructura adicional (típicamente un B-Tree) que mantiene ordenados los valores de una o más columnas junto con punteros a las filas. Mejora el rendimiento porque permite localizar valores en O(log n) en lugar de un Full Table Scan O(n): una búsqueda por email en 10M filas pasa de 10M comparaciones a ~24. El costo es espacio extra y overhead en INSERT/UPDATE/DELETE, porque el índice debe mantenerse.",
+    "keywords": ["índice", "b-tree", "o(log n)", "full table scan", "punteros"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 4, pregunta 87"
+  },
+  {
+    "id": "banco-088", "topic": "base_de_datos", "subtopic": "Índices y ACID",
+    "question": "¿Cuándo un índice puede perjudicar el rendimiento de una tabla?",
+    "modelAnswer": "Un índice perjudica cuando la tabla tiene muchas escrituras (INSERT/UPDATE/DELETE), porque cada operación debe actualizar también el índice, añadiendo overhead. También en columnas de baja cardinalidad (pocos valores distintos, como un booleano), donde el optimizador prefiere un table scan; en tablas pequeñas, donde el scan es más barato; y cuando hay índices redundantes que consumen espacio y ralentizan las escrituras sin aportar a las consultas.",
+    "keywords": ["overhead", "escrituras", "cardinalidad", "redundante", "table scan"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 4, pregunta 88"
+  },
+  {
+    "id": "banco-089", "topic": "base_de_datos", "subtopic": "Índices y ACID",
+    "question": "Describí las 4 propiedades ACID de una transacción con un ejemplo real de cada una.",
+    "modelAnswer": "Atomicidad: todo o nada (una transferencia bancaria debita y acredita, o se deshace por completo). Consistencia: lleva la BD de un estado válido a otro respetando restricciones (no transferir más saldo del disponible). Aislamiento: las transacciones concurrentes no se interfieren (dos cajeros vendiendo el último asiento, solo uno lo logra). Durabilidad: tras el COMMIT los cambios persisten ante caídas, gracias al write-ahead logging (WAL).",
+    "keywords": ["atomicidad", "consistencia", "aislamiento", "durabilidad", "commit"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 4, pregunta 89"
+  },
+  {
+    "id": "banco-090", "topic": "base_de_datos", "subtopic": "Índices y ACID",
+    "question": "¿Qué es un deadlock a nivel de base de datos? ¿Cómo lo detectan Oracle/PostgreSQL y en qué se diferencia del de SO?",
+    "modelAnswer": "Es cuando dos transacciones se bloquean mutuamente esperando locks que la otra tiene (T1 tiene la fila A y pide B, T2 tiene B y pide A). Oracle/PostgreSQL construyen un grafo de espera (wait-for graph), detectan ciclos con DFS, eligen una transacción víctima y la abortan automáticamente (error ORA-00060); la app debe reintentar. Se diferencia del de SO en que ACID garantiza que el rollback deja la BD consistente, mientras matar un proceso en el SO puede dejar estado inconsistente.",
+    "keywords": ["deadlock", "wait-for graph", "víctima", "rollback", "locks"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 4, pregunta 90"
+  },
+  {
+    "id": "banco-091", "topic": "algoritmos_estructuras", "subtopic": "Notación Big-O",
+    "question": "Ordená de mejor a peor: O(n²), O(1), O(n log n), O(log n), O(n), O(2ⁿ).",
+    "modelAnswer": "De más eficiente a menos: O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(2ⁿ). Ejemplos: O(1) acceso a array por índice; O(log n) búsqueda binaria; O(n) recorrido de lista; O(n log n) MergeSort/QuickSort promedio; O(n²) Burbuja/Selección; O(2ⁿ) Fibonacci recursivo ingenuo. Big-O describe cómo crece el tiempo con el tamaño de la entrada, no el tiempo absoluto.",
+    "keywords": ["big-o", "o(1)", "o(log n)", "o(n²)", "o(2^n)"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 5, pregunta 91"
+  },
+  {
+    "id": "banco-092", "topic": "algoritmos_estructuras", "subtopic": "Notación Big-O",
+    "question": "¿Cuál es la complejidad de buscar en un array desordenado, un array ordenado con búsqueda binaria, y una tabla hash con colisiones mínimas?",
+    "modelAnswer": "En array desordenado la búsqueda es lineal, O(n), porque hay que recorrer hasta encontrar el elemento. En array ordenado con búsqueda binaria es O(log n), porque se descarta la mitad en cada paso. En una tabla hash con colisiones mínimas es O(1) promedio, porque la función hash localiza el bucket directamente, aunque en el peor caso, con muchas colisiones, degrada a O(n).",
+    "keywords": ["o(n)", "búsqueda binaria", "o(log n)", "hash", "o(1)"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 5, pregunta 92"
+  },
+  {
+    "id": "banco-093", "topic": "algoritmos_estructuras", "subtopic": "Notación Big-O",
+    "question": "Analizá la complejidad de un doble loop anidado donde i va de 0 a n y j va de i a n.",
+    "modelAnswer": "El loop externo ejecuta n veces; el interno, para cada i, ejecuta (n-i) veces. El total es n+(n-1)+...+1 = n(n+1)/2, una suma triangular. En Big-O las constantes y términos menores se descartan: O(n²/2) = O(n²). Es el patrón típico de algoritmos que comparan cada elemento con los demás (como Selection Sort); aunque el interno no recorra todo, sigue siendo cuadrático.",
+    "keywords": ["doble loop", "suma triangular", "n(n+1)/2", "o(n²)", "anidado"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 5, pregunta 93"
+  },
+  {
+    "id": "banco-094", "topic": "algoritmos_estructuras", "subtopic": "Estructuras",
+    "question": "¿Cuál es la diferencia entre una pila (LIFO) y una cola (FIFO)? Dá un ejemplo de uso en sistemas operativos de cada una.",
+    "modelAnswer": "La pila es LIFO (Last In First Out): el último en entrar es el primero en salir; se inserta y extrae por el mismo extremo (push/pop). La cola es FIFO (First In First Out): el primero en entrar es el primero en salir. En el SO, la pila se usa para la pila de llamadas (call stack) que guarda el contexto de funciones anidadas; la cola se usa para la cola de procesos listos del planificador o la cola de spool de impresión.",
+    "keywords": ["pila", "cola", "lifo", "fifo", "call stack"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 5, pregunta 94"
+  },
+  {
+    "id": "banco-095", "topic": "algoritmos_estructuras", "subtopic": "Estructuras",
+    "question": "¿Cómo implementarías una cola usando dos pilas? Describí el algoritmo.",
+    "modelAnswer": "Se usan dos pilas: entrada y salida. Enqueue(x): push en la pila de entrada, O(1). Dequeue(): si la pila de salida está vacía, se vuelcan todos los elementos de entrada a salida (lo que invierte el orden), y luego se hace pop de salida. Así el primero que entró queda arriba en salida, logrando FIFO. La complejidad es O(1) amortizado, porque cada elemento se mueve exactamente dos veces en su vida.",
+    "keywords": ["dos pilas", "enqueue", "dequeue", "amortizado", "fifo"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 5, pregunta 95"
+  },
+  {
+    "id": "banco-096", "topic": "algoritmos_estructuras", "subtopic": "Estructuras",
+    "question": "¿Cuál es la diferencia entre una lista simplemente enlazada, doblemente enlazada y circular? ¿Cuándo usarías cada una?",
+    "modelAnswer": "La simplemente enlazada tiene un puntero al siguiente y solo se recorre hacia adelante; buena para pilas y memoria limitada. La doblemente enlazada tiene punteros al siguiente y al anterior, permite recorrer en ambos sentidos e insertar/borrar en O(1) con el nodo (ej: LinkedList de Java, historial del navegador). La circular conecta el último nodo con el primero, útil para scheduling Round Robin y buffers de anillo de audio/video.",
+    "keywords": ["simple", "doble", "circular", "punteros", "round robin"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 5, pregunta 96"
+  },
+  {
+    "id": "banco-097", "topic": "algoritmos_estructuras", "subtopic": "Estructuras",
+    "question": "Escribí la función para invertir una lista simplemente enlazada en O(n) tiempo y O(1) espacio extra.",
+    "modelAnswer": "Se usan tres punteros: anterior, actual y siguiente. Mientras actual no sea null: guardar siguiente=actual.next; invertir actual.next=anterior; avanzar anterior=actual y actual=siguiente. Al terminar, anterior es la nueva cabeza. Es O(n) en tiempo (un solo recorrido) y O(1) en espacio (solo 3 variables). La clave es guardar la referencia al siguiente ANTES de modificar el puntero, para no perder el resto de la lista.",
+    "keywords": ["invertir", "tres punteros", "anterior actual siguiente", "o(n)", "o(1)"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 5, pregunta 97"
+  },
+  {
+    "id": "banco-098", "topic": "algoritmos_estructuras", "subtopic": "Ordenamiento",
+    "question": "¿Cuál es la complejidad temporal (mejor, promedio y peor caso) de Burbuja, Inserción, MergeSort y QuickSort?",
+    "modelAnswer": "Burbuja: O(n) mejor con corte temprano, O(n²) promedio y peor, espacio O(1), estable. Inserción: O(n) mejor, O(n²) promedio y peor, O(1), estable. MergeSort: O(n log n) en todos los casos, espacio O(n), estable. QuickSort: O(n log n) mejor y promedio, O(n²) peor con pivote en el extremo, espacio O(log n), no estable. MergeSort garantiza n log n siempre; QuickSort suele ser más rápido por su mejor localidad de caché.",
+    "keywords": ["burbuja", "inserción", "mergesort", "quicksort", "estable"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 5, pregunta 98"
+  },
+  {
+    "id": "banco-099", "topic": "algoritmos_estructuras", "subtopic": "Ordenamiento",
+    "question": "¿Por qué MergeSort garantiza O(n log n) en el peor caso pero QuickSort no? ¿Qué estrategia mitiga el peor caso de QuickSort?",
+    "modelAnswer": "MergeSort siempre divide el arreglo exactamente por la mitad (log n niveles) y fusiona en O(n) por nivel, sin depender de los datos. QuickSort depende de la elección del pivote: si el pivote cae siempre en el extremo (ej: arreglo ya ordenado con pivote=último), las particiones quedan desbalanceadas (n-1 y 0), dando O(n²). Se mitiga eligiendo el pivote como mediana de tres o de forma aleatoria, que equilibra las particiones.",
+    "keywords": ["mergesort", "quicksort", "pivote", "mediana de tres", "partición"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 5, pregunta 99"
+  },
+  {
+    "id": "banco-100", "topic": "algoritmos_estructuras", "subtopic": "Ordenamiento",
+    "question": "Ordená el arreglo [38, 27, 43, 3, 9, 82, 10] usando MergeSort, mostrando el árbol de recursión.",
+    "modelAnswer": "División: [38,27,43,3,9,82,10] se parte en [38,27,43] y [3,9,82,10], y así hasta elementos individuales. Fusión ascendente: [27]+[43]=[27,43]; [38]+[27,43]=[27,38,43]; [3]+[9]=[3,9]; [82]+[10]=[10,82]; [3,9]+[10,82]=[3,9,10,82]; finalmente [27,38,43]+[3,9,10,82]=[3,9,10,27,38,43,82]. La división da log n niveles y la fusión O(n) por nivel: O(n log n).",
+    "keywords": ["mergesort", "división", "fusión", "divide y vencerás", "árbol de recursión"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 5, pregunta 100"
+  },
+  {
+    "id": "banco-101", "topic": "algoritmos_estructuras", "subtopic": "Ordenamiento",
+    "question": "Aplicá QuickSort al arreglo [38, 27, 43, 3, 9, 82, 10] con pivote = último elemento, mostrando cada partición.",
+    "modelAnswer": "Pivote=10: menores {3,9} a la izquierda, queda [3,9,10,43,38,82,27] con el pivote en índice 2. Izquierda [3,9] con pivote 9 queda [3,9]. Derecha [43,38,82,27] con pivote 27 queda [27,43,38,82]; luego [43,38,82] pivote 82 queda [38,43,82]; luego [38,43] pivote 43 queda [38,43]. Resultado: [3,9,10,27,38,43,82]. Con pivote=último, un arreglo ya ordenado da el peor caso O(n²); por eso se prefiere mediana de tres.",
+    "keywords": ["quicksort", "pivote", "partición", "peor caso", "in-place"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 5, pregunta 101"
+  },
+  {
+    "id": "banco-102", "topic": "paradigmas_lenguajes", "subtopic": "POO",
+    "question": "Definí y diferenciá los 4 pilares de la POO: Abstracción, Encapsulamiento, Herencia y Polimorfismo.",
+    "modelAnswer": "Abstracción: representar solo lo esencial ocultando los detalles de implementación (List expone add/get sin revelar su estructura interna). Encapsulamiento: agrupar datos y métodos en una clase controlando el acceso con modificadores (saldo private, modificable solo por depositar/retirar). Herencia: una subclase reutiliza y extiende atributos y métodos de una superclase (Perro extends Animal). Polimorfismo: objetos de distintas clases responden al mismo mensaje de forma diferente (animal.hacerSonido()).",
+    "keywords": ["abstracción", "encapsulamiento", "herencia", "polimorfismo", "poo"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 6, pregunta 102"
+  },
+  {
+    "id": "banco-103", "topic": "paradigmas_lenguajes", "subtopic": "POO",
+    "question": "¿Cuál es la diferencia entre una clase abstracta y una interfaz en Java? ¿Cuándo usarías cada una?",
+    "modelAnswer": "La clase abstracta puede tener métodos concretos y abstractos, atributos de cualquier tipo y constructor, pero solo se hereda una (extends); modela una relación «es-un» con código común. La interfaz define un contrato (métodos abstractos y default desde Java 8), solo atributos public static final, sin constructor, y se implementan múltiples (implements); modela un «puede-hacer». Se usa clase abstracta cuando hay implementación compartida en una jerarquía; interfaz para contratos que clases no relacionadas pueden cumplir.",
+    "keywords": ["clase abstracta", "interfaz", "extends", "implements", "es-un"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 6, pregunta 103"
+  },
+  {
+    "id": "banco-104", "topic": "paradigmas_lenguajes", "subtopic": "POO",
+    "question": "¿Qué es el principio de sustitución de Liskov (LSP)? Dá un ejemplo de violación.",
+    "modelAnswer": "LSP dice que si S es subtipo de T, los objetos de T pueden reemplazarse por objetos de S sin alterar la correctitud del programa: una subclase debe usarse donde se espera la superclase sin sorpresas. Ejemplo clásico de violación: Cuadrado extends Rectangulo; si Cuadrado sobreescribe setAncho para forzar alto=ancho, un código que hace setAncho(5) y setAlto(3) esperando área 15 obtiene 9. Solución: no heredar, sino que ambos implementen una interfaz Forma.",
+    "keywords": ["liskov", "lsp", "subtipo", "sustitución", "rectángulo cuadrado"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 6, pregunta 104"
+  },
+  {
+    "id": "banco-105", "topic": "paradigmas_lenguajes", "subtopic": "POO",
+    "question": "Modelá en Java una jerarquía de pagos: clase abstracta Pago, subclases PagoTarjeta y PagoTransferencia, interfaz Auditable con registrarOperacion(). Implementá el polimorfismo.",
+    "modelAnswer": "abstract class Pago define el método abstracto procesar(); interface Auditable define registrarOperacion(). PagoTarjeta y PagoTransferencia extends Pago implements Auditable, cada una con su propia implementación de procesar() y registrarOperacion(). El polimorfismo se aplica recorriendo una List<Pago>: for(Pago p: pagos) p.procesar(); cada objeto ejecuta su propia versión según su tipo real, sin que el código conozca la subclase concreta.",
+    "keywords": ["clase abstracta", "interfaz", "polimorfismo", "override", "lista de pagos"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 6, pregunta 105"
+  },
+  {
+    "id": "banco-106", "topic": "paradigmas_lenguajes", "subtopic": "Patrones MVC",
+    "question": "Describí el patrón MVC: responsabilidad de cada capa y cómo interactúan.",
+    "modelAnswer": "MVC separa la app en tres capas. El Model contiene la lógica de negocio y el acceso a datos, independiente de la UI. La View es responsable solo de la presentación, sin lógica de negocio. El Controller es el intermediario: recibe las acciones del usuario, llama al Model y decide qué View mostrar. Flujo: el usuario hace una petición, el Controller invoca el Model, el Model consulta datos, el Controller pasa el resultado a la View y la View renderiza. Permite cambiar la UI sin tocar la lógica.",
+    "keywords": ["mvc", "model", "view", "controller", "separación de responsabilidades"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 6, pregunta 106"
+  },
+  {
+    "id": "banco-107", "topic": "paradigmas_lenguajes", "subtopic": "Patrones MVC",
+    "question": "¿Cuál es la diferencia entre el patrón Singleton y el patrón Factory? ¿En qué situación usarías cada uno?",
+    "modelAnswer": "Singleton garantiza una única instancia de una clase con acceso global (constructor privado y método getInstancia()); se usa para pool de conexiones, configuración global, logger o caché compartido. Factory define una interfaz para crear objetos delegando en subclases qué clase concreta instanciar; se usa cuando el tipo exacto no se conoce hasta runtime o hay múltiples variantes de un producto. Singleton controla la cantidad de instancias; Factory abstrae la creación.",
+    "keywords": ["singleton", "factory", "instancia única", "creación", "constructor privado"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 6, pregunta 107"
+  },
+  {
+    "id": "banco-108", "topic": "paradigmas_lenguajes", "subtopic": "Patrones MVC",
+    "question": "Aplicá el patrón MVC a un repositorio de modelos 3D. ¿Qué clases van en cada capa y cómo fluiría 'subir nuevo modelo 3D'?",
+    "modelAnswer": "Model: Modelo3D, Modelo3DRepository (acceso a BD), Modelo3DService (lógica/validación). View: la página o componente de subida y la lista de modelos. Controller: Modelo3DController con el método subir(). Flujo: el usuario completa el formulario y la View envía la petición al Controller; el Controller valida la sesión y llama a Modelo3DService.subir(); el Service valida el archivo, lo almacena y persiste vía Repository; el Controller devuelve a la View la confirmación o el error.",
+    "keywords": ["mvc", "model", "view", "controller", "subir modelo"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 6, pregunta 108"
+  },
+  {
+    "id": "banco-109", "topic": "paradigmas_lenguajes", "subtopic": "Excepciones",
+    "question": "¿Cuál es la diferencia entre una excepción checked y unchecked en Java? Dá dos ejemplos de cada tipo.",
+    "modelAnswer": "Las checked extienden Exception (no RuntimeException) y el compilador obliga a manejarlas o declararlas con throws; representan condiciones recuperables previsibles (IOException, SQLException). Las unchecked extienden RuntimeException y no obligan a manejo en compilación; representan errores de programación o reglas de negocio (NullPointerException, IllegalArgumentException). La regla: si el llamador puede hacer algo útil con el error, checked; si «no debería ocurrir» en operación normal, unchecked.",
+    "keywords": ["checked", "unchecked", "runtimeexception", "throws", "ioexception"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 6, pregunta 109"
+  },
+  {
+    "id": "banco-110", "topic": "paradigmas_lenguajes", "subtopic": "Excepciones",
+    "question": "Escribí un bloque try-catch-finally que abra una conexión a BD, ejecute una consulta y garantice el cierre incluso con excepción, usando multi-catch.",
+    "modelAnswer": "En el try se abre la conexión, se prepara el PreparedStatement y se ejecuta el ResultSet. Se encadenan varios catch (multi-catch): SQLTimeoutException, SQLException y Exception, cada uno con su tratamiento. En el finally se cierran rs, ps y conn (en orden inverso a la apertura), porque el finally siempre se ejecuta y evita los connection leaks. La práctica moderna es try-with-resources (Java 7+), que cierra automáticamente los recursos AutoCloseable.",
+    "keywords": ["try-catch-finally", "multi-catch", "finally", "try-with-resources", "connection leak"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 6, pregunta 110"
+  },
+  {
+    "id": "banco-111", "topic": "paradigmas_lenguajes", "subtopic": "Excepciones",
+    "question": "Creá una excepción personalizada StockInsuficienteException que extienda RuntimeException con producto y cantidad, y usala en retirarStock().",
+    "modelAnswer": "public class StockInsuficienteException extends RuntimeException tiene campos producto y disponible, y su constructor llama a super con un mensaje formateado («Stock insuficiente para X: disponible=A, solicitado=B»). En retirarStock(producto, cantidad): si stockActual < cantidad, se hace throw new StockInsuficienteException(producto, stockActual, cantidad). Extiende RuntimeException (unchecked) porque es una regla de negocio que se maneja en capas superiores, y agregar campos de contexto facilita el diagnóstico en logs.",
+    "keywords": ["excepción personalizada", "runtimeexception", "throw", "campos de contexto", "retirarstock"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 6, pregunta 111"
+  },
+  {
+    "id": "banco-112", "topic": "paradigmas_lenguajes", "subtopic": "Collections y JDBC",
+    "question": "¿Cuál es la diferencia entre ArrayList y LinkedList en cuanto a complejidad de acceso por índice e inserción en el medio?",
+    "modelAnswer": "ArrayList usa un array dinámico: el acceso por índice es O(1) por cálculo directo de la posición, pero insertar/borrar en el medio es O(n) porque hay que desplazar los elementos. LinkedList es una lista doblemente enlazada: el acceso por índice es O(n) porque hay que recorrer nodo a nodo, pero insertar/borrar es O(1) una vez ubicado el nodo. ArrayList conviene para acceso aleatorio frecuente; LinkedList para inserciones/eliminaciones frecuentes.",
+    "keywords": ["arraylist", "linkedlist", "o(1)", "o(n)", "acceso por índice"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 6, pregunta 112"
+  },
+  {
+    "id": "banco-113", "topic": "paradigmas_lenguajes", "subtopic": "Collections y JDBC",
+    "question": "Escribí código Java con JDBC que conecte a una BD, ejecute un PreparedStatement para buscar usuarios por email, recorra el ResultSet y cierre los recursos.",
+    "modelAnswer": "Con try-with-resources se abren Connection y PreparedStatement («SELECT id, nombre, email FROM USUARIO WHERE email = ?»); se hace ps.setString(1, email) y dentro de otro try-with-resources el ResultSet; mientras rs.next() se construye cada Usuario con rs.getInt/getString y se agrega a la lista. Se usa PreparedStatement, no Statement, para prevenir SQL Injection: el parámetro ? se envía por separado y nunca se interpreta como SQL. try-with-resources cierra todo automáticamente en orden inverso.",
+    "keywords": ["jdbc", "preparedstatement", "resultset", "sql injection", "try-with-resources"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 6, pregunta 113"
+  },
+  {
+    "id": "banco-114", "topic": "paradigmas_lenguajes", "subtopic": "Collections y JDBC",
+    "question": "Extendé el ejemplo para una transacción JDBC que inserte un pedido y descuente el stock. ¿Dónde va el commit y dónde el rollback?",
+    "modelAnswer": "Se hace conn.setAutoCommit(false) para iniciar la transacción manual. Se inserta el PEDIDO recuperando el ID generado, se insertan los detalles y se descuenta stock con «UPDATE PRODUCTO SET stock = stock - ? WHERE id = ? AND stock >= ?»; si afecta 0 filas hay stock insuficiente y se lanza excepción. El conn.commit() va al final, solo si todo fue exitoso; el conn.rollback() va en el catch, deshaciendo todo ante cualquier error. Garantiza la atomicidad: o se crea el pedido y se descuenta stock, o nada.",
+    "keywords": ["transacción", "setautocommit", "commit", "rollback", "atomicidad"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 6, pregunta 114"
+  },
+  {
+    "id": "banco-115", "topic": "analisis_diseno", "subtopic": "Casos de Uso",
+    "question": "¿Qué elementos contiene un diagrama de casos de uso? Definí actor, caso de uso, include y extend.",
+    "modelAnswer": "Actor: entidad externa que interactúa con el sistema (persona o sistema externo), no necesariamente humana. Caso de uso: funcionalidad observable desde afuera (elipse), describe QUÉ hace el sistema. Include: relación obligatoria, el caso base siempre ejecuta el incluido (ej: «Realizar pago» include «Autenticar usuario»). Extend: relación opcional/condicional, el extensor agrega comportamiento bajo ciertas condiciones. Include apunta del base al incluido; extend del extensor al base.",
+    "keywords": ["actor", "caso de uso", "include", "extend", "asociación"],
+    "frequency": "recurrente", "difficulty": 1, "source": "EFIP I Banco - Eje 7, pregunta 115"
+  },
+  {
+    "id": "banco-116", "topic": "analisis_diseno", "subtopic": "Casos de Uso",
+    "question": "Diseñá el diagrama de casos de uso para una plataforma de mods (actores: Anónimo, Registrado, Autor, Administrador).",
+    "modelAnswer": "Los actores usan generalización: Registrado hereda de Anónimo, y Autor y Administrador heredan de Registrado. Casos: Buscar mods y Ver detalle (Anónimo+); Descargar, Comentar, Valorar, Reportar y Crear colección (Registrado, todos con include Autenticar usuario); Subir mod y Gestionar versiones (Autor, con include Validar compatibilidad); Moderar contenido (Administrador). Valorar puede tener un extend «Verificar descarga previa». La herencia de actores evita repetir los casos de uso comunes.",
+    "keywords": ["casos de uso", "actores", "generalización", "include", "extend"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 7, pregunta 116"
+  },
+  {
+    "id": "banco-117", "topic": "analisis_diseno", "subtopic": "Casos de Uso",
+    "question": "Extendé el diagrama para incluir el subsistema de pagos (mods premium con pago único o suscripción). ¿Qué casos de uso y actores nuevos aparecen?",
+    "modelAnswer": "Aparecen nuevos casos de uso: «Comprar mod premium», «Suscribirse», «Gestionar suscripción» y «Procesar pago», todos con include «Autenticar usuario». «Procesar pago» se incluye desde comprar y suscribirse. Como actor adicional aparece la Pasarela de Pagos (sistema externo que confirma la transacción) y opcionalmente un actor temporal para el vencimiento de suscripción. El Autor gana «Marcar mod como premium». La pasarela se modela como actor secundario externo al sistema.",
+    "keywords": ["pagos", "premium", "suscripción", "pasarela", "actor externo"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 7, pregunta 117"
+  },
+  {
+    "id": "banco-118", "topic": "analisis_diseno", "subtopic": "Diagrama de Clases",
+    "question": "Describí los tipos de relaciones en un diagrama de clases UML. ¿Cuál es la diferencia entre agregación y composición?",
+    "modelAnswer": "Asociación: relación estructural donde una clase usa o conoce a otra, con multiplicidad. Agregación (diamante vacío): todo-parte débil, las partes existen sin el todo (Departamento-Empleado). Composición (diamante relleno): todo-parte fuerte, las partes no existen sin el todo (Casa-Habitación). Dependencia (flecha punteada): uso temporal. Realización: una clase implementa una interfaz. Herencia: subclase de superclase. La diferencia agregación/composición está en el ciclo de vida de la parte.",
+    "keywords": ["asociación", "agregación", "composición", "dependencia", "ciclo de vida"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 7, pregunta 118"
+  },
+  {
+    "id": "banco-119", "topic": "analisis_diseno", "subtopic": "Diagrama de Clases",
+    "question": "Diseñá el diagrama de clases para el sistema de mods (Mod, Version, Usuario, Categoria, Comentario, Valoracion) con atributos, métodos y relaciones.",
+    "modelAnswer": "Mod(+id, +titulo, +descripcion, -autorId; publicar(), getVersionActual()). Version(+id, +numero, +archivoUrl; descargar()). Usuario(+id, +email, -passwordHash; autenticar()). Categoria(+id, +nombre). Comentario(+id, +contenido). Valoracion(+id, +puntuacion). Relaciones: Usuario es superclase de AutorMod y Administrador (herencia); Mod compuesto de Version y de Comentario (composición); Usuario agrega Mod (agregación); Mod-Categoria es N:M. Composición para lo que no existe sin el mod, agregación para lo que sobrevive.",
+    "keywords": ["diagrama de clases", "atributos", "visibilidad", "composición", "agregación"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 7, pregunta 119"
+  },
+  {
+    "id": "banco-120", "topic": "analisis_diseno", "subtopic": "Diagrama de Clases",
+    "question": "Aplicá el patrón de diseño Observer al sistema de mods para que los suscriptores reciban notificaciones cuando se publique una nueva versión.",
+    "modelAnswer": "Se define la interfaz IModObservable (suscribir, desuscribir, notificar) que implementa Mod (ConcreteSubject), manteniendo una lista de observadores; al publicar una versión llama notificar(). La interfaz IModObserver (actualizar(evento)) la implementan ServicioEmail, ServicioPush y UsuarioSuscriptor (ConcreteObservers). Cuando hay nueva versión, Mod recorre su lista y llama actualizar() en cada observador. Observer desacopla el sujeto de sus observadores (principio abierto/cerrado): se agregan tipos de notificación sin tocar Mod.",
+    "keywords": ["observer", "observable", "observador", "notificar", "desacople"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 7, pregunta 120"
+  },
+  {
+    "id": "banco-121", "topic": "analisis_diseno", "subtopic": "Diagrama de Secuencia",
+    "question": "Listá los elementos de un diagrama de secuencia: participantes, lifelines, mensajes, activaciones y fragmentos combinados.",
+    "modelAnswer": "Participantes (objetos o actores arriba); líneas de vida (lifelines) verticales que representan su existencia en el tiempo; barras de activación que indican cuándo un objeto está procesando; mensajes síncronos (flecha llena, espera respuesta) y asíncronos (flecha abierta); mensajes de retorno (línea punteada); y fragmentos combinados como alt (alternativa if-else), loop (repetición) y opt (opcional). Los mensajes se leen de arriba hacia abajo en orden temporal.",
+    "keywords": ["participantes", "lifeline", "activación", "mensajes", "alt loop opt"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 7, pregunta 121"
+  },
+  {
+    "id": "banco-122", "topic": "analisis_diseno", "subtopic": "Diagrama de Secuencia",
+    "question": "Creá un diagrama de secuencia para 'un usuario descarga un mod', con autenticación y caso alternativo de usuario no autenticado.",
+    "modelAnswer": "Participantes: Usuario, Navegador, API, AuthService, ModRepository, CDN. Flujo: Usuario→Navegador (click Descargar); Navegador→API (GET /mods/42/download con token); API→AuthService (validarToken); API→ModRepository (findModById y registrarDescarga); API→CDN (generarURLFirmada); API→Navegador (downloadUrl); el Navegador inicia la descarga directa al CDN. Fragmento alt [token inválido]: AuthService devuelve excepción, API responde HTTP 401 y el Navegador redirige a /login. El alt modela el if-else temporal.",
+    "keywords": ["secuencia", "participantes", "autenticación", "alt", "url firmada"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 7, pregunta 122"
+  },
+  {
+    "id": "banco-123", "topic": "analisis_diseno", "subtopic": "Diagrama de Despliegue",
+    "question": "¿Para qué sirve un diagrama de despliegue? ¿Qué elementos lo componen (nodos, artefactos, asociaciones)?",
+    "modelAnswer": "Modela la arquitectura física del sistema: cómo los artefactos de software se distribuyen en los nodos de hardware. Sus elementos son: nodos (elementos físicos donde se ejecuta software: servidor, contenedor, JVM, representados con un cubo 3D), artefactos (piezas desplegables concretas: .jar, .war, imagen Docker), asociaciones de comunicación (líneas entre nodos etiquetadas con el protocolo y puerto) y dependencias de despliegue. Responde «¿dónde se ejecuta cada parte?», esencial para infraestructura y DevOps.",
+    "keywords": ["despliegue", "nodos", "artefactos", "comunicación", "topología física"],
+    "frequency": "frecuente", "difficulty": 2, "source": "EFIP I Banco - Eje 7, pregunta 123"
+  },
+  {
+    "id": "banco-124", "topic": "analisis_diseno", "subtopic": "Diagrama de Despliegue",
+    "question": "Diseñá el diagrama de despliegue para la plataforma de mods en 3 capas en la nube (cliente, API, BD, CDN, balanceador, firewall, DMZ).",
+    "modelAnswer": "Cliente (navegador SPA) por HTTPS:443 al Firewall perimetral y al Load Balancer. En la DMZ: Servidores de Aplicaciones x2 (app.war Spring Boot) y CDN/File Server para los .zip. Tras un Firewall interno, en la red de datos: BD PostgreSQL primary con replicación a una réplica de lectura. Protocolos: Cliente-Firewall HTTPS:443 (TLS 1.3); LB-AppServers HTTP:8080; AppServer-BD JDBC/TLS:5432; AppServer-CDN HTTPS con signed URLs; las descargas van directas del cliente al CDN para no saturar el app server. La DMZ aísla lo público de los datos sensibles.",
+    "keywords": ["despliegue", "3 capas", "dmz", "load balancer", "cdn"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Eje 7, pregunta 124"
+  },
+  {
+    "id": "banco-b1", "topic": "sistemas_operativos", "subtopic": "Integradora SO + Arquitectura",
+    "question": "[SO + Arquitectura] Explicá cómo el thrashing en un SO afecta el desgaste de un SSD en RAID 5 y su impacto en la disponibilidad a largo plazo.",
+    "modelAnswer": "Cadena causal: el thrashing genera cientos de page faults por segundo con swapping intenso; cada swap es una escritura en el SSD que consume ciclos P/E. En RAID 5 cada escritura lógica implica 4 operaciones físicas (write penalty), multiplicando el desgaste; un SSD TLC con 300 TBW puede agotarse en semanas. Cuando un SSD se marca como malo, el array entra en modo degradado sin redundancia, y si otro SSD igualmente desgastado falla durante el rebuild, se pierde todo. La solución es atacar el origen: agregar RAM, reducir la multiprogramación o usar un disco de swap dedicado.",
+    "keywords": ["thrashing", "ciclos p/e", "write penalty", "degradado", "tbw"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Bonus B1 (SO + Arquitectura)"
+  },
+  {
+    "id": "banco-b2", "topic": "redes_comunicaciones", "subtopic": "Integradora Redes + BD",
+    "question": "[Redes + BD] Una app Java accede vía JDBC a un Oracle remoto por VPN MPLS. Describí la encapsulación de la consulta SQL, las capas OSI y la seguridad.",
+    "modelAnswer": "La consulta SQL nace en Aplicación (protocolo Oracle Net/TNS), se cifra en Presentación (TLS), mantiene la sesión TCP en Sesión, TCP la segmenta en Transporte (puerto 1521), IP la encapsula en Red (origen sede remota, destino servidor central), en el router del proveedor se le asigna una etiqueta MPLS en Enlace, y se transmite como bits por fibra en Física. Seguridad en capas: TLS cifra los datos (confidencialidad extremo a extremo), MPLS VPN aísla el tráfico en un VRF, el firewall filtra el acceso al puerto 1521 y la autenticación Oracle valida credenciales. Es defensa en profundidad.",
+    "keywords": ["jdbc", "encapsulación", "mpls", "tls", "vrf"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Bonus B2 (Redes + BD)"
+  },
+  {
+    "id": "banco-b3", "topic": "base_de_datos", "subtopic": "Integradora BD + Algoritmos",
+    "question": "[BD + Algoritmos] Una tabla de 10M filas se busca con LIKE '%mouse%'. ¿Por qué es lento aunque haya índice en la columna nombre? ¿Qué alternativa proponés?",
+    "modelAnswer": "Un índice B-Tree ordena lexicográficamente, así que solo acelera búsquedas por prefijo conocido (LIKE 'mouse%' es O(log n)). Con el comodín al inicio (LIKE '%mouse%'), el optimizador no sabe dónde empezar y debe hacer un Full Table Scan O(n): leer las 10M filas. Es un problema de sargabilidad. Alternativas: un índice de texto completo (FULLTEXT, tsvector, Elasticsearch) que tokeniza palabras en un índice invertido, o un índice de trigramas (pg_trgm) que permite el comodín interno. La diferencia entre O(log n)≈23 y O(n)=10M es de varios órdenes de magnitud.",
+    "keywords": ["like", "full table scan", "sargable", "índice invertido", "trigrama"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Bonus B3 (BD + Algoritmos)"
+  },
+  {
+    "id": "banco-b4", "topic": "paradigmas_lenguajes", "subtopic": "Integradora Java + BD + UML",
+    "question": "[Java + BD + UML] Describí el flujo completo de 'subir mod': diagrama de secuencia, clases MVC, transacción ACID y esquema de red.",
+    "modelAnswer": "Secuencia: el Autor sube el archivo desde la SPA, POST al ModController, que valida el JWT con AuthService; ModService crea el mod dentro de una transacción: sube el .zip al CDN vía FileService, inserta en MOD y en VERSION_MOD, y hace commit. Clases MVC: ModController (@RestController), ModService (@Service @Transactional), ModRepository/VersionRepository (@Repository), modelos Mod/Version/ModDTO y FileService (infraestructura/CDN). ACID: @Transactional da atomicidad (si falla la subida, rollback del INSERT), la FK version-mod la consistencia, el isolation level el aislamiento y el WAL la durabilidad. Red: Cliente-HTTPS:443-LB-HTTP:8080-AppServer-HTTPS/S3-CDN, idealmente con presigned URL para no saturar el app server.",
+    "keywords": ["mvc", "transaccional", "acid", "secuencia", "presigned url"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Bonus B4 (Java + BD + UML)"
+  },
+  {
+    "id": "banco-b5", "topic": "sistemas_operativos", "subtopic": "Integradora SO + Redes",
+    "question": "[SO + Redes] Un servidor nginx en Linux maneja 5.000 conexiones concurrentes. Explicá su modelo de hilos, la planificación del SO, el efecto del thrashing y el rol del firewall de la DMZ.",
+    "modelAnswer": "nginx usa un modelo multi-proceso event-driven: un master gestiona N worker processes (uno por núcleo), y cada worker maneja miles de conexiones con epoll, sin un hilo por conexión. El kernel (CFS, Completely Fair Scheduler) planifica esos pocos workers; cuando un worker espera en epoll_wait() pasa a BLOCKED y la interrupción del NIC lo despierta. Si entra en thrashing, las estructuras de las conexiones se paginan a disco, cada acceso genera page faults y la latencia HTTP sube a segundos (iowait al 100%). El firewall perimetral solo deja pasar HTTPS:443 hacia el LB, el interno protege la BD (solo 5432 desde los app servers) y el rate limiting mitiga DDoS.",
+    "keywords": ["nginx", "event-driven", "epoll", "cfs", "firewall dmz"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Bonus B5 (SO + Redes)"
+  },
+  {
+    "id": "banco-b6", "topic": "arquitectura_computadoras", "subtopic": "Integradora Arquitectura + SO + Redes",
+    "question": "[Arquitectura + SO + Redes] Diseñá la infraestructura completa de hardware y software para una plataforma de streaming de videojuegos (almacenamiento/RAID, kernel, topología, subnetting y cifrado).",
+    "modelAnswer": "Almacenamiento: archivos de juego (lectura secuencial) en HDD RAID 6 de 16+ TB; BD de usuarios/partidas (OLTP aleatorio) en SSD NVMe RAID 10; logs en HDD RAID 5. Kernel: servidores de juego en tiempo real con Linux PREEMPT_RT (latencia determinista < 50 ms); API y BD con Linux monolítico estándar optimizado. Topología: Firewall perimetral, DMZ (LB, Web/API, Game Servers UDP:7777, CDN), Firewall interno, red de datos (BD RAID 10, storage). Subnetting: DMZ 10.0.1.0/24, datos 10.0.2.0/24, gestión 10.0.3.0/28, replicación 10.0.4.0/30. Cifrado: HTTPS/TLS 1.3 (AES-256-GCM) para web, DTLS/ChaCha20 para juego UDP, TLS para replicación. Cada decisión equilibra rendimiento, seguridad, costo y disponibilidad.",
+    "keywords": ["raid", "preempt_rt", "dmz", "subnetting", "cifrado"],
+    "frequency": "posible", "difficulty": 3, "source": "EFIP I Banco - Bonus B6 (Arquitectura + SO + Redes)"
+  }
+]
