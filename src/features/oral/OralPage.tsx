@@ -72,7 +72,7 @@ function SoloMode({ onBack }: { onBack: () => void }) {
   }
 
   function finishRound() {
-    playSfx('confirm');
+    playSfx('modelAnswer');
     setRevealed(false);
     setFinished(true);
   }

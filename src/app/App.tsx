@@ -8,7 +8,7 @@ import { OralPage } from '../features/oral/OralPage';
 import { CasePage } from '../features/cases/CasePage';
 import { ReviewsPage } from '../features/reviews/ReviewsPage';
 import { SimulationPage } from '../features/simulation/SimulationPage';
-import { TeoriaPage } from '../features/teoria/TeoriaPage';
+import { TeoriaPage, TheoryReaderPage } from '../features/teoria/TeoriaPage';
 
 export function App() {
   const init = useStore((s) => s.init);
@@ -29,6 +29,7 @@ export function App() {
       <Routes>
         <Route path="/" element={<DashboardPage />} />
         <Route path="/teoria" element={<TeoriaPage />} />
+        <Route path="/teoria/:topic" element={<TheoryReaderPage />} />
         <Route path="/test" element={<TestPage />} />
         <Route path="/oral" element={<OralPage />} />
         <Route path="/caso/:id" element={<CasePage />} />

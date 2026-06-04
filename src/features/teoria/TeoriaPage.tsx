@@ -1,3 +1,7 @@
+import { useEffect } from 'react';
+import { Link, Navigate, useParams } from 'react-router-dom';
+import { THEORY_MODULES } from '../../data/theory/modules';
+import { playBackButton } from '../../lib/audio/soundManager';
 import { TOPIC_THEME } from '../../lib/theme/topicTheme';
 import { TOPIC_LABELS } from '../../store/useStore';
 import type { Topic } from '../../types';
@@ -10,14 +14,14 @@ import imgAlgoritmos from '../../assets/modulos/Algoritmos y Estructura de datos
 import imgParadigmas from '../../assets/modulos/Siggy Paradigmas de Programacion.png';
 import imgAnalisis from '../../assets/modulos/Siggy Analisis y Diseño de sistemas.png';
 
-interface Module {
+interface ModuleCard {
   topic: Topic;
   image: string;
   subtitle: string;
   num: string;
 }
 
-const MODULES: Module[] = [
+const MODULES: ModuleCard[] = [
   {
     topic: 'arquitectura_computadoras',
     image: imgArquitectura,
@@ -75,12 +79,12 @@ export function TeoriaPage() {
         {MODULES.map((mod) => {
           const theme = TOPIC_THEME[mod.topic];
           return (
-            <div
+            <Link
               key={mod.topic}
-              className="group rounded-2xl overflow-hidden shadow-stud cursor-default select-none"
+              to={`/teoria/${mod.topic}`}
+              className="sfx-click group rounded-2xl overflow-hidden shadow-stud select-none transition hover:-translate-y-0.5 hover:shadow-panel focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
               style={{ border: `2px solid ${theme.border}` }}
             >
-              {/* Image — landscape, sin overlay */}
               <div className="overflow-hidden bg-panel-2" style={{ aspectRatio: '16 / 9' }}>
                 <img
                   src={mod.image}
@@ -91,7 +95,6 @@ export function TeoriaPage() {
                 />
               </div>
 
-              {/* Footer info */}
               <div
                 className="flex items-center gap-3 px-4 py-3"
                 style={{ borderTop: `3px solid ${theme.color}`, background: theme.soft }}
@@ -109,10 +112,53 @@ export function TeoriaPage() {
                   <p className="text-xs text-muted mt-0.5 leading-tight">{mod.subtitle}</p>
                 </div>
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>
     </div>
+  );
+}
+
+export function TheoryReaderPage() {
+  const { topic } = useParams<{ topic: Topic }>();
+  const mod = topic ? THEORY_MODULES[topic] : null;
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [topic]);
+
+  if (!mod) return <Navigate to="/teoria" replace />;
+
+  const theme = TOPIC_THEME[mod.topic];
+
+  return (
+    <article className="theory-reader">
+      <div className="theory-reader-top">
+        <Link to="/teoria" className="theory-back" aria-label="Volver a teoría" onClick={playBackButton}>←</Link>
+      </div>
+
+      <section className="theory-page">
+        <header
+          className="theory-page-header"
+          style={{ borderColor: theme.border, background: `linear-gradient(180deg, ${theme.soft}, transparent)` }}
+        >
+          <span className="theory-eyebrow" style={{ color: theme.color }}>Guía de estudio EFIP</span>
+          <h1>{mod.title}</h1>
+          <p>{TOPIC_LABELS[mod.topic]}</p>
+        </header>
+
+        <div className="theory-content">
+          {mod.sections.map((section, index) => (
+            <section key={`${section.title}-${index}`} className="theory-section">
+              <h2 style={{ color: theme.color }}>{section.title}</h2>
+              {section.paragraphs.map((paragraph, pIndex) => (
+                <p key={pIndex}>{paragraph}</p>
+              ))}
+            </section>
+          ))}
+        </div>
+      </section>
+    </article>
   );
 }

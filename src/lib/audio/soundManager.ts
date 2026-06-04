@@ -15,9 +15,14 @@ let pendingSfx: Sfx | null = null;
 
 // Samples MP3 incrustados (data URI) — funcionan también en build de archivo único / file://
 import { SFX_SELECT, SFX_COLLECT, SFX_ERROR, SFX_LOGO1, SFX_LOGO2, SFX_LOGO3, SFX_LOGO4 } from './samples';
+import akuAkuLogoSfx from '../../assets/audio/aku_aku.mp3';
+import backButtonSfx from '../../assets/audio/back-button.mp3';
 import bolivianoLogoSfx from '../../assets/audio/Boliviano.mp3';
+import dekuLogoSfx from '../../assets/audio/oi-oi-oi-deku.mp3';
+import jazwareLogoSfx from '../../assets/audio/lo-que-se-dano-fue-el-jazware.mp3';
 import modelAnswerSfx from '../../assets/audio/Medio.mp3';
 import uwuLogoSfx from '../../assets/audio/uwu_isolated_3db_boosted.mp3';
+import specialLogoSfx from '../../assets/audio/you-are-my-special.mp3';
 
 const MP3_SFXS: Partial<Record<Sfx, string>> = {
   select: SFX_SELECT,
@@ -27,12 +32,23 @@ const MP3_SFXS: Partial<Record<Sfx, string>> = {
 };
 
 // Sonidos que suenan al azar al hacer hover sobre el logo.
-const LOGO_HOVER_SFXS = [SFX_LOGO1, SFX_LOGO2, SFX_LOGO3, SFX_LOGO4, bolivianoLogoSfx, uwuLogoSfx];
+const LOGO_HOVER_SFXS: Array<{ url: string; volumeBoost?: number }> = [
+  { url: SFX_LOGO1 },
+  { url: SFX_LOGO2 },
+  { url: SFX_LOGO3 },
+  { url: SFX_LOGO4 },
+  { url: akuAkuLogoSfx },
+  { url: bolivianoLogoSfx },
+  { url: uwuLogoSfx },
+  { url: jazwareLogoSfx },
+  { url: specialLogoSfx },
+  { url: dekuLogoSfx },
+];
 
-function playMp3(url: string): void {
+function playMp3(url: string, volumeBoost = 1): void {
   try {
     const el = new Audio(url);
-    el.volume = Math.max(0.05, Math.min(1, volume));
+    el.volume = Math.max(0.05, Math.min(1, volume * volumeBoost));
     void el.play();
   } catch { /* audio no disponible */ }
 }
@@ -45,7 +61,13 @@ export function playLogoHover(): void {
   let idx = Math.floor(Math.random() * n);
   if (n > 1 && idx === lastLogoIdx) idx = (idx + 1 + Math.floor(Math.random() * (n - 1))) % n;
   lastLogoIdx = idx;
-  playMp3(LOGO_HOVER_SFXS[idx]);
+  const sfx = LOGO_HOVER_SFXS[idx];
+  playMp3(sfx.url, sfx.volumeBoost);
+}
+
+export function playBackButton(): void {
+  if (!enabled) return;
+  playMp3(backButtonSfx);
 }
 
 function init(): AudioContext | null {

@@ -15,7 +15,9 @@
       "PowerShell($dest = \"D:\\\\EFIPER\\\\public\\\\siggy\"; New-Item -ItemType Directory -Force $dest | Out-Null; & \"C:\\\\Program Files\\\\WinRAR\\\\UnRAR.exe\" e -o+ \"C:\\\\Users\\\\sofia\\\\OneDrive\\\\Desktop\\\\Syggy_Sprites_Transparentes.rar\" \"$dest\\\\\"; \"---LISTO---\"; Get-ChildItem $dest | Select-Object Name,Length)",
       "Read(//c/Users/sofia/**)",
       "Bash(python -c \"import PIL; print\\('Pillow', PIL.__version__\\)\")",
-      "Bash(python -c \"import docx; print\\('python-docx OK'\\)\")"
+      "Bash(python -c \"import docx; print\\('python-docx OK'\\)\")",
+      "PowerShell(Start-Process \"msedge\" \"http://localhost:5173/efiper/teoria\")",
+      "Bash(git commit -m ' *)"
     ]
   }
 }

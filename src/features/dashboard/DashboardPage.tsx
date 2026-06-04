@@ -80,7 +80,8 @@ export function DashboardPage() {
       <div>
         <div className="label mb-2">Misión de hoy {progress.dailyMissionDone ? '✓' : ''}</div>
         <p className="text-sm text-muted mb-3">10 preguntas · 1 bloque de caso · 5 preguntas orales.</p>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          <Link to="/teoria"><Button variant="missionTheory" className="w-full">Ver teoría</Button></Link>
           <Link to="/test"><Button variant="missionTest" className="w-full">Test rápido</Button></Link>
           <Link to="/oral"><Button variant="missionOral" className="w-full">Defensa oral</Button></Link>
           <Link to="/caso/case-001"><Button variant="missionCase" className="w-full">Resolver caso</Button></Link>

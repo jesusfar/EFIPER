@@ -133,6 +133,101 @@
   .gantt-segment {
     @apply min-w-20 border-y border-r border-stud/25 bg-go/10 px-3 py-2 text-center font-mono text-xs font-semibold text-stud-dim first:rounded-l-lg first:border-l last:rounded-r-lg;
   }
+  .theory-reader {
+    @apply min-h-screen bg-white pt-[50px] text-[#111827];
+  }
+  .theory-reader-top {
+    @apply fixed left-0 right-0 top-0 z-30 flex h-[50px] items-center overflow-hidden px-8 text-white shadow-sm;
+    background:
+      radial-gradient(circle at 12% 42%, rgba(255,255,255,0.95) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 16% 18%, rgba(255,255,255,0.66) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 28% 22%, rgba(178,242,255,0.9) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 34% 76%, rgba(255,255,255,0.58) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 47% 64%, rgba(255,255,255,0.75) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 54% 18%, rgba(255,255,255,0.86) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 66% 30%, rgba(209,250,229,0.85) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 72% 72%, rgba(178,242,255,0.62) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 82% 58%, rgba(255,255,255,0.9) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 91% 24%, rgba(255,255,255,0.62) 0 1px, transparent 1.5px),
+      linear-gradient(180deg, #061716 0%, #101314 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(0,159,146,0.85),
+      inset 0 -1px 0 rgba(255,255,255,0.04),
+      0 10px 28px rgba(0,0,0,0.22);
+  }
+  .theory-reader-top::before,
+  .theory-reader-top::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .theory-reader-top::before {
+    opacity: 0.7;
+    background-image:
+      radial-gradient(circle at 6% 72%, rgba(255,255,255,0.8) 0 1px, transparent 1.4px),
+      radial-gradient(circle at 11% 26%, rgba(209,250,229,0.75) 0 1px, transparent 1.4px),
+      radial-gradient(circle at 19% 18%, rgba(255,255,255,0.65) 0 1px, transparent 1.4px),
+      radial-gradient(circle at 25% 66%, rgba(255,255,255,0.72) 0 1px, transparent 1.4px),
+      radial-gradient(circle at 38% 38%, rgba(178,242,255,0.9) 0 1px, transparent 1.4px),
+      radial-gradient(circle at 44% 82%, rgba(255,255,255,0.7) 0 1px, transparent 1.4px),
+      radial-gradient(circle at 58% 78%, rgba(255,255,255,0.75) 0 1px, transparent 1.4px),
+      radial-gradient(circle at 63% 14%, rgba(178,242,255,0.72) 0 1px, transparent 1.4px),
+      radial-gradient(circle at 74% 20%, rgba(255,255,255,0.8) 0 1px, transparent 1.4px),
+      radial-gradient(circle at 86% 82%, rgba(255,255,255,0.62) 0 1px, transparent 1.4px),
+      radial-gradient(circle at 94% 48%, rgba(209,250,229,0.85) 0 1px, transparent 1.4px);
+    animation: theory-star-twinkle 2.6s ease-in-out infinite alternate;
+  }
+  .theory-reader-top::after {
+    opacity: 0.45;
+    background:
+      linear-gradient(90deg, rgba(0,159,146,0.22), transparent 24%, transparent 76%, rgba(0,132,0,0.16)),
+      radial-gradient(ellipse at 50% -40%, rgba(0,159,146,0.42), transparent 62%);
+    animation: theory-night-glow 4.2s ease-in-out infinite alternate;
+  }
+  .theory-back {
+    @apply relative z-10 grid h-7 w-7 place-items-center bg-black text-2xl leading-none text-white transition hover:bg-stud focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent;
+  }
+  .theory-page {
+    @apply mx-auto max-w-[842px] px-6 pb-20 pt-10 sm:px-10;
+  }
+  .theory-page-header {
+    @apply mb-10 rounded-sm border-b border-[#E5E7EB] px-1 pb-6 pt-4;
+  }
+  .theory-eyebrow {
+    @apply mb-3 block text-xs font-bold uppercase tracking-[0.18em];
+  }
+  .theory-page-header h1 {
+    @apply font-display text-3xl font-black leading-tight text-[#111827] sm:text-4xl;
+  }
+  .theory-page-header p {
+    @apply mt-2 text-sm text-[#6B7280];
+  }
+  .theory-content {
+    @apply space-y-10;
+  }
+  .theory-section {
+    @apply scroll-mt-20;
+  }
+  .theory-section h2 {
+    @apply mb-6 font-display text-[19px] font-extrabold leading-snug text-[#111827];
+  }
+  .theory-section p {
+    @apply mb-6 text-[18px] leading-[1.85] text-[#111827];
+    user-select: text;
+    -webkit-user-select: text;
+  }
+  @media (max-width: 640px) {
+    .theory-reader-top {
+      @apply px-4;
+    }
+    .theory-page {
+      @apply px-5 pt-8;
+    }
+    .theory-section p {
+      @apply text-[16px] leading-[1.75];
+    }
+  }
 }
 
 .mermaid-host {
@@ -154,4 +249,26 @@
 .mermaid-host .node circle,
 .mermaid-host .node ellipse {
   filter: drop-shadow(0 6px 10px rgba(0,63,58,0.08));
+}
+
+@keyframes theory-star-twinkle {
+  0% {
+    opacity: 0.35;
+    transform: translateY(0);
+    filter: brightness(0.8);
+  }
+  45% {
+    opacity: 0.95;
+    filter: brightness(1.35);
+  }
+  100% {
+    opacity: 0.55;
+    transform: translateY(1px);
+    filter: brightness(1);
+  }
+}
+
+@keyframes theory-night-glow {
+  0% { opacity: 0.28; }
+  100% { opacity: 0.62; }
 }

@@ -97,7 +97,7 @@ export function PingPongMode({ onBack }: { onBack: () => void }) {
   }
 
   function finish() {
-    playSfx('confirm');
+    playSfx('modelAnswer');
     setRevealed(false);
     setPhase('results');
   }
