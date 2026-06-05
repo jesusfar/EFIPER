@@ -573,4 +573,292 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
       'Programar el sistema sin etapa de análisis',
     ], 0,
     'La trazabilidad vincula cada requerimiento con su origen y con los artefactos que lo realizan y verifican, facilitando el control de cambios y la cobertura.'),
+
+  mc('ad-t-061', 'Principios de diseño', 3,
+    'El principio de Responsabilidad Única (SRP) establece que…',
+    [
+      'Una clase debe tener una sola razón para cambiar (una única responsabilidad)',
+      'Una clase debe heredar de una sola clase',
+      'Un método debe recibir un solo parámetro',
+      'Toda clase debe ser abstracta',
+    ], 0,
+    'El SRP (la "S" de SOLID) busca que cada clase tenga una responsabilidad cohesiva: si tiene varias, un cambio en una puede afectar a las otras.'),
+
+  mc('ad-t-062', 'Principios de diseño', 3,
+    'El principio Abierto/Cerrado (OCP) indica que las entidades de software deben estar…',
+    [
+      'Abiertas a la extensión pero cerradas a la modificación',
+      'Cerradas a la extensión y abiertas a la modificación',
+      'Siempre abiertas a cualquier cambio',
+      'Siempre cerradas a todo',
+    ], 0,
+    'El OCP busca poder agregar comportamiento (extender, p. ej. con nuevas subclases o implementaciones) sin tener que modificar el código existente que ya funciona.'),
+
+  mc('ad-t-063', 'Principios de diseño', 3,
+    'El principio de Sustitución de Liskov (LSP) dice que…',
+    [
+      'Un objeto de una subclase debe poder usarse donde se espera la superclase sin romper el comportamiento',
+      'Las subclases no pueden sobrescribir métodos',
+      'Toda clase debe declararse final',
+      'La herencia múltiple es obligatoria',
+    ], 0,
+    'El LSP exige que las subclases respeten el contrato de la superclase: si una subclase no puede sustituir a la base sin alterar la corrección, la herencia está mal planteada.'),
+
+  mc('ad-t-064', 'Principios de diseño', 3,
+    'El principio de Segregación de Interfaces (ISP)…',
+    [
+      'Prefiere muchas interfaces específicas antes que una interfaz general que obligue a implementar métodos que no se usan',
+      'Obliga a definir una única interfaz gigante para todo',
+      'Prohíbe el uso de interfaces',
+      'Es exactamente lo mismo que el SRP',
+    ], 0,
+    'El ISP evita "interfaces gordas": es mejor varias interfaces chicas y cohesivas que una grande que fuerce a las clases a implementar métodos irrelevantes.'),
+
+  mc('ad-t-065', 'Principios de diseño', 3,
+    'El principio de Inversión de Dependencias (DIP) establece que…',
+    [
+      'Los módulos de alto nivel no deben depender de los de bajo nivel; ambos deben depender de abstracciones',
+      'El alto nivel debe depender de los detalles concretos',
+      'Hay que eliminar todas las interfaces',
+      'Es un patrón de creación de objetos',
+    ], 0,
+    'El DIP invierte la dependencia hacia abstracciones (interfaces): así el alto nivel no se acopla a implementaciones concretas, que pueden cambiar o intercambiarse.'),
+
+  ms('ad-t-066', 'Principios de diseño', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre los principios SOLID:',
+    [
+      'SRP: una clase debe tener una única responsabilidad',
+      'OCP: abierto a la extensión, cerrado a la modificación',
+      'LSP: las subclases deben ser sustituibles por su superclase',
+      'DIP: depender de abstracciones, no de implementaciones concretas',
+      'SOLID es un conjunto de patrones de creación de objetos',
+      'ISP recomienda una única interfaz general para todo el sistema',
+    ], [0, 1, 2, 3],
+    'SRP, OCP, LSP y DIP son cuatro de los cinco principios SOLID. SOLID no son patrones de creación, e ISP recomienda justamente lo contrario: interfaces específicas.'),
+
+  mc('ad-t-067', 'Calidad de diseño', 3,
+    'La alta cohesión en una clase/módulo es deseable porque…',
+    [
+      'Significa que sus responsabilidades están fuertemente relacionadas entre sí, facilitando el mantenimiento',
+      'Significa que depende de muchas otras clases',
+      'Indica que hay código duplicado',
+      'Reduce la mantenibilidad del sistema',
+    ], 0,
+    'Una clase cohesiva hace "una cosa bien": sus elementos colaboran en un mismo propósito, lo que la hace más comprensible, reutilizable y fácil de mantener.'),
+
+  mc('ad-t-068', 'Calidad de diseño', 3,
+    'El bajo acoplamiento entre módulos es deseable porque…',
+    [
+      'Reduce las dependencias entre módulos, facilitando el cambio, la prueba y la reutilización',
+      'Aumenta las dependencias para tener más control',
+      'Obliga a usar herencia en todos lados',
+      'Hace el sistema más rígido ante cambios',
+    ], 0,
+    'Con bajo acoplamiento, un cambio en un módulo impacta poco en los demás; los módulos se pueden entender, probar y reutilizar de forma más independiente.'),
+
+  tf('ad-t-069', 'Calidad de diseño', 2,
+    'Un buen diseño orientado a objetos busca ALTA cohesión y BAJO acoplamiento.',
+    true,
+    'Verdadero. Alta cohesión (responsabilidades relacionadas) y bajo acoplamiento (pocas dependencias) son dos metas centrales de un diseño mantenible y flexible.'),
+
+  mc('ad-t-070', 'Calidad de diseño', 3,
+    '"Preferir composición sobre herencia" significa…',
+    [
+      'Construir comportamiento combinando objetos (relación tiene-un) en vez de heredar, para más flexibilidad y menos acoplamiento',
+      'No usar objetos en absoluto',
+      'Usar siempre herencia múltiple',
+      'Eliminar las clases del diseño',
+    ], 0,
+    'La composición permite cambiar/intercambiar partes en tiempo de ejecución y evita el acoplamiento fuerte y la fragilidad de las jerarquías de herencia profundas.'),
+
+  tf('ad-t-071', 'Calidad de diseño', 3,
+    'La herencia profunda puede generar acoplamiento fuerte y clases base frágiles; la composición suele resultar más flexible.',
+    true,
+    'Verdadero. Un cambio en una superclase puede romper a muchas subclases (base frágil). Componer objetos desacopla y facilita variar el comportamiento.'),
+
+  mc('ad-t-072', 'POO', 3,
+    'En el diseño orientado a objetos, el polimorfismo permite…',
+    [
+      'Tratar de manera uniforme objetos de distintas clases que comparten una interfaz/superclase, variando el comportamiento según el tipo real',
+      'Que una clase tenga varios constructores',
+      'Ocultar los atributos de una clase',
+      'Heredar de varias clases a la vez',
+    ], 0,
+    'El polimorfismo permite invocar la misma operación sobre objetos de distintas clases y que cada uno responda a su manera, reduciendo condicionales por tipo.'),
+
+  mc('ad-t-073', 'Patrones', 3,
+    'El patrón GRASP "Experto en Información" asigna una responsabilidad…',
+    [
+      'A la clase que tiene la información necesaria para cumplirla',
+      'A la clase que tiene la mayor cantidad de métodos',
+      'A una única clase controladora central',
+      'Al actor externo del sistema',
+    ], 0,
+    'Experto en Información asigna cada responsabilidad a quien posee los datos para llevarla a cabo, lo que favorece la cohesión y el bajo acoplamiento.'),
+
+  mc('ad-t-074', 'Patrones', 3,
+    'El patrón GRASP "Controlador" sugiere…',
+    [
+      'Asignar la responsabilidad de manejar los eventos del sistema a una clase controladora, no a la interfaz de usuario',
+      'Que la interfaz de usuario contenga toda la lógica de negocio',
+      'Eliminar los casos de uso del análisis',
+      'Usar siempre herencia múltiple',
+    ], 0,
+    'El Controlador desacopla la UI de la lógica: un objeto controlador recibe los eventos del sistema y coordina su atención, manteniendo la interfaz "delgada".'),
+
+  ms('ad-t-075', 'Patrones', 3,
+    'Seleccioná TODOS los que son patrones GRASP:',
+    [
+      'Experto en Información',
+      'Creador',
+      'Controlador',
+      'Bajo Acoplamiento / Alta Cohesión',
+      'Singleton',
+      'Observer',
+    ], [0, 1, 2, 3],
+    'Experto, Creador, Controlador y Bajo Acoplamiento/Alta Cohesión son GRASP. Singleton y Observer son patrones GoF (de la "Banda de los Cuatro"), no GRASP.'),
+
+  mc('ad-t-076', 'Patrones', 3,
+    'El patrón Singleton (GoF) garantiza que…',
+    [
+      'Una clase tenga una única instancia y un punto de acceso global a ella',
+      'Una clase pueda tener muchas instancias simultáneas',
+      'Una clase no pueda instanciarse nunca',
+      'Dos clases se fusionen en una',
+    ], 0,
+    'El Singleton restringe la creación a una sola instancia (p. ej. una configuración o un logger) y ofrece un acceso global controlado a ella.'),
+
+  mc('ad-t-077', 'Patrones', 3,
+    'El patrón Observer se utiliza para…',
+    [
+      'Notificar automáticamente a varios objetos (observadores) cuando cambia el estado de otro (sujeto)',
+      'Crear una única instancia de una clase',
+      'Recorrer los elementos de una colección',
+      'Convertir la interfaz de una clase en otra',
+    ], 0,
+    'Observer define una dependencia uno-a-muchos: cuando el sujeto cambia, todos sus observadores son notificados y se actualizan. Es de comportamiento.'),
+
+  ms('ad-t-078', 'Patrones', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre los patrones de diseño (GoF):',
+    [
+      'Se agrupan en creacionales, estructurales y de comportamiento',
+      'Factory Method es un patrón creacional',
+      'Adapter es un patrón estructural',
+      'Observer es un patrón de comportamiento',
+      'Todos los patrones GoF son creacionales',
+      'Los patrones de diseño son lenguajes de programación',
+    ], [0, 1, 2, 3],
+    'Los GoF se clasifican en creacionales (Factory), estructurales (Adapter) y de comportamiento (Observer). No son todos creacionales ni son lenguajes: son soluciones reutilizables a problemas de diseño.'),
+
+  mc('ad-t-079', 'Diagramas', 3,
+    'Un diagrama de objetos muestra…',
+    [
+      'Una instantánea de instancias concretas (objetos) y sus enlaces en un momento dado',
+      'Las clases y sus métodos en general, sin instancias',
+      'El flujo de actividades de un proceso',
+      'La distribución del hardware',
+    ], 0,
+    'El diagrama de objetos es como una "foto" del sistema en ejecución: muestra objetos concretos con valores y los enlaces entre ellos, a nivel de instancia.'),
+
+  mc('ad-t-080', 'Diagramas', 3,
+    'El diagrama de comunicación (colaboración)…',
+    [
+      'Muestra la interacción entre objetos enfatizando sus enlaces/estructura, con los mensajes numerados según su orden',
+      'Representa el hardware del sistema',
+      'Es un diagrama estructural estático sin mensajes',
+      'No incluye intercambio de mensajes',
+    ], 0,
+    'El diagrama de comunicación modela la misma interacción que el de secuencia, pero destacando la estructura de enlaces; el orden se indica numerando los mensajes.'),
+
+  tf('ad-t-081', 'Diagramas', 3,
+    'El diagrama de secuencia enfatiza el orden temporal de los mensajes y el de comunicación enfatiza la estructura/enlaces entre objetos, pero ambos modelan la misma interacción.',
+    true,
+    'Verdadero. Son dos vistas equivalentes de una interacción: una resalta el tiempo (líneas de vida) y la otra la topología de objetos (con mensajes numerados).'),
+
+  mc('ad-t-082', 'Modelado', 3,
+    'En el paso del análisis al diseño…',
+    [
+      'Se agregan detalles de implementación (tecnología, tipos, visibilidad, patrones) al modelo conceptual',
+      'Se eliminan todas las clases identificadas en el análisis',
+      'Se reemplaza el modelo por el código directamente, sin diseño',
+      'Se ignoran los requerimientos relevados',
+    ], 0,
+    'El diseño refina el modelo de análisis con decisiones técnicas: tipos de datos, visibilidad, navegabilidad, patrones y detalles de la plataforma elegida.'),
+
+  mc('ad-t-083', 'Normalización', 3,
+    'Una tabla está en Primera Forma Normal (1FN) cuando…',
+    [
+      'Todos sus atributos son atómicos (sin grupos repetitivos ni valores multivaluados)',
+      'No tiene dependencias transitivas',
+      'No contiene ninguna clave foránea',
+      'Cada atributo no clave depende de toda la clave',
+    ], 0,
+    '1FN exige atomicidad: nada de listas o grupos repetitivos en una celda. Eliminar transitivas es 3FN; eliminar dependencias parciales es 2FN.'),
+
+  mc('ad-t-084', 'Normalización', 3,
+    'La Segunda Forma Normal (2FN) elimina…',
+    [
+      'Las dependencias parciales (atributos que dependen solo de parte de una clave compuesta)',
+      'Las dependencias transitivas entre atributos no clave',
+      'Los atributos multivaluados',
+      'Las claves foráneas redundantes',
+    ], 0,
+    '2FN requiere estar en 1FN y que todo atributo no clave dependa de la clave COMPLETA (no de una parte). Las transitivas se quitan en 3FN.'),
+
+  mc('ad-t-085', 'Normalización', 3,
+    'La Tercera Forma Normal (3FN) elimina…',
+    [
+      'Las dependencias transitivas entre atributos no clave',
+      'Las dependencias parciales de la clave',
+      'Los atributos atómicos',
+      'Las relaciones N:M',
+    ], 0,
+    '3FN requiere estar en 2FN y que ningún atributo no clave dependa de otro atributo no clave (sin dependencias transitivas).'),
+
+  ms('ad-t-086', 'Normalización', 3,
+    'Marcá TODAS las afirmaciones correctas sobre normalización:',
+    [
+      '1FN exige atributos atómicos (sin repetitivos ni multivaluados)',
+      '2FN elimina las dependencias parciales de la clave',
+      '3FN elimina las dependencias transitivas entre atributos no clave',
+      'Normalizar reduce la redundancia y las anomalías de actualización',
+      'La 1FN se encarga de eliminar las dependencias transitivas',
+      'Normalizar siempre mejora el rendimiento de las lecturas',
+    ], [0, 1, 2, 3],
+    '1FN=atómico, 2FN=parciales, 3FN=transitivas, y normalizar reduce redundancia/anomalías. Eliminar transitivas es 3FN (no 1FN), y normalizar puede ENLENTECER lecturas (más JOINs).'),
+
+  mc('ad-t-087', 'Normalización', 3,
+    'La desnormalización controlada se utiliza para…',
+    [
+      'Mejorar el rendimiento de lectura agregando redundancia, a costa de más espacio y riesgo de inconsistencia',
+      'Eliminar todas las tablas de la base',
+      'Cumplir con más formas normales',
+      'Quitar las claves primarias',
+    ], 0,
+    'La desnormalización introduce redundancia a propósito para evitar JOINs costosos y acelerar lecturas, sacrificando algo de integridad/espacio.'),
+
+  mc('ad-t-088', 'Modelo de datos', 3,
+    'Si se intenta borrar un Cliente que tiene Pedidos asociados, para mantener la integridad referencial se puede…',
+    [
+      'Impedir el borrado, o usar borrado en cascada, o poner la FK en NULL, según la política definida',
+      'Borrar toda la base de datos',
+      'Ignorar la integridad referencial',
+      'Duplicar el cliente en otra tabla',
+    ], 0,
+    'Las políticas ON DELETE (RESTRICT/NO ACTION, CASCADE, SET NULL) definen qué pasa con las filas hijas al borrar la padre, preservando la integridad referencial.'),
+
+  tf('ad-t-089', 'Modelado', 2,
+    'El modelo conceptual (análisis) debe ser independiente de la tecnología; las decisiones de implementación se toman en la etapa de diseño.',
+    true,
+    'Verdadero. El análisis modela el problema (qué) sin atarse a una tecnología; el diseño decide el cómo (plataforma, estructuras, patrones).'),
+
+  mc('ad-t-090', 'Patrones', 3,
+    'En un sistema de ventas, ¿a qué clase conviene asignar el cálculo del total de una Venta, según el patrón "Experto en Información"?',
+    [
+      'A la clase Venta, que conoce sus líneas/ítems y sus importes',
+      'A la clase Cliente',
+      'A la interfaz de usuario',
+      'A una clase utilitaria global que no tiene los datos',
+    ], 0,
+    'La Venta posee la información (sus líneas y precios), así que es la experta para calcular el total. Asignarlo a quien tiene los datos mejora la cohesión y baja el acoplamiento.'),
 ]);
