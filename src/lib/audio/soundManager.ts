@@ -25,6 +25,10 @@ import meowLogoSfx from '../../assets/audio/Meow.mp3';
 import modelAnswerSfx from '../../assets/audio/Medio.mp3';
 import levelCompleteSfx from '../../assets/audio/level-complete.mp3';
 import levelFailedSfx from '../../assets/audio/level-failed.mp3';
+import hoverSfx from '../../assets/audio/HoverDDLC.mp3';
+import confirmSfx from '../../assets/audio/ps2-select-sound.mp3';
+import streakSfx from '../../assets/audio/duolingo-end-of-lesson.mp3';
+import levelUpSfx from '../../assets/audio/skyrim_level_up_sound_effect_free_downloadx1.mp3';
 import sapeeeLogoSfx from '../../assets/audio/sapeee-el-bananero.mp3';
 import spiderman2099LogoSfx from '../../assets/audio/spiderman-2099-theme.mp3';
 import uwuLogoSfx from '../../assets/audio/uwu_isolated_3db_boosted.mp3';
@@ -35,9 +39,13 @@ const themeHoverSfxs = Object.entries(
 );
 
 const MP3_SFXS: Partial<Record<Sfx, string>> = {
+  hover: hoverSfx,
   select: SFX_SELECT,
+  confirm: confirmSfx,
   collect: SFX_COLLECT,
   error: SFX_ERROR,
+  levelUp: levelUpSfx,
+  streak: streakSfx,
   modelAnswer: modelAnswerSfx,
 };
 
@@ -59,7 +67,11 @@ const LOGO_HOVER_SFXS: Array<{ url: string; volumeBoost?: number }> = [
   { url: meowLogoSfx },
   ...themeHoverSfxs.map(([path, url]) => ({
     url,
-    volumeBoost: path.endsWith('/plus-ultra.mp3') ? 1.65 : undefined,
+    volumeBoost: path.endsWith('/plus-ultra.mp3')
+      ? 1.65
+      : path.endsWith('/fears-to-fathom-notification-sound.mp3')
+        ? 2.8
+        : undefined,
   })),
 ];
 

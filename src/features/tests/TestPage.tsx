@@ -1,20 +1,25 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useStore, TOPIC_LABELS } from '../../store/useStore';
 import { questionsByTopic } from '../../data';
+import { isDue } from '../../lib/spaced-repetition/leitner';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { TopicChip } from '../../components/TopicChip';
 import { TOPIC_THEME } from '../../lib/theme/topicTheme';
 import { playSfx, playResult, stopResult } from '../../lib/audio/soundManager';
-import type { Question, Topic } from '../../types';
+import type { Question, QuestionType, ReviewItem, Topic } from '../../types';
 
 const norm = (s: string) => s.trim().toLowerCase();
+const TEST_TYPES: QuestionType[] = ['multiple_choice', 'multiple_select', 'true_false'];
+const MIN_PER_TEST_TYPE = 2;
+const TOPICS = Object.keys(TOPIC_LABELS) as Topic[];
+const DAY = 24 * 60 * 60 * 1000;
 
 function isCorrect(q: Question, answer: string): boolean {
   return norm(answer) === norm(q.correctAnswer as string);
 }
 
-/** Selección múltiple: acierta solo si marca TODAS las correctas y ninguna incorrecta. */
 function isMultiCorrect(q: Question, selected: string[]): boolean {
   const correct = (q.correctAnswer as string[]).map(norm);
   if (selected.length !== correct.length) return false;
@@ -27,7 +32,6 @@ interface AnswerLog {
   correct: boolean;
 }
 
-/** Acumula aciertos/errores por eje a partir del registro de respuestas. */
 function tallyByTopic(log: AnswerLog[]) {
   const map = new Map<Topic, { correct: number; wrong: number }>();
   for (const a of log) {
@@ -38,10 +42,109 @@ function tallyByTopic(log: AnswerLog[]) {
   return map;
 }
 
+function shuffle<T>(arr: T[]): T[] {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+function buildBalancedTestPool(
+  selectedTopic: Topic | 'all',
+  count: number,
+  reviews: ReviewItem[],
+  reviewMode: boolean,
+): Question[] {
+  const candidates = questionsByTopic(selectedTopic === 'all' ? undefined : selectedTopic)
+    .filter((q) => TEST_TYPES.includes(q.type));
+  const target = Math.min(count, candidates.length);
+  const reviewByRef = new Map(
+    reviews
+      .filter((r) => r.refType === 'question')
+      .map((r) => [r.refId, r]),
+  );
+
+  const selected = new Map<string, Question>();
+  const now = Date.now();
+
+  while (selected.size < target) {
+    const best = pickBestCandidate(candidates, selected, reviewByRef, reviewMode, now, selectedTopic, target);
+    if (!best) break;
+    selected.set(best.id, best);
+  }
+
+  return shuffle([...selected.values()]);
+}
+
+function pickBestCandidate(
+  candidates: Question[],
+  selected: Map<string, Question>,
+  reviewByRef: Map<string, ReviewItem>,
+  reviewMode: boolean,
+  now: number,
+  selectedTopic: Topic | 'all',
+  target: number,
+): Question | undefined {
+  const remaining = candidates.filter((q) => !selected.has(q.id));
+  if (remaining.length === 0) return undefined;
+  const selectedItems = [...selected.values()];
+  const topicNeed = new Map<Topic, number>();
+  const typeNeed = new Map<QuestionType, number>();
+
+  if (selectedTopic === 'all' && target >= TOPICS.length) {
+    for (const topic of TOPICS) {
+      if (candidates.some((q) => q.topic === topic)) topicNeed.set(topic, 1);
+    }
+  }
+
+  for (const type of TEST_TYPES) {
+    const availableOfType = candidates.filter((q) => q.type === type).length;
+    typeNeed.set(type, Math.min(MIN_PER_TEST_TYPE, availableOfType, target));
+  }
+
+  const topicCount = (topic: Topic) => selectedItems.filter((q) => q.topic === topic).length;
+  const typeCount = (type: QuestionType) => selectedItems.filter((q) => q.type === type).length;
+  const hasOpenDeficit = [...topicNeed].some(([topic, need]) => topicCount(topic) < need)
+    || [...typeNeed].some(([type, need]) => typeCount(type) < need);
+
+  return remaining
+    .map((question) => {
+      const topicDeficit = (topicNeed.get(question.topic) ?? 0) > topicCount(question.topic) ? 1 : 0;
+      const typeDeficit = (typeNeed.get(question.type) ?? 0) > typeCount(question.type) ? 1 : 0;
+      const deficitScore = topicDeficit * 1200 + typeDeficit * 1200;
+      const allowed = !hasOpenDeficit || deficitScore > 0;
+      return {
+        question,
+        allowed,
+        score: deficitScore + scoreQuestion(question, reviewByRef, reviewMode, now),
+      };
+    })
+    .filter((item) => item.allowed)
+    .sort((a, b) => b.score - a.score)[0]?.question;
+}
+
+function scoreQuestion(
+  question: Question,
+  reviewByRef: Map<string, ReviewItem>,
+  reviewMode: boolean,
+  now: number,
+): number {
+  const review = reviewByRef.get(question.id);
+  const random = Math.random() * 20;
+  if (!reviewMode) return random;
+  if (!review) return random - 12;
+
+  const overdueDays = Math.max(0, (now - review.nextReviewAt) / DAY);
+  const dueBoost = isDue(review, now) ? 140 : 0;
+  const weaknessBoost = review.failures * 18 + (5 - review.box) * 6;
+  return dueBoost + overdueDays * 12 + weaknessBoost + random;
+}
+
 export function TestPage() {
+  const [searchParams] = useSearchParams();
+  const reviewMode = searchParams.get('mode') === 'review';
   const recordAnswer = useStore((s) => s.recordAnswer);
+  const reviews = useStore((s) => s.reviews);
   const [topic, setTopic] = useState<Topic | 'all'>('all');
   const [count, setCount] = useState(10);
+  const [activePool, setActivePool] = useState<Question[]>([]);
   const [started, setStarted] = useState(false);
   const [idx, setIdx] = useState(0);
   const [answer, setAnswer] = useState('');
@@ -52,37 +155,8 @@ export function TestPage() {
   const [log, setLog] = useState<AnswerLog[]>([]);
   const [startTs, setStartTs] = useState(Date.now());
 
-  const pool = useMemo(() => {
-    const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
-
-    // Tema único: barajar y cortar.
-    if (topic !== 'all') return shuffle(questionsByTopic(topic)).slice(0, count);
-
-    // Mixto EFIP: muestreo estratificado para garantizar preguntas de CADA eje.
-    // Reparte el cupo equitativamente entre los 7 ejes (resto repartido al azar).
-    const topics = Object.keys(TOPIC_LABELS) as Topic[];
-    const byTopic = new Map(topics.map((t) => [t, shuffle(questionsByTopic(t))]));
-    const base = Math.floor(count / topics.length);
-    const extra = new Set(shuffle(topics).slice(0, count % topics.length));
-
-    const selected: Question[] = [];
-    for (const t of topics) {
-      const want = base + (extra.has(t) ? 1 : 0);
-      selected.push(...(byTopic.get(t) ?? []).slice(0, want));
-    }
-    // Si algún eje tenía menos preguntas que su cupo, completar con el resto.
-    if (selected.length < count) {
-      const used = new Set(selected.map((q) => q.id));
-      const rest = shuffle(questionsByTopic()).filter((q) => !used.has(q.id));
-      selected.push(...rest.slice(0, count - selected.length));
-    }
-    // Barajar para que los ejes queden intercalados, no agrupados.
-    return shuffle(selected).slice(0, count);
-  }, [topic, count, started]);
-
-  const available = questionsByTopic(topic === 'all' ? undefined : topic).length;
-
-  const q = pool[idx];
+  const available = questionsByTopic(topic === 'all' ? undefined : topic).filter((q) => TEST_TYPES.includes(q.type)).length;
+  const q = activePool[idx];
 
   function submit(a: string) {
     if (revealed || !q) return;
@@ -95,7 +169,7 @@ export function TestPage() {
     playSfx(ok ? 'collect' : 'error');
     void recordAnswer({
       refId: q.id, refType: 'question', userAnswer: a, correct: ok,
-      timeSpent: Math.round((Date.now() - startTs) / 1000), topic: q.topic, mode: 'test',
+      timeSpent: Math.round((Date.now() - startTs) / 1000), topic: q.topic, mode: reviewMode ? 'review-test' : 'test',
     });
   }
 
@@ -111,7 +185,7 @@ export function TestPage() {
     playSfx(ok ? 'collect' : 'error');
     void recordAnswer({
       refId: q.id, refType: 'question', userAnswer: a, correct: ok,
-      timeSpent: Math.round((Date.now() - startTs) / 1000), topic: q.topic, mode: 'test',
+      timeSpent: Math.round((Date.now() - startTs) / 1000), topic: q.topic, mode: reviewMode ? 'review-test' : 'test',
     });
   }
 
@@ -125,19 +199,29 @@ export function TestPage() {
     setIdx((i) => i + 1);
   }
 
+  function start() {
+    setActivePool(buildBalancedTestPool(topic, count, reviews, reviewMode));
+    setStarted(true);
+    setStartTs(Date.now());
+  }
+
   function restart() {
     setStarted(false); setIdx(0); setRight(0); setLog([]);
-    setRevealed(false); setAnswer(''); setSelected([]);
+    setRevealed(false); setAnswer(''); setSelected([]); setActivePool([]);
   }
 
   if (!started) {
     return (
       <div className="space-y-5 animate-rise max-w-xl">
-        <h1 className="font-display text-2xl font-black">Test rápido</h1>
-        <p className="text-muted text-sm">Opción múltiple, Verdadero/Falso y selección múltiple (varias correctas). Elegí un tema o mezclá todo.</p>
+        <h1 className="font-display text-2xl font-black">{reviewMode ? 'Repaso de teoria' : 'Test rapido'}</h1>
+        <p className="text-muted text-sm">
+          {reviewMode
+            ? 'Prioriza preguntas vencidas sin romper la mezcla de ejes ni tipos de pregunta.'
+            : 'Opcion multiple, Verdadero/Falso y seleccion multiple (varias correctas). Elegi un tema o mezcla todo.'}
+        </p>
         <div className="flex flex-wrap gap-2">
           <button onClick={() => setTopic('all')} className={`pill ${topic === 'all' ? 'pill-active' : 'pill-muted'}`}>Mixto EFIP</button>
-          {(Object.keys(TOPIC_LABELS) as Topic[]).map((t) => {
+          {TOPICS.map((t) => {
             const th = TOPIC_THEME[t];
             const active = topic === t;
             return (
@@ -159,23 +243,23 @@ export function TestPage() {
             ))}
           </div>
           <p className="text-xs text-muted mt-2">
-            Disponibles en este filtro: {available}.{count > available ? ` Se usarán ${available} (el banco aún es chico).` : ''}
+            Disponibles en este filtro: {available}.{count > available ? ` Se usaran ${available} (el banco aun es chico).` : ''}
           </p>
         </div>
-        <Button variant="primary" onClick={() => { setStarted(true); setStartTs(Date.now()); }}>Empezar ({Math.min(count, available)})</Button>
+        <Button variant="primary" onClick={start}>Empezar ({Math.min(count, available)})</Button>
       </div>
     );
   }
 
-  if (idx >= pool.length || pool.length === 0) {
-    return <ResultsScreen total={pool.length} right={right} log={log} onRestart={restart} />;
+  if (idx >= activePool.length || activePool.length === 0) {
+    return <ResultsScreen total={activePool.length} right={right} log={log} onRestart={restart} />;
   }
 
   return (
     <div className="space-y-5 animate-rise max-w-2xl">
       <div className="flex items-center justify-between">
         <TopicChip topic={q.topic} subtopic={q.subtopic} />
-        <span className="font-mono text-sm text-muted">{idx + 1}/{pool.length}</span>
+        <span className="font-mono text-sm text-muted">{idx + 1}/{activePool.length}</span>
       </div>
       <Card>
         <h2 className="text-lg font-semibold mb-4">{q.statement}</h2>
@@ -220,7 +304,7 @@ export function TestPage() {
         {q.type === 'multiple_select' && (
           <div className="space-y-2">
             <p className="text-xs text-muted -mt-2 mb-1">
-              Seleccioná <strong>todas</strong> las correctas (puede haber 2, 3 o 4). Acertás solo si marcás exactamente las correctas.
+              Selecciona <strong>todas</strong> las correctas (puede haber 2, 3 o 4). Acertas solo si marcas exactamente las correctas.
             </p>
             {q.options?.map((opt) => {
               const chosen = selected.includes(opt);
@@ -234,8 +318,8 @@ export function TestPage() {
                 cls = chosen ? 'border-accent bg-accent/10' : 'border-accent/40 bg-white/80 hover:border-accent';
               }
               const box = revealed
-                ? (correct ? '✓' : chosen ? '✗' : '○')
-                : (chosen ? '☑' : '☐');
+                ? (correct ? 'OK' : chosen ? 'X' : '-')
+                : (chosen ? '[x]' : '[ ]');
               return (
                 <button key={opt} disabled={revealed} onClick={() => toggleSelected(opt)}
                   className={`sfx-mute w-full text-left px-4 py-3 rounded-xl border transition flex items-start gap-3 ${cls}`}>
@@ -246,7 +330,7 @@ export function TestPage() {
             })}
             {!revealed && (
               <Button variant="primary" className="sfx-mute mt-2" disabled={selected.length === 0}
-                onClick={submitMulti}>Confirmar selección ({selected.length})</Button>
+                onClick={submitMulti}>Confirmar seleccion ({selected.length})</Button>
             )}
           </div>
         )}
@@ -254,19 +338,19 @@ export function TestPage() {
         {revealed && (
           <div className="mt-5 animate-pop-in">
             <p className={`font-semibold ${correctNow ? 'text-go' : 'text-[#DC2626]'}`}>
-              {correctNow ? '✓ Correcto' : '✗ Incorrecto'}
+              {correctNow ? 'Correcto' : 'Incorrecto'}
             </p>
             {q.type === 'multiple_select' && (
               <p className="text-xs text-muted mt-1">
-                Correctas: {(q.correctAnswer as string[]).length} de {q.options?.length}. En verde las correctas; en rojo las que marcaste de más.
+                Correctas: {(q.correctAnswer as string[]).length} de {q.options?.length}. En verde las correctas; en rojo las que marcaste de mas.
               </p>
             )}
             <div className="mt-2 rounded-xl border border-line bg-panel-2 p-3">
-              <p className="label mb-1">Justificación</p>
+              <p className="label mb-1">Justificacion</p>
               <p className="text-sm text-ink/90">{q.explanation}</p>
             </div>
             <Button variant="primary" className="mt-4" onClick={next}>
-              {idx + 1 >= pool.length ? 'Ver resultados' : 'Siguiente'}
+              {idx + 1 >= activePool.length ? 'Ver resultados' : 'Siguiente'}
             </Button>
           </div>
         )}
@@ -275,7 +359,6 @@ export function TestPage() {
   );
 }
 
-// ── Pantalla de resultados: desglose por eje + ejes a repasar ──
 function ResultsScreen({ total, right, log, onRestart }: {
   total: number; right: number; log: AnswerLog[]; onRestart: () => void;
 }) {
@@ -291,14 +374,12 @@ function ResultsScreen({ total, right, log, onRestart }: {
   const toReview = rows.filter((r) => r.pct < 60).map((r) => r.topic);
   const overallPct = total ? Math.round((right / total) * 100) : 0;
 
-  // Sonido de cierre: ≥70% suena "level complete", si no "level failed".
-  // Se corta si el usuario abandona la pantalla de resultados (cleanup).
   useEffect(() => {
     playResult(overallPct >= 70);
     return () => stopResult();
   }, [overallPct]);
 
-  const msg = overallPct >= 80 ? '¡Excelente! Estás muy bien parado.'
+  const msg = overallPct >= 80 ? 'Excelente! Estas muy bien parado.'
     : overallPct >= 60 ? 'Bien, pero hay ejes para reforzar.'
     : 'A repasar: enfocate en los ejes marcados.';
 
@@ -311,7 +392,7 @@ function ResultsScreen({ total, right, log, onRestart }: {
           <p className="text-5xl font-display font-black text-stud">{right}/{total}</p>
           <p className="text-2xl font-display font-bold text-muted pb-1">{overallPct}%</p>
         </div>
-        <p className="text-muted mt-2 text-sm">{msg} Los errores ya están en tu cola de repaso.</p>
+        <p className="text-muted mt-2 text-sm">{msg} Los errores ya estan en tu cola de repaso.</p>
       </Card>
 
       <div>
@@ -324,10 +405,10 @@ function ResultsScreen({ total, right, log, onRestart }: {
                 <div className="flex items-center justify-between gap-3">
                   <TopicChip topic={r.topic} />
                   <span className="font-mono text-sm shrink-0">
-                    <span className="text-go font-semibold">{r.correct}✓</span>
-                    {' · '}
-                    <span className="text-[#DC2626] font-semibold">{r.wrong}✗</span>
-                    {' · '}
+                    <span className="text-go font-semibold">{r.correct} OK</span>
+                    {' - '}
+                    <span className="text-[#DC2626] font-semibold">{r.wrong} X</span>
+                    {' - '}
                     <span className="text-muted">{r.pct}%</span>
                   </span>
                 </div>
@@ -347,11 +428,11 @@ function ResultsScreen({ total, right, log, onRestart }: {
           <div className="flex flex-wrap gap-2">
             {toReview.map((t) => <TopicChip key={t} topic={t} />)}
           </div>
-          <p className="text-xs text-muted mt-3">Menos del 60% de aciertos. Empezá un test filtrado por estos ejes.</p>
+          <p className="text-xs text-muted mt-3">Menos del 60% de aciertos. Empeza un test filtrado por estos ejes.</p>
         </Card>
       ) : (
         <Card style={{ borderColor: 'rgba(0,132,0,0.4)' }}>
-          <p className="text-sm text-go font-semibold">Sin ejes críticos: superaste el 60% en todos. 🎯</p>
+          <p className="text-sm text-go font-semibold">Sin ejes criticos: superaste el 60% en todos.</p>
         </Card>
       )}
 

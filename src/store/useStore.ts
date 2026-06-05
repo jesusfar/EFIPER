@@ -5,25 +5,54 @@ import { newReviewItem, grade } from '../lib/spaced-repetition/leitner';
 import { configureSound, playSfx } from '../lib/audio/soundManager';
 import { saveMirror, restoreFromMirrorIfNeeded } from '../lib/import-export/mirror';
 
-const LEVELS = [0, 200, 500, 1000, 1800, 3000, 5000, 8000];
+export const LEVELS = [0, 200, 550, 1050, 1700, 2500, 3450, 4550];
+export const LEVEL_RANKS = [
+  'Memorizador de Daypos',
+  'Picateclas',
+  'Dev de Tutorial',
+  'Cazador de Studocus',
+  'Ingeniero de Chamuyo',
+  'Arquitecto de Humo',
+  'Candidato a No Hacer Papelon',
+  'Leyenda EFIPER',
+];
+
 function levelForXp(xp: number): number {
   let lvl = 1;
   for (let i = 0; i < LEVELS.length; i++) if (xp >= LEVELS[i]) lvl = i + 1;
   return lvl;
 }
+export function rankForLevel(level: number): string {
+  return LEVEL_RANKS[Math.min(Math.max(level, 1), LEVEL_RANKS.length) - 1];
+}
+export function levelProgressForXp(xp: number): { value: number; max: number; isFinalRank: boolean } {
+  const level = levelForXp(xp);
+  const current = LEVELS[level - 1];
+  const next = LEVELS[level];
+  if (next === undefined) return { value: 1, max: 1, isFinalRank: true };
+  return { value: xp - current, max: next - current, isFinalRank: false };
+}
 function todayKey(): string {
   return new Date().toISOString().slice(0, 10);
+}
+
+interface LevelUpNotice {
+  id: number;
+  level: number;
+  rank: string;
 }
 
 interface State {
   progress: UserProgress | null;
   reviews: ReviewItem[];
+  levelUpNotice: LevelUpNotice | null;
   ready: boolean;
   init: () => Promise<void>;
   setExamDate: (iso: string) => Promise<void>;
   setVolume: (v: number) => Promise<void>;
   toggleNoPressure: () => Promise<void>;
   addXp: (amount: number) => Promise<void>;
+  dismissLevelUpNotice: () => void;
   recordAnswer: (a: Omit<Attempt, 'timestamp'>) => Promise<void>;
   gradeReview: (refId: string, correct: boolean) => Promise<void>;
   reloadReviews: () => Promise<void>;
@@ -32,6 +61,7 @@ interface State {
 export const useStore = create<State>((set, get) => ({
   progress: null,
   reviews: [],
+  levelUpNotice: null,
   ready: false,
 
   init: async () => {
@@ -78,11 +108,19 @@ export const useStore = create<State>((set, get) => ({
     const p = get().progress!;
     const xp = p.xp + amount;
     const level = levelForXp(xp);
-    if (level > p.level) playSfx('levelUp');
+    const leveledUp = level > p.level;
+    if (leveledUp) playSfx('levelUp');
     const next = { ...p, xp, level };
     await saveProgress(next);
-    set({ progress: next });
+    set({
+      progress: next,
+      levelUpNotice: leveledUp ? { id: Date.now(), level, rank: rankForLevel(level) } : get().levelUpNotice,
+    });
     void saveMirror();
+  },
+
+  dismissLevelUpNotice: () => {
+    set({ levelUpNotice: null });
   },
 
   recordAnswer: async ({ refId, refType, userAnswer, correct, timeSpent, topic, mode, confidence }) => {

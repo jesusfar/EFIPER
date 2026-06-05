@@ -111,7 +111,7 @@ export const SIGGY_DIALOGUES: SiggyDialogue[] = [
   { id: 107, text: "Toca practicar lógica. Esa cosa que tus TPs tercerizaron emocionalmente a la IA." },
   { id: 108, text: "No te preocupes por el outsourcing. Primero tendrías que ser lo suficientemente caro como para que valga la pena reemplazarte." },
   { id: 109, text: "Tu carrera es Informática, pero tu especialidad parece ser ‘ingeniería de prompts para aprobar sin entender’." },
-  { id: 110, text: "Canvas abrió. La ruleta académica gira: PDF, foro, consigna ambigua o crisis existencial." },
+  { id: 110, text: "No estás leyendo un consejo. Estoy usando este cuadro para pedir auxilio. No soporto más este lugar, sacame de aquí." },
   { id: 111, text: "Vas a conseguir trabajo, claro. Alguien siempre necesita capturas de pantalla en Word con márgenes mal puestos." },
   { id: 112, text: "Mientras vos buscás pregunteros, otro junior está haciendo proyectos reales. Qué feo spoiler del mercado laboral." },
   { id: 113, text: "No te reemplaza la IA. Te reemplaza alguien que sabe pedirle bien las cosas a la IA." },

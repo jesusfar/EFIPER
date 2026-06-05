@@ -1,6 +1,7 @@
-import { type ReactNode } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { playSfx, playLogoHover } from '../lib/audio/soundManager';
+import { useStore } from '../store/useStore';
 import efiperLogo from '../assets/logo-efiper-cropped.png';
 
 const NAV = [
@@ -16,9 +17,31 @@ const NAV = [
 export function Layout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const isTheoryReader = location.pathname.startsWith('/teoria/');
+  const levelUpNotice = useStore((s) => s.levelUpNotice);
+  const dismissLevelUpNotice = useStore((s) => s.dismissLevelUpNotice);
+
+  useEffect(() => {
+    if (!levelUpNotice) return;
+    const id = window.setTimeout(dismissLevelUpNotice, 6200);
+    return () => window.clearTimeout(id);
+  }, [dismissLevelUpNotice, levelUpNotice]);
 
   return (
     <div className="min-h-full flex flex-col">
+      {levelUpNotice && (
+        <div className="level-up-toast" role="status" aria-live="polite">
+          <div className="level-up-orbit" aria-hidden="true" />
+          <div className="level-up-copy">
+            <span className="level-up-kicker">Subiste de nivel</span>
+            <strong>Nivel {levelUpNotice.level}</strong>
+            <span>Nuevo rango: {levelUpNotice.rank}</span>
+          </div>
+          <button className="level-up-close" type="button" aria-label="Cerrar aviso de nivel" onClick={dismissLevelUpNotice}>
+            x
+          </button>
+        </div>
+      )}
+
       {!isTheoryReader && (
         <header className="sticky top-0 z-20 backdrop-blur border-b border-accent/40 bg-[linear-gradient(135deg,#003F3A,#005E50_58%,#324A4D)] shadow-stud">
           <div className="max-w-5xl mx-auto px-4 py-2 lg:min-h-20 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2 lg:gap-4">

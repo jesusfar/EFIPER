@@ -93,6 +93,39 @@
       linear-gradient(135deg, rgba(0,94,80,0.97), rgba(0,159,146,0.92) 58%, rgba(0,132,0,0.9));
   }
   .label { @apply text-xs uppercase tracking-[0.16em] text-stud font-display font-bold; }
+  .level-up-toast {
+    @apply fixed right-4 top-24 z-50 flex w-[min(360px,calc(100vw-2rem))] items-center gap-3 overflow-hidden rounded-xl border border-accent/50 bg-white/95 px-4 py-3 text-ink shadow-panel backdrop-blur;
+    animation: level-up-toast-in 420ms cubic-bezier(.2,.9,.2,1) both;
+  }
+  .level-up-toast::before {
+    content: "";
+    @apply absolute inset-y-0 left-0 w-1.5;
+    background: linear-gradient(180deg, #FBBF24, #008400 55%, #009F92);
+  }
+  .level-up-orbit {
+    @apply relative grid h-11 w-11 shrink-0 place-items-center rounded-full border border-[#FBBF24]/70 bg-[#FFF7CC];
+    box-shadow: 0 0 0 5px rgba(251,191,36,0.14), inset 0 0 18px rgba(251,191,36,0.28);
+  }
+  .level-up-orbit::before {
+    content: "";
+    @apply h-3 w-3 rounded-full bg-go;
+    box-shadow: 0 0 16px rgba(0,132,0,0.72);
+  }
+  .level-up-copy {
+    @apply min-w-0 flex-1 leading-tight;
+  }
+  .level-up-kicker {
+    @apply block text-[10px] font-black uppercase tracking-[0.18em] text-stud;
+  }
+  .level-up-copy strong {
+    @apply mt-0.5 block font-display text-lg font-black text-ink;
+  }
+  .level-up-copy span:last-child {
+    @apply mt-0.5 block text-sm font-semibold text-muted;
+  }
+  .level-up-close {
+    @apply grid h-7 w-7 shrink-0 place-items-center rounded-full border border-line bg-white text-sm font-black text-stud transition hover:border-accent hover:bg-panel-2;
+  }
   .rich-answer {
     @apply space-y-3 text-sm leading-relaxed text-ink;
     -webkit-user-select: text;
@@ -392,6 +425,17 @@
     opacity: 0.55;
     transform: translateY(1px);
     filter: brightness(1);
+  }
+}
+
+@keyframes level-up-toast-in {
+  0% {
+    opacity: 0;
+    transform: translateX(24px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
   }
 }
 
