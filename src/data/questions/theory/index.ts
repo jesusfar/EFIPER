@@ -20,4 +20,4 @@ export const THEORY: Record<Topic, Question[]> = {
   analisis_diseno: analisisDisenoTheory,
 };
 
-export const THEORY_TARGET_PER_TOPIC = 250;
+export const THEORY_TARGET_PER_TOPIC = 120;
