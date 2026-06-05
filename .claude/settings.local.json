@@ -32,7 +32,8 @@
       "Bash(where pdftotext *)",
       "Bash(pdftotext -layout \"C:/Users/sofia/OneDrive/Desktop/Notas EFIP I.pdf\" \"D:/EFIPER/notas-efip.txt\")",
       "Bash(pdftotext -layout -enc UTF-8 \"C:/Users/sofia/OneDrive/Desktop/Notas EFIP I.pdf\" \"D:/EFIPER/notas-efip.txt\")",
-      "Bash(cat)"
+      "Bash(cat)",
+      "Bash(git commit -q -m ' *)"
     ]
   }
 }
