@@ -829,4 +829,287 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
       'Un proceso atrapado en un interbloqueo',
     ], 0,
     'El zombie terminó pero su PCB persiste hasta que el padre hace wait() y recoge su código de salida. Si el padre muere antes, el proceso queda huérfano y lo adopta init.'),
+
+  mc('so-t-091', 'Planificación', 3,
+    'Con SRTF, P1 llega en t=0 con ráfaga 8 ms y P2 llega en t=1 con ráfaga 4 ms. ¿Qué ocurre en t=1?',
+    [
+      'P2 expropia a P1, porque su tiempo restante (4) es menor que el de P1 (7)',
+      'P1 continúa hasta terminar, ignorando a P2',
+      'Ambos se ejecutan en paralelo en la misma CPU',
+      'P2 espera a que P1 termine por completo',
+    ], 0,
+    'En SRTF, al llegar P2 (resta 4) se compara con lo que le queda a P1 (8−1=7). Como 4 < 7, P2 expropia la CPU y se ejecuta primero.'),
+
+  mc('so-t-092', 'Memoria', 3,
+    'Con un espacio de direcciones virtual de 32 bits y páginas de 4 KB, ¿cuántas entradas tiene la tabla de páginas de un nivel?',
+    [
+      '2²⁰ entradas (1.048.576)',
+      '2¹² entradas (4.096)',
+      '2³² entradas',
+      '2¹⁰ entradas (1.024)',
+    ], 0,
+    'Página de 4 KB = 2¹² ⇒ 12 bits de offset. Quedan 32−12 = 20 bits para el número de página ⇒ 2²⁰ = 1.048.576 entradas.'),
+
+  mc('so-t-093', 'Memoria', 2,
+    'Si el tamaño de página es de 8 KB, ¿cuántos bits se necesitan para el desplazamiento (offset) dentro de la página?',
+    [
+      '13 bits',
+      '8 bits',
+      '10 bits',
+      '14 bits',
+    ], 0,
+    '8 KB = 8 × 1024 = 8192 = 2¹³ bytes ⇒ se requieren 13 bits para direccionar cualquier byte dentro de la página.'),
+
+  tf('so-t-094', 'Memoria', 2,
+    'Cada proceso tiene su propia tabla de páginas, que traduce sus direcciones virtuales a los marcos físicos que le fueron asignados.',
+    true,
+    'Verdadero. La tabla de páginas es por proceso: así cada uno tiene su propio espacio virtual aislado, mapeado a distintos marcos de la memoria física.'),
+
+  mc('so-t-095', 'Memoria', 3,
+    'En memoria paginada, una dirección virtual se divide en…',
+    [
+      'Número de página + desplazamiento (offset); la tabla traduce la página a un marco y el offset se mantiene',
+      'Únicamente un desplazamiento, sin número de página',
+      'Solo un número de segmento',
+      'La dirección física directa, sin ninguna traducción',
+    ], 0,
+    'La parte alta (número de página) se traduce a marco vía la tabla de páginas; la parte baja (offset) no cambia y ubica el byte dentro de la página/marco.'),
+
+  mc('so-t-096', 'Memoria', 3,
+    'A un proceso se le asigna el marco 5, con páginas de 1 KB (offset de 10 bits). Si el offset es 100, ¿cuál es la dirección física?',
+    [
+      '5220',
+      '5100',
+      '600',
+      '5124',
+    ], 0,
+    'Dirección física = (marco × tamaño de página) + offset = 5 × 1024 + 100 = 5120 + 100 = 5220.'),
+
+  mc('so-t-097', 'Sistemas distribuidos', 2,
+    'Un sistema distribuido es…',
+    [
+      'Un conjunto de computadoras independientes que el usuario percibe como un único sistema coherente',
+      'Una sola computadora con muchos núcleos',
+      'Un sistema que funciona sin ninguna red',
+      'Un tipo de algoritmo de planificación',
+    ], 0,
+    'En un sistema distribuido, varios nodos autónomos cooperan a través de la red y se presentan al usuario como un todo único (transparencia).'),
+
+  ms('so-t-098', 'Sistemas distribuidos', 3,
+    'Seleccioná TODAS las características/ventajas de los sistemas distribuidos:',
+    [
+      'Permiten compartir recursos entre nodos',
+      'Pueden escalar agregando más nodos',
+      'Mejoran la tolerancia a fallos mediante redundancia',
+      'Buscan transparencia: el usuario no nota que está distribuido',
+      'Tienen obligatoriamente un único punto central de fallo',
+      'Funcionan sin ninguna red de comunicación',
+    ], [0, 1, 2, 3],
+    'Compartición de recursos, escalabilidad, tolerancia a fallos y transparencia son sus rasgos. Justamente buscan EVITAR el punto único de fallo y dependen de la red para comunicarse.'),
+
+  mc('so-t-099', 'E/S', 3,
+    'Una llamada de E/S BLOQUEANTE…',
+    [
+      'Suspende al proceso hasta que la operación termina; la no bloqueante retorna de inmediato',
+      'Retorna de inmediato en todos los casos',
+      'No involucra al sistema operativo',
+      'Es siempre más rápida que la no bloqueante',
+    ], 0,
+    'La E/S bloqueante deja al proceso en espera hasta completar la operación; la no bloqueante devuelve el control enseguida y el proceso consulta o es notificado luego.'),
+
+  mc('so-t-100', 'E/S', 3,
+    'El DMA (Direct Memory Access) permite…',
+    [
+      'Que un dispositivo transfiera datos a/desde la memoria sin intervención continua de la CPU, liberándola',
+      'Acelerar la frecuencia del reloj de la CPU',
+      'Planificar los procesos por prioridad',
+      'Cifrar el contenido de la memoria',
+    ], 0,
+    'El DMA realiza transferencias dispositivo↔memoria por su cuenta y avisa a la CPU al terminar (interrupción), liberándola de copiar byte por byte.'),
+
+  tf('so-t-101', 'E/S', 2,
+    'Con interrupciones, el dispositivo avisa a la CPU cuando termina, evitando el polling (consulta constante) que desperdicia ciclos de procesador.',
+    true,
+    'Verdadero. El esquema por interrupciones es más eficiente que el polling: la CPU hace otra cosa y solo atiende al dispositivo cuando éste la interrumpe.'),
+
+  mc('so-t-102', 'E/S', 3,
+    'Cuando ocurre una interrupción, la CPU…',
+    [
+      'Guarda su estado, ejecuta la rutina de servicio de interrupción (ISR) y luego retoma lo que estaba haciendo',
+      'Reinicia el sistema por completo',
+      'Ignora el evento y sigue de largo',
+      'Borra la memoria del proceso actual',
+    ], 0,
+    'Ante la interrupción, la CPU salva su contexto, salta a la ISR correspondiente para atender el evento y, al terminar, restaura el contexto y continúa.'),
+
+  mc('so-t-103', 'Sistemas de archivos', 3,
+    '¿Cuál es la diferencia entre acceso secuencial y acceso directo (aleatorio) a un archivo?',
+    [
+      'El secuencial lee/escribe en orden de principio a fin; el directo accede a cualquier posición por su dirección/registro',
+      'El secuencial accede a cualquier posición y el directo solo en orden',
+      'Ambos solo permiten leer en orden estricto',
+      'Ninguno de los dos permite escribir datos',
+    ], 0,
+    'El acceso secuencial recorre el archivo en orden; el directo (random) salta a cualquier registro/posición sin recorrer lo anterior, útil para bases de datos e índices.'),
+
+  mc('so-t-104', 'Sistemas de archivos', 2,
+    'Un directorio (carpeta) es…',
+    [
+      'Una estructura que organiza y referencia archivos (y otros directorios), mapeando nombres a inodos/ubicaciones',
+      'El contenido de datos de un archivo',
+      'Un proceso del sistema operativo',
+      'Un dispositivo de entrada/salida',
+    ], 0,
+    'El directorio asocia nombres de archivo con su inodo/ubicación. Anidando directorios se forma la estructura jerárquica de carpetas.'),
+
+  ms('so-t-105', 'Memoria', 3,
+    'Marcá TODAS las afirmaciones correctas sobre la gestión de memoria:',
+    [
+      'La MMU (unidad de gestión de memoria) traduce direcciones virtuales a físicas',
+      'La tabla de páginas mapea cada página virtual a un marco físico',
+      'Un page fault ocurre si la página referenciada no está en RAM',
+      'La TLB acelera la traducción cacheando entradas de la tabla de páginas',
+      'La MMU se encarga de planificar la CPU',
+      'El desplazamiento (offset) cambia durante la traducción de la dirección',
+    ], [0, 1, 2, 3],
+    'MMU, tabla de páginas, page fault y TLB son piezas de la gestión de memoria. La MMU no planifica la CPU y el offset NO cambia al traducir (solo se traduce el número de página).'),
+
+  mc('so-t-106', 'Planificación', 3,
+    'P1 llega en t=0 con ráfaga 5 ms y P2 en t=1 con ráfaga 2 ms, atendidos con SRTF. ¿Cuál es el tiempo de espera PROMEDIO?',
+    [
+      '1 ms',
+      '2 ms',
+      '1,5 ms',
+      '3 ms',
+    ], 0,
+    'P1 corre [0-1]; en t=1 llega P2 (2 < 4 restante) y expropia: P2 [1-3] (fin), luego P1 [3-7] (fin). Retornos: P1=7, P2=2. Espera = retorno − ráfaga: P1=2, P2=0. Promedio = 1 ms.'),
+
+  tf('so-t-107', 'Planificación', 2,
+    'En un algoritmo no apropiativo, una vez que un proceso obtiene la CPU la conserva hasta que termina o se bloquea voluntariamente.',
+    true,
+    'Verdadero. Los no apropiativos (FIFO, SJF, HRN) no interrumpen al proceso en ejecución: solo cambian de proceso cuando éste termina o se bloquea.'),
+
+  mc('so-t-108', 'Planificación', 2,
+    'El "throughput" (rendimiento) de la planificación se define como…',
+    [
+      'La cantidad de procesos completados por unidad de tiempo',
+      'El tiempo que un proceso espera en la cola de listos',
+      'El tiempo total desde que un proceso llega hasta que termina',
+      'El tiempo hasta la primera respuesta',
+    ], 0,
+    'El throughput mide cuántos procesos se terminan por unidad de tiempo. La espera, el turnaround y el tiempo de respuesta son métricas distintas.'),
+
+  mc('so-t-109', 'Planificación', 2,
+    'En sistemas interactivos, el "tiempo de respuesta" es…',
+    [
+      'El tiempo desde que se envía una solicitud hasta que se produce la primera respuesta',
+      'El tiempo total de ejecución del proceso',
+      'El tiempo que el proceso pasa en la cola de bloqueados',
+      'La cantidad de procesos completados por segundo',
+    ], 0,
+    'El tiempo de respuesta mide cuánto tarda en empezar a responder (clave en interactividad), no cuánto tarda en terminar (eso es el turnaround).'),
+
+  ms('so-t-110', 'Planificación', 3,
+    'Seleccioná TODAS las definiciones correctas de métricas de planificación:',
+    [
+      'Turnaround (retorno) = tiempo de finalización − tiempo de llegada',
+      'Tiempo de espera = tiempo total que el proceso pasa en la cola de listos',
+      'Throughput = cantidad de procesos completados por unidad de tiempo',
+      'Tiempo de respuesta = desde la solicitud hasta la primera respuesta',
+      'Turnaround = tiempo que el proceso usa la CPU únicamente',
+      'Throughput = el tiempo de espera promedio de los procesos',
+    ], [0, 1, 2, 3],
+    'Las cuatro primeras son las definiciones correctas. El turnaround NO es solo el tiempo de CPU (incluye esperas) y el throughput NO es un tiempo, sino un conteo por unidad de tiempo.'),
+
+  mc('so-t-111', 'Memoria', 3,
+    'En la asignación contigua con particiones variables, ¿qué algoritmo de ubicación elige el hueco más pequeño que alcanza para el proceso?',
+    [
+      'Best fit (mejor ajuste)',
+      'First fit (primer ajuste)',
+      'Worst fit (peor ajuste)',
+      'Next fit (siguiente ajuste)',
+    ], 0,
+    'Best fit busca el hueco más ajustado (el menor que alcance). First fit toma el primero que sirva; worst fit, el más grande.'),
+
+  mc('so-t-112', 'Memoria', 3,
+    'El algoritmo "worst fit" (peor ajuste)…',
+    [
+      'Elige el hueco más grande disponible, dejando un resto grande potencialmente reutilizable',
+      'Elige el hueco más pequeño que alcanza',
+      'Elige el primer hueco que alcanza',
+      'Nunca deja huecos libres',
+    ], 0,
+    'Worst fit usa el hueco mayor con la idea de que el sobrante quede lo bastante grande para otro proceso, en vez de generar fragmentos minúsculos.'),
+
+  tf('so-t-113', 'Memoria', 3,
+    'El best fit tiende a dejar muchos huecos pequeños difíciles de reutilizar, lo que puede aumentar la fragmentación externa.',
+    true,
+    'Verdadero. Al elegir siempre el hueco más ajustado, el sobrante suele ser minúsculo e inservible, acumulando fragmentación externa con el tiempo.'),
+
+  mc('so-t-114', 'Planificación', 3,
+    'Para un sistema interactivo de tiempo compartido con muchos usuarios, ¿qué algoritmo conviene y por qué?',
+    [
+      'Round Robin, porque reparte la CPU de forma equitativa y ofrece buen tiempo de respuesta',
+      'FIFO, porque su simplicidad garantiza buen tiempo de respuesta',
+      'SJF puro, porque nunca produce inanición',
+      'Planificación de plazo fijo, por ser la más simple',
+    ], 0,
+    'RR da turnos cortos a todos, logrando buena interactividad y respuesta. FIFO sufre efecto convoy, SJF puede causar inanición y el plazo fijo es complejo.'),
+
+  mc('so-t-115', 'Planificación', 3,
+    'En un entorno batch donde se conocen las duraciones y se busca minimizar la espera promedio, conviene…',
+    [
+      'SJF, que minimiza el tiempo de espera promedio',
+      'Round Robin con quantum muy chico',
+      'FIFO en todos los casos',
+      'Planificación de plazo fijo',
+    ], 0,
+    'SJF es óptimo para minimizar la espera promedio cuando se conocen las ráfagas, situación típica del procesamiento por lotes (batch).'),
+
+  tf('so-t-116', 'Planificación', 2,
+    'Round Robin no produce inanición, porque cada proceso recibe su turno de CPU de forma periódica.',
+    true,
+    'Verdadero. Al rotar por todos con un quantum, RR garantiza que ningún proceso quede postergado indefinidamente: tarde o temprano le toca.'),
+
+  mc('so-t-117', 'Multiprogramación', 2,
+    'La multiprogramación mejora el uso de la CPU porque…',
+    [
+      'Mientras un proceso espera una E/S, la CPU ejecuta otro proceso, en lugar de quedar ociosa',
+      'Ejecuta un solo proceso a la vez hasta que termine por completo',
+      'Elimina la necesidad de usar memoria',
+      'Reduce la cantidad total de procesos del sistema',
+    ], 0,
+    'Teniendo varios procesos en memoria, cuando uno se bloquea por E/S el SO le da la CPU a otro, aprovechando los tiempos muertos y subiendo la utilización.'),
+
+  mc('so-t-118', 'Multiprogramación', 3,
+    'El "grado de multiprogramación" es…',
+    [
+      'La cantidad de procesos que están simultáneamente en memoria',
+      'La frecuencia del reloj de la CPU',
+      'El número de núcleos del procesador',
+      'El tamaño de la página de memoria',
+    ], 0,
+    'Es cuántos procesos hay a la vez en memoria. Subirlo mejora la utilización, pero pasado cierto punto provoca thrashing por exceso de fallos de página.'),
+
+  ms('so-t-119', 'Planificación', 3,
+    'Repaso integrador: marcá TODAS las afirmaciones correctas sobre los algoritmos de planificación:',
+    [
+      'FIFO es simple pero sufre el efecto convoy',
+      'SJF minimiza la espera promedio pero puede causar inanición',
+      'Round Robin es adecuado para entornos interactivos y su rendimiento depende del quantum',
+      'HRN evita la inanición de SJF al considerar también el tiempo de espera',
+      'FIFO es el algoritmo ideal para sistemas interactivos de tiempo compartido',
+      'Round Robin siempre ejecuta primero el proceso de menor ráfaga',
+    ], [0, 1, 2, 3],
+    'FIFO=convoy; SJF=óptimo pero con inanición; RR=interactivo y sensible al quantum; HRN=corrige a SJF. FIFO no sirve para interactivo y RR no prioriza por ráfaga (rota por turnos).'),
+
+  mc('so-t-120', 'Tipos de SO', 3,
+    'En un sistema de control industrial donde ciertas tareas deben cumplir plazos estrictos, ¿qué tipo de SO y enfoque conviene?',
+    [
+      'Un RTOS con planificación por prioridades/deadlines, donde una respuesta tardía se considera un fallo',
+      'Un SO batch que maximiza el throughput sin importar el tiempo de respuesta',
+      'FIFO puro, sin ningún esquema de prioridades',
+      'Un SO de tiempo compartido orientado a muchos usuarios interactivos',
+    ], 0,
+    'El control industrial exige determinismo temporal: un RTOS garantiza el cumplimiento de plazos. Un sistema batch o de tiempo compartido no asegura esos deadlines.'),
 ]);
