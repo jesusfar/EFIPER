@@ -551,4 +551,282 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
       'El scheduler se encarga de administrar la memoria',
     ], 0,
     'El scheduler aplica la política de selección (a quién darle la CPU); el dispatcher ejecuta esa decisión: cambia el contexto y cede el control al proceso elegido.'),
+
+  mc('so-t-061', 'Arranque', 2,
+    '¿Cuál es el rol del BIOS/UEFI?',
+    [
+      'Es el firmware que inicializa el hardware y arranca el cargador del SO (bootloader) al encender el equipo',
+      'Es el kernel del sistema operativo',
+      'Es el sistema de archivos del disco',
+      'Es el planificador de la CPU',
+    ], 0,
+    'El BIOS/UEFI es firmware en la placa: hace el POST, inicializa el hardware básico y cede el control al bootloader, que carga el kernel del SO.'),
+
+  mc('so-t-062', 'Arranque', 3,
+    '¿Cuál es el orden correcto del proceso de arranque?',
+    [
+      'POST → BIOS/UEFI → bootloader → kernel → init/servicios',
+      'kernel → BIOS/UEFI → bootloader → POST',
+      'bootloader → POST → kernel → BIOS/UEFI',
+      'init → kernel → BIOS/UEFI → POST',
+    ], 0,
+    'Al encender: POST (autoprueba), el firmware BIOS/UEFI localiza el bootloader, éste carga el kernel y el kernel lanza el primer proceso (init/systemd) y los servicios.'),
+
+  tf('so-t-063', 'Arranque', 2,
+    'UEFI es el sucesor del BIOS tradicional: soporta discos grandes (GPT), arranque seguro (Secure Boot) e interfaces más modernas.',
+    true,
+    'Verdadero. UEFI supera limitaciones del BIOS legacy (MBR, tamaño de disco) y agrega Secure Boot, arranque más rápido y una interfaz gráfica.'),
+
+  mc('so-t-064', 'Dispositivos', 2,
+    'Un controlador de dispositivo (driver) es…',
+    [
+      'El software que permite al sistema operativo comunicarse con un hardware específico',
+      'Un componente físico del procesador',
+      'Un algoritmo de planificación de la CPU',
+      'Un tipo de sistema de archivos',
+    ], 0,
+    'El driver traduce las peticiones genéricas del SO a las operaciones concretas que entiende un dispositivo particular (placa de red, GPU, disco, etc.).'),
+
+  mc('so-t-065', 'Planificación', 3,
+    'En una planificación con colas multinivel (multilevel queue)…',
+    [
+      'Hay varias colas con distinta prioridad y política, y los procesos se asignan según su tipo (interactivo, batch, sistema)',
+      'Hay una única cola FIFO para todos los procesos',
+      'Todos los procesos tienen la misma prioridad fija',
+      'No se utiliza la CPU en absoluto',
+    ], 0,
+    'Las colas multinivel separan los procesos por categoría, cada cola con su propia política (p. ej. RR para interactivos, FIFO para batch) y prioridad entre colas.'),
+
+  mc('so-t-066', 'Planificación', 3,
+    '¿Qué agrega la cola multinivel con realimentación (multilevel feedback queue)?',
+    [
+      'Permite que los procesos se muevan entre colas según su comportamiento (bajan si usan mucha CPU), evitando la inanición',
+      'Fija cada proceso en una cola para toda su vida',
+      'Elimina por completo el concepto de prioridad',
+      'Se comporta igual que un FIFO puro',
+    ], 0,
+    'La realimentación ajusta dinámicamente la cola de un proceso: los que consumen mucha CPU bajan de prioridad y los que esperan suben, equilibrando interactividad y equidad.'),
+
+  mc('so-t-067', 'Planificación', 3,
+    '¿Cuál es la diferencia entre prioridad estática y dinámica?',
+    [
+      'La estática no cambia durante la vida del proceso; la dinámica se ajusta según el comportamiento (por ejemplo, con envejecimiento)',
+      'La estática cambia constantemente y la dinámica es fija',
+      'Ambas son siempre fijas',
+      'La prioridad dinámica no existe en la práctica',
+    ], 0,
+    'La prioridad estática se asigna y no varía; la dinámica se recalcula (aging, uso de CPU) para adaptarse y evitar problemas como la inanición.'),
+
+  tf('so-t-068', 'Planificación', 3,
+    'El "envejecimiento" (aging) aumenta gradualmente la prioridad de los procesos que esperan mucho, para evitar la inanición.',
+    true,
+    'Verdadero. El aging combate la inanición: cuanto más espera un proceso, más sube su prioridad, hasta que eventualmente es atendido.'),
+
+  mc('so-t-069', 'Planificación', 3,
+    'Tres procesos llegan en t=0 con ráfagas P1=6, P2=2 y P3=4 ms y se atienden con FIFO en ese orden. ¿Cuál es el tiempo de espera PROMEDIO?',
+    [
+      '4,67 ms',
+      '6 ms',
+      '3,33 ms',
+      '8 ms',
+    ], 0,
+    'Esperas: P1=0, P2=6, P3=6+2=8. Promedio = (0+6+8)/3 = 14/3 ≈ 4,67 ms.'),
+
+  mc('so-t-070', 'Planificación', 3,
+    'Con los mismos procesos (ráfagas 6, 2 y 4 ms, todos en t=0) pero atendidos con SJF, ¿cuál es el tiempo de espera PROMEDIO?',
+    [
+      '2,67 ms',
+      '4,67 ms',
+      '4 ms',
+      '6 ms',
+    ], 0,
+    'SJF ordena por ráfaga: P2(2), P3(4), P1(6). Esperas: P2=0, P3=2, P1=2+4=6. Promedio = (0+2+6)/3 = 8/3 ≈ 2,67 ms (menor que FIFO).'),
+
+  tf('so-t-071', 'Planificación', 3,
+    'Para el mismo conjunto de procesos disponibles a la vez, SJF da un tiempo de espera promedio menor o igual que FIFO.',
+    true,
+    'Verdadero. SJF es óptimo en minimizar la espera promedio cuando todas las ráfagas están disponibles: atender primero las cortas baja el promedio.'),
+
+  mc('so-t-072', 'Planificación', 3,
+    'Tres procesos con ráfagas 4, 3 y 1 ms llegan en t=0 y se atienden con FIFO en ese orden. ¿Cuál es el tiempo de RETORNO (turnaround) PROMEDIO?',
+    [
+      '6,33 ms',
+      '5 ms',
+      '3,67 ms',
+      '8 ms',
+    ], 0,
+    'Retorno = finalización − llegada (llegada 0). P1=4, P2=4+3=7, P3=7+1=8. Promedio = (4+7+8)/3 = 19/3 ≈ 6,33 ms.'),
+
+  mc('so-t-073', 'Virtualización', 3,
+    'Una máquina virtual (VM) con hipervisor…',
+    [
+      'Emula un hardware completo para ejecutar un SO huésped aislado sobre un anfitrión',
+      'Es lo mismo que un proceso común del SO',
+      'No necesita ningún sistema operativo huésped',
+      'Reemplaza al kernel del sistema anfitrión',
+    ], 0,
+    'La VM presenta hardware virtual sobre el que corre un SO huésped completo, aislado del anfitrión. El hipervisor gestiona ese hardware virtual.'),
+
+  mc('so-t-074', 'Virtualización', 3,
+    '¿Cuál es la diferencia entre contenedores y máquinas virtuales?',
+    [
+      'Los contenedores comparten el kernel del host (más livianos); las VM incluyen un SO huésped completo (más aisladas y pesadas)',
+      'Los contenedores incluyen un kernel propio completo',
+      'Las máquinas virtuales comparten el kernel del host',
+      'Son tecnologías idénticas',
+    ], 0,
+    'Los contenedores virtualizan a nivel de SO compartiendo el kernel del host (arranque rápido, poco peso); las VM virtualizan hardware con su propio SO (más aislamiento, más recursos).'),
+
+  tf('so-t-075', 'Virtualización', 3,
+    'Un hipervisor de tipo 1 (bare-metal) corre directamente sobre el hardware, mientras que uno de tipo 2 corre como una aplicación sobre un SO anfitrión.',
+    true,
+    'Verdadero. Tipo 1 (ESXi, Hyper-V) se instala sobre el hardware desnudo; tipo 2 (VirtualBox, VMware Workstation) se ejecuta como programa dentro de un SO existente.'),
+
+  ms('so-t-076', 'Virtualización', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre virtualización y contenedores:',
+    [
+      'Las máquinas virtuales ejecutan un SO huésped completo y aislado',
+      'Los contenedores comparten el kernel del sistema anfitrión',
+      'Los contenedores suelen arrancar más rápido y consumir menos recursos que las VM',
+      'El hipervisor administra y asigna recursos a varias VM',
+      'Los contenedores virtualizan un hardware completo, igual que una VM',
+      'Una máquina virtual comparte el kernel del host, igual que un contenedor',
+    ], [0, 1, 2, 3],
+    'VM = SO huésped completo gestionado por el hipervisor; contenedores = comparten kernel, livianos y rápidos. Las dos últimas invierten justamente esa distinción.'),
+
+  mc('so-t-077', 'Seguridad', 3,
+    'La separación entre modo usuario y modo kernel sirve principalmente para…',
+    [
+      'Proteger el sistema: el código de usuario no puede ejecutar instrucciones privilegiadas ni acceder directamente al hardware',
+      'Acelerar el reloj de la CPU',
+      'Aumentar la cantidad de memoria RAM',
+      'Planificar los procesos',
+    ], 0,
+    'El modo dual evita que un programa de usuario dañe el sistema: las operaciones privilegiadas (acceso a hardware, gestión de memoria) solo se hacen en modo kernel, vía syscalls.'),
+
+  ms('so-t-078', 'Seguridad', 3,
+    'Marcá TODOS los que son mecanismos de protección/seguridad del SO:',
+    [
+      'Permisos de archivos por usuario/grupo (lectura/escritura/ejecución)',
+      'Autenticación de usuarios al iniciar sesión',
+      'Aislamiento del espacio de direcciones de cada proceso',
+      'Aplicar el principio de menor privilegio',
+      'Otorgar privilegios de administrador (root) a todos los usuarios',
+      'Deshabilitar la autenticación para simplificar el acceso',
+    ], [0, 1, 2, 3],
+    'Permisos, autenticación, aislamiento de memoria y menor privilegio son mecanismos de protección. Dar root a todos o quitar la autenticación son justamente fallas graves de seguridad.'),
+
+  mc('so-t-079', 'Sistemas de archivos', 2,
+    '"Montar" un sistema de archivos significa…',
+    [
+      'Asociar un sistema de archivos (de un dispositivo o partición) a un punto del árbol de directorios para poder acceder a él',
+      'Formatear el disco por completo',
+      'Cifrar todos los archivos',
+      'Desfragmentar el disco',
+    ], 0,
+    'El montaje conecta el sistema de archivos de un dispositivo a un punto de montaje del árbol de directorios; recién entonces se puede leer/escribir en él.'),
+
+  mc('so-t-080', 'E/S', 3,
+    'El buffering en operaciones de E/S sirve para…',
+    [
+      'Acomodar la diferencia de velocidad entre el productor y el consumidor de los datos, almacenándolos temporalmente',
+      'Cifrar los datos de entrada/salida',
+      'Planificar la CPU por prioridad',
+      'Reemplazar páginas de memoria',
+    ], 0,
+    'El buffer absorbe el desajuste de velocidades (por ejemplo, CPU rápida y disco lento), permitiendo que ambos trabajen sin esperarse continuamente.'),
+
+  tf('so-t-081', 'E/S', 3,
+    'La caché de disco mantiene en RAM los bloques de uso frecuente para acelerar los accesos, aprovechando la localidad de referencia.',
+    true,
+    'Verdadero. Como los programas tienden a reutilizar datos recientes y cercanos, cachear bloques en RAM evita ir al disco (mucho más lento) repetidamente.'),
+
+  mc('so-t-082', 'Memoria', 3,
+    'El principio de localidad de referencia indica que…',
+    [
+      'Los programas tienden a acceder a posiciones de memoria cercanas (localidad espacial) y a las usadas recientemente (localidad temporal)',
+      'Los programas acceden a la memoria de forma totalmente aleatoria',
+      'Cada posición de memoria se accede una sola vez',
+      'La localidad no influye en el rendimiento de la caché',
+    ], 0,
+    'La localidad (espacial y temporal) es la base de las cachés y de la memoria virtual: por eso conviene mantener cerca lo recién usado y lo contiguo.'),
+
+  mc('so-t-083', 'Planificación', 3,
+    'Round Robin con quantum = 2 ms. En t=0 están P1=4 y P2=3 ms (orden P1, P2). ¿Cuál es el tiempo de espera PROMEDIO?',
+    [
+      '3 ms',
+      '3,5 ms',
+      '2,5 ms',
+      '4 ms',
+    ], 0,
+    'Secuencia: P1[0-2], P2[2-4], P1[4-6] (fin), P2[6-7] (fin). Retornos: P1=6, P2=7. Espera = retorno − ráfaga: P1=6−4=2, P2=7−3=4. Promedio = (2+4)/2 = 3 ms.'),
+
+  ms('so-t-084', 'Planificación', 3,
+    'Seleccioná TODOS los algoritmos de planificación que son apropiativos (preemptive):',
+    [
+      'Round Robin',
+      'SRTF (Shortest Remaining Time First)',
+      'Planificación por prioridad con expropiación',
+      'FIFO (First In First Out)',
+      'SJF clásico (no apropiativo)',
+      'HRN (Highest Response Ratio Next)',
+    ], [0, 1, 2],
+    'RR, SRTF y la prioridad con expropiación interrumpen al proceso en ejecución. FIFO, SJF clásico y HRN son no apropiativos: ejecutan la ráfaga hasta terminar o bloquearse.'),
+
+  tf('so-t-085', 'Planificación', 2,
+    'El efecto convoy ocurre en FIFO cuando un proceso largo de CPU hace esperar a varios procesos cortos detrás de él, degradando el tiempo de respuesta.',
+    true,
+    'Verdadero. Como FIFO no expropia, un proceso largo "arrastra" una fila de cortos detrás (como un convoy lento), aumentando la espera de todos.'),
+
+  mc('so-t-086', 'Memoria', 3,
+    'La fragmentación EXTERNA ocurre cuando…',
+    [
+      'Hay suficiente memoria libre en total, pero está dividida en huecos no contiguos que no alcanzan para ubicar un proceso',
+      'La última página de un proceso queda parcialmente usada',
+      'La memoria RAM está completamente llena',
+      'El disco se queda sin espacio',
+    ], 0,
+    'En la fragmentación externa el espacio libre existe pero está disperso en huecos pequeños no contiguos. Que la última página quede a medias es fragmentación interna.'),
+
+  mc('so-t-087', 'Memoria', 3,
+    'La compactación de memoria sirve para…',
+    [
+      'Reunir los huecos libres dispersos en un bloque contiguo, combatiendo la fragmentación externa',
+      'Comprimir los archivos del usuario',
+      'Reemplazar páginas en memoria virtual',
+      'Cifrar el contenido de la memoria',
+    ], 0,
+    'La compactación reubica los procesos para juntar los huecos libres en un único bloque grande, resolviendo la fragmentación externa (a costa de mover datos).'),
+
+  ms('so-t-088', 'Memoria', 3,
+    'Marcá TODAS las afirmaciones correctas sobre fragmentación y memoria:',
+    [
+      'La paginación sufre fragmentación interna (la última página)',
+      'La segmentación pura puede sufrir fragmentación externa (huecos no contiguos)',
+      'La compactación combate la fragmentación externa',
+      'La memoria virtual usa el disco como respaldo de la RAM',
+      'La paginación de bloques fijos sufre principalmente fragmentación externa',
+      'La segmentación no produce ningún tipo de fragmentación',
+    ], [0, 1, 2, 3],
+    'Paginación → interna; segmentación → externa; compactación la combate; la memoria virtual respalda en disco. Las dos últimas contradicen esos hechos.'),
+
+  mc('so-t-089', 'Procesos e hilos', 2,
+    'Un "daemon" (o servicio) es…',
+    [
+      'Un proceso que corre en segundo plano sin interacción directa del usuario (por ejemplo, un servidor web o cron)',
+      'Un virus que infecta el sistema',
+      'Un tipo de interrupción de hardware',
+      'Un algoritmo de planificación de la CPU',
+    ], 0,
+    'Los daemons son procesos de fondo que brindan servicios (impresión, red, tareas programadas) sin una interfaz interactiva, normalmente iniciados por el sistema.'),
+
+  mc('so-t-090', 'Procesos e hilos', 3,
+    'Un proceso "zombie" es…',
+    [
+      'Un proceso que ya terminó, pero cuya entrada sigue en la tabla porque el padre aún no leyó su estado de salida',
+      'Un proceso que consume el 100% de la CPU',
+      'Un proceso que se quedó sin memoria',
+      'Un proceso atrapado en un interbloqueo',
+    ], 0,
+    'El zombie terminó pero su PCB persiste hasta que el padre hace wait() y recoge su código de salida. Si el padre muere antes, el proceso queda huérfano y lo adopta init.'),
 ]);
