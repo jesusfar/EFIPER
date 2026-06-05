@@ -32,6 +32,34 @@ export function mc(
   };
 }
 
+/**
+ * Crea una pregunta de SELECCIÓN MÚLTIPLE (varias correctas).
+ * `options` son las 6 opciones; `correct` son los índices (0-based) de las
+ * correctas (entre 2 y 4). El test exige marcar todas las correctas y ninguna
+ * incorrecta. Las opciones se barajan en el banco.
+ */
+export function ms(
+  id: string,
+  subtopic: string,
+  difficulty: Difficulty,
+  statement: string,
+  options: string[],
+  correct: number[],
+  explanation: string,
+): Omit<Question, 'topic'> {
+  return {
+    id,
+    subtopic,
+    type: 'multiple_select',
+    difficulty,
+    statement,
+    options,
+    correctAnswer: correct.map((i) => options[i]),
+    explanation,
+    active: true,
+  };
+}
+
 /** Crea una pregunta de Verdadero/Falso. */
 export function tf(
   id: string,

@@ -25,7 +25,14 @@
       "Bash(npx tsx *)",
       "mcp__Claude_Preview__preview_start",
       "Bash(git rm *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git push *)",
+      "Bash(python -c \"import pypdf; print\\('pypdf ok'\\)\")",
+      "Bash(python -c \"import pdfplumber; print\\('pdfplumber ok'\\)\")",
+      "Bash(where pdftotext *)",
+      "Bash(pdftotext -layout \"C:/Users/sofia/OneDrive/Desktop/Notas EFIP I.pdf\" \"D:/EFIPER/notas-efip.txt\")",
+      "Bash(pdftotext -layout -enc UTF-8 \"C:/Users/sofia/OneDrive/Desktop/Notas EFIP I.pdf\" \"D:/EFIPER/notas-efip.txt\")",
+      "Bash(cat)"
     ]
   }
 }

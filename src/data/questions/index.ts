@@ -7,6 +7,7 @@ import { basesDatos } from './banks/bases-datos';
 import { algoritmos } from './banks/algoritmos';
 import { paradigmas } from './banks/paradigmas';
 import { analisisDiseno } from './banks/analisis-diseno';
+import { THEORY, THEORY_TARGET_PER_TOPIC } from './theory';
 
 // ── Banco de preguntas del Test rápido ──
 // Cada eje se arma con: preguntas conceptuales escritas a mano (distractores
@@ -39,9 +40,9 @@ function mulberry32(seed: number) {
   };
 }
 
-/** Baraja las opciones de una MC sin perder cuál es la correcta (por valor). */
+/** Baraja las opciones (MC y selección múltiple) sin perder las correctas (por valor). */
 function shuffleOptions(q: Question, rand: () => number): Question {
-  if (q.type !== 'multiple_choice' || !q.options) return q;
+  if ((q.type !== 'multiple_choice' && q.type !== 'multiple_select') || !q.options) return q;
   const opts = [...q.options];
   for (let i = opts.length - 1; i > 0; i--) {
     const j = Math.floor(rand() * (i + 1));
@@ -50,22 +51,31 @@ function shuffleOptions(q: Question, rand: () => number): Question {
   return { ...q, options: opts };
 }
 
-/** Banco final por eje: a mano + generadas, sin enunciados repetidos, hasta el target. */
+/** Toma preguntas únicas (por enunciado + opciones) hasta `limit`, barajando opciones. */
+function collect(qs: Question[], limit: number, rand: () => number): Question[] {
+  const seen = new Set<string>();
+  const out: Question[] = [];
+  for (const q of qs) {
+    if (out.length >= limit) break;
+    const key = q.statement.trim().toLowerCase() + '||' + (q.options ? [...q.options].sort().join('~') : '');
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(shuffleOptions(q, rand));
+  }
+  return out;
+}
+
+/** Banco final por eje: (conceptuales+cálculo hasta TARGET) + (teóricas a mano hasta THEORY_TARGET). */
 function buildBank(): Question[] {
   const rand = mulberry32(0x5eed);
   const all: Question[] = [];
   for (const topic of TOPICS) {
-    const seen = new Set<string>();
-    const bucket: Question[] = [];
-    const push = (q: Question) => {
-      const key = q.statement.trim().toLowerCase();
-      if (seen.has(key) || bucket.length >= TARGET_PER_TOPIC) return;
-      seen.add(key);
-      bucket.push(shuffleOptions(q, rand));
-    };
-    HAND_AUTHORED[topic].forEach(push);
-    if (bucket.length < TARGET_PER_TOPIC) GENERATORS[topic]().forEach(push);
-    all.push(...bucket);
+    // Bucket 1: conceptuales a mano + generadas de cálculo.
+    const base = [...HAND_AUTHORED[topic]];
+    if (base.length < TARGET_PER_TOPIC) base.push(...GENERATORS[topic]());
+    all.push(...collect(base, TARGET_PER_TOPIC, rand));
+    // Bucket 2: teóricas escritas a mano (selección múltiple, "cuál es incorrecta", etc.).
+    all.push(...collect(THEORY[topic], THEORY_TARGET_PER_TOPIC, rand));
   }
   return all;
 }

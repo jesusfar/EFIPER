@@ -8,9 +8,18 @@ import { TOPIC_THEME } from '../../lib/theme/topicTheme';
 import { playSfx, playResult, stopResult } from '../../lib/audio/soundManager';
 import type { Question, Topic } from '../../types';
 
+const norm = (s: string) => s.trim().toLowerCase();
+
 function isCorrect(q: Question, answer: string): boolean {
-  const norm = (s: string) => s.trim().toLowerCase();
   return norm(answer) === norm(q.correctAnswer as string);
+}
+
+/** Selección múltiple: acierta solo si marca TODAS las correctas y ninguna incorrecta. */
+function isMultiCorrect(q: Question, selected: string[]): boolean {
+  const correct = (q.correctAnswer as string[]).map(norm);
+  if (selected.length !== correct.length) return false;
+  const set = new Set(correct);
+  return selected.every((s) => set.has(norm(s)));
 }
 
 interface AnswerLog {
@@ -36,6 +45,7 @@ export function TestPage() {
   const [started, setStarted] = useState(false);
   const [idx, setIdx] = useState(0);
   const [answer, setAnswer] = useState('');
+  const [selected, setSelected] = useState<string[]>([]);
   const [revealed, setRevealed] = useState(false);
   const [correctNow, setCorrectNow] = useState(false);
   const [right, setRight] = useState(0);
@@ -89,21 +99,42 @@ export function TestPage() {
     });
   }
 
+  function submitMulti() {
+    if (revealed || !q) return;
+    const ok = isMultiCorrect(q, selected);
+    const a = selected.join(' | ');
+    setAnswer(a);
+    setCorrectNow(ok);
+    setRevealed(true);
+    setRight((r) => r + (ok ? 1 : 0));
+    setLog((l) => [...l, { topic: q.topic, correct: ok }]);
+    playSfx(ok ? 'collect' : 'error');
+    void recordAnswer({
+      refId: q.id, refType: 'question', userAnswer: a, correct: ok,
+      timeSpent: Math.round((Date.now() - startTs) / 1000), topic: q.topic, mode: 'test',
+    });
+  }
+
+  function toggleSelected(opt: string) {
+    if (revealed) return;
+    setSelected((s) => s.includes(opt) ? s.filter((o) => o !== opt) : [...s, opt]);
+  }
+
   function next() {
-    setRevealed(false); setAnswer(''); setStartTs(Date.now());
+    setRevealed(false); setAnswer(''); setSelected([]); setStartTs(Date.now());
     setIdx((i) => i + 1);
   }
 
   function restart() {
     setStarted(false); setIdx(0); setRight(0); setLog([]);
-    setRevealed(false); setAnswer('');
+    setRevealed(false); setAnswer(''); setSelected([]);
   }
 
   if (!started) {
     return (
       <div className="space-y-5 animate-rise max-w-xl">
         <h1 className="font-display text-2xl font-black">Test rápido</h1>
-        <p className="text-muted text-sm">Opción múltiple y Verdadero/Falso. Elegí un tema o mezclá todo.</p>
+        <p className="text-muted text-sm">Opción múltiple, Verdadero/Falso y selección múltiple (varias correctas). Elegí un tema o mezclá todo.</p>
         <div className="flex flex-wrap gap-2">
           <button onClick={() => setTopic('all')} className={`pill ${topic === 'all' ? 'pill-active' : 'pill-muted'}`}>Mixto EFIP</button>
           {(Object.keys(TOPIC_LABELS) as Topic[]).map((t) => {
@@ -186,11 +217,50 @@ export function TestPage() {
           </div>
         )}
 
+        {q.type === 'multiple_select' && (
+          <div className="space-y-2">
+            <p className="text-xs text-muted -mt-2 mb-1">
+              Seleccioná <strong>todas</strong> las correctas (puede haber 2, 3 o 4). Acertás solo si marcás exactamente las correctas.
+            </p>
+            {q.options?.map((opt) => {
+              const chosen = selected.includes(opt);
+              const correct = Array.isArray(q.correctAnswer) && q.correctAnswer.includes(opt);
+              let cls: string;
+              if (revealed) {
+                cls = correct
+                  ? 'border-go bg-go/15'
+                  : chosen ? 'border-[#DC2626] bg-[#DC2626]/15 text-[#DC2626]' : 'border-line opacity-60';
+              } else {
+                cls = chosen ? 'border-accent bg-accent/10' : 'border-accent/40 bg-white/80 hover:border-accent';
+              }
+              const box = revealed
+                ? (correct ? '✓' : chosen ? '✗' : '○')
+                : (chosen ? '☑' : '☐');
+              return (
+                <button key={opt} disabled={revealed} onClick={() => toggleSelected(opt)}
+                  className={`sfx-mute w-full text-left px-4 py-3 rounded-xl border transition flex items-start gap-3 ${cls}`}>
+                  <span className="font-mono text-base leading-5 shrink-0">{box}</span>
+                  <span>{opt}</span>
+                </button>
+              );
+            })}
+            {!revealed && (
+              <Button variant="primary" className="sfx-mute mt-2" disabled={selected.length === 0}
+                onClick={submitMulti}>Confirmar selección ({selected.length})</Button>
+            )}
+          </div>
+        )}
+
         {revealed && (
           <div className="mt-5 animate-pop-in">
             <p className={`font-semibold ${correctNow ? 'text-go' : 'text-[#DC2626]'}`}>
               {correctNow ? '✓ Correcto' : '✗ Incorrecto'}
             </p>
+            {q.type === 'multiple_select' && (
+              <p className="text-xs text-muted mt-1">
+                Correctas: {(q.correctAnswer as string[]).length} de {q.options?.length}. En verde las correctas; en rojo las que marcaste de más.
+              </p>
+            )}
             <div className="mt-2 rounded-xl border border-line bg-panel-2 p-3">
               <p className="label mb-1">Justificación</p>
               <p className="text-sm text-ink/90">{q.explanation}</p>

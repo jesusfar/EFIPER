@@ -30,6 +30,10 @@ import spiderman2099LogoSfx from '../../assets/audio/spiderman-2099-theme.mp3';
 import uwuLogoSfx from '../../assets/audio/uwu_isolated_3db_boosted.mp3';
 import specialLogoSfx from '../../assets/audio/you-are-my-special.mp3';
 
+const themeHoverSfxs = Object.entries(
+  import.meta.glob<string>('../../assets/audio/hover/*.mp3', { eager: true, query: '?url', import: 'default' })
+);
+
 const MP3_SFXS: Partial<Record<Sfx, string>> = {
   select: SFX_SELECT,
   collect: SFX_COLLECT,
@@ -53,6 +57,10 @@ const LOGO_HOVER_SFXS: Array<{ url: string; volumeBoost?: number }> = [
   { url: barbaNegraLogoSfx },
   { url: spiderman2099LogoSfx },
   { url: meowLogoSfx },
+  ...themeHoverSfxs.map(([path, url]) => ({
+    url,
+    volumeBoost: path.endsWith('/plus-ultra.mp3') ? 1.65 : undefined,
+  })),
 ];
 
 function playMp3(url: string, volumeBoost = 1): void {
