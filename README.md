@@ -1,73 +1,165 @@
-# EFIPER — Entrenador EFIP I
+# EFIPER
 
-PWA personal para preparar el **EFIP I** (Licenciatura en Informática, U. Siglo 21).
-Offline, sin backend, sin costos. Tu progreso queda en el dispositivo.
-Colores institucionales Siglo 21 (verde) y sonidos arcade originales (estilo glockenspiel).
+**EFIPER** es un entrenador offline-first para preparar el **EFIP I de Licenciatura en Informatica**. Centraliza practica teorica, defensa oral, casos, repaso espaciado, progreso por XP y una version portable en un unico archivo HTML.
 
----
+El proyecto esta pensado para estudiar sin backend, sin cuentas y sin depender de internet. El progreso se guarda localmente en el navegador y puede exportarse/importarse como respaldo JSON.
 
-## ▶ Abrir SIN terminal (la forma más simple)
+## Funcionalidades principales
 
-1. Descomprimí el `.zip`.
-2. **Doble clic en `EFIPER.html`** — se abre en tu navegador y funciona.
-   - En Windows también podés usar **`Abrir EFIPER.bat`**.
-   - En macOS, **`Abrir EFIPER.command`** (la primera vez: clic derecho → Abrir).
+- **Dashboard de progreso** con racha, XP, nivel, rango actual, tema mas debil y accesos rapidos.
+- **Sistema de rangos** con progresion por XP, barra visual tipo sable de luz y notificacion de subida de nivel.
+- **Test teorico** con preguntas mixtas, multiple choice, respuestas multiples y verdadero/falso.
+- **Reglas de seleccion del test** para mantener variedad por tema y por tipo de pregunta.
+- **Repaso inteligente tipo Leitner** con cola de vencidas, seguimiento por cajas y distribucion por eje tematico.
+- **Defensa oral individual** con respuestas modelo, autoevaluacion y carga automatica al sistema de repaso.
+- **Modo Ping-Pong grupal** para practicar oral con hasta 4 participantes sin afectar la cola personal de repaso.
+- **Casos practicos** con timer, rubricas, correccion por reglas y soporte de diagramas Mermaid.
+- **Simulacro** con ambiente sonoro continuo mientras el usuario permanece en la seccion.
+- **Sonidos personalizados** para hover, confirmacion, racha, subida de nivel, respuesta modelo y feedback.
+- **Exportar/importar progreso** para respaldar el estado local.
+- **PWA instalable** y **archivo autonomo `EFIPER.html`** para abrir con doble clic.
 
-`EFIPER.html` es un único archivo autónomo (todo embebido). No instala nada, no necesita internet (salvo para las tipografías; sin conexión usa las del sistema).
+## Abrir sin terminal
 
-> **Importante sobre tu progreso:** abriendo el archivo directamente, el navegador guarda el avance localmente, pero según el navegador puede borrarse al limpiar datos. Usá el botón **Exportar** del dashboard cada tanto para respaldar tu progreso en un `.json`. Para persistencia garantizada + instalación como app, usá la versión servida (ver abajo).
+La forma mas simple de usar EFIPER es abrir el archivo generado:
 
----
+1. Descarga o descomprime el proyecto.
+2. Haz doble clic en `EFIPER.html`.
+3. El navegador abre la app y conserva el progreso en este dispositivo.
 
-## 🛠 Desarrollo y versión "app" instalable (opcional, requiere Node.js 18+)
+Tambien se incluyen accesos directos:
+
+- Windows: `Abrir EFIPER.bat`
+- macOS: `Abrir EFIPER.command`
+
+`EFIPER.html` contiene la aplicacion y sus assets embebidos. No requiere servidor para el uso normal.
+
+## Persistencia de progreso
+
+EFIPER guarda el progreso en almacenamiento local del navegador mediante IndexedDB y un espejo en `localStorage`.
+
+Como esos datos pueden borrarse si el usuario limpia el navegador, se recomienda usar periodicamente:
+
+- **Exportar**: descarga un respaldo JSON.
+- **Importar**: restaura un respaldo previo.
+
+## Desarrollo
+
+Requisitos:
+
+- Node.js 18 o superior
+- npm
+
+Instalacion y comandos:
 
 ```bash
 npm install
-npm run dev        # desarrollo en http://localhost:5173/efiper/
-npm run build      # build PWA (carpeta dist/) → instalable, offline real con service worker
-npm run preview    # previsualizar el build
+npm run dev
+npm run build
+npm run preview
 ```
 
-### Regenerar el archivo de doble clic
+Comando para regenerar el archivo autonomo:
+
 ```bash
-npm run build:single   # genera dist-single/index.html
-# copialo a la raíz como EFIPER.html
+npm run build:single
 ```
 
-### Deploy a GitHub Pages
-1. Subí el repo (ej. `efiper`) y ajustá `base` en `vite.config.ts` al nombre del repo (`/efiper/`); para dominio propio usá `/`.
-2. `npm run build` → publicá `dist/`. Usa HashRouter, así que funciona en Pages sin reglas extra.
+Luego copiar `dist-single/index.html` como `EFIPER.html` en la raiz del proyecto.
 
----
+## Scripts
 
-## Colores (marca Siglo 21)
-El verde institucional está centralizado en `tailwind.config.js`, token **`stud: '#009e8e'`**.
-Si tenés el hex oficial del manual de marca, cambiá solo ese valor (y `stud-dim` para el verde oscuro).
+| Comando | Descripcion |
+|---|---|
+| `npm run dev` | Inicia Vite para desarrollo local. |
+| `npm run build` | Genera la build PWA en `dist/`. |
+| `npm run preview` | Previsualiza la build de produccion. |
+| `npm run build:single` | Genera una version single-file en `dist-single/`. |
 
-## Sonido
-Efectos **sintetizados en el navegador** (Web Audio API), con timbre de glockenspiel + reverb tipo menú LEGO. Sin samples con copyright. Silenciables con el ícono 🔊.
+## Stack tecnico
 
-## Estructura
-```
+- **React 18**
+- **TypeScript**
+- **Vite**
+- **Tailwind CSS**
+- **Zustand** para estado global
+- **Dexie / IndexedDB** para persistencia local
+- **Mermaid** para diagramas
+- **vite-plugin-pwa** para instalacion/offline
+- **vite-plugin-singlefile** para generar `EFIPER.html`
+
+## Estructura del proyecto
+
+```text
 src/
-├── app/                 # App, Layout, router
-├── components/          # Button, Card, Timer, MermaidView, SoundToggle, ProgressBar
-├── data/                # contenido estático (JSON) + loaders (questions/ oral/ cases/ rubrics/)
-├── features/            # dashboard, tests, oral, cases, reviews, simulation
-├── lib/
-│   ├── storage/         # Dexie / IndexedDB
-│   ├── spaced-repetition/  # Leitner (5 cajas)
-│   ├── scoring/         # corrección por reglas (RF/RNF/UC/clases/DER/red)
-│   ├── audio/           # sonidos glockenspiel (Web Audio, sin copyright)
-│   └── import-export/   # respaldo JSON + espejo en localStorage
-├── store/               # estado global (Zustand)
-├── types/  └── styles/
+  app/                 Router, layout y shell principal
+  assets/              Audio, imagenes y recursos embebibles
+  components/          UI reutilizable
+  data/                Banco de preguntas, oral, teoria y casos
+  features/
+    cases/             Resolucion de casos practicos
+    dashboard/         Inicio, progreso, Siggy y accesos rapidos
+    oral/              Defensa oral individual y Ping-Pong
+    reviews/           Repaso espaciado
+    simulation/        Simulacro
+    tests/             Tests teoricos
+    teoria/            Lectura de teoria
+  lib/
+    audio/             Gestion de efectos y musica
+    import-export/     Backups y espejo local
+    scoring/           Reglas de correccion de casos
+    spaced-repetition/ Leitner
+    storage/           Dexie e IndexedDB
+    theme/             Colores por eje tematico
+  store/               Estado global de progreso
+  styles/              Estilos globales
+  types/               Tipos compartidos
 ```
 
-## Ampliar el banco (sin tocar el núcleo)
-Agregá objetos a `src/data/questions/sample.json`, `oral/sample.json` y `cases/sample.json`
-(o nuevos archivos concatenados en `src/data/index.ts`). Cada ítem DEBE llevar `explanation`/`modelAnswer`.
+## Sistema de progreso
 
-## Estado de los módulos
-- ✅ Dashboard, Test, Defensa oral (Leitner), Caso (timer + rúbricas + Mermaid), Repaso, Export/Import, Sonidos, PWA, archivo de doble clic.
-- 🔜 (P1) Simulacro orquestado en una sola sesión con nota unificada; banco grande desde los materiales.
+Las respuestas correctas en test y oral suman XP. Los casos practicos tambien pueden sumar XP al entregarse. El nivel determina el rango visible del usuario y la notificacion de subida de nivel.
+
+Rangos actuales:
+
+1. Memorizador de Daypos
+2. Picateclas
+3. Dev de Tutorial
+4. Cazador de Studocus
+5. Ingeniero de Chamuyo
+6. Arquitecto de Humo
+7. Candidato a No Hacer Papelon
+8. Leyenda EFIPER
+
+Al llegar a **Leyenda EFIPER**, la barra de progreso queda completa aunque el usuario siga acumulando XP.
+
+## Repaso espaciado
+
+El sistema de repaso usa una variante de Leitner con cinco cajas. Las respuestas se programan para volver a aparecer segun el desempeno del usuario. El objetivo es priorizar lo que se olvida, sin repetir siempre las mismas preguntas ni romper las reglas de variedad del test.
+
+## Contenido
+
+El contenido vive dentro de `src/data/`. Para ampliar el banco, agregar nuevos items respetando los tipos definidos en `src/types/`.
+
+Cada pregunta debe incluir:
+
+- enunciado
+- tipo
+- opciones cuando corresponda
+- respuesta correcta
+- explicacion o respuesta modelo
+- eje tematico
+
+## Deploy
+
+Para publicar como PWA:
+
+1. Ajustar `base` en `vite.config.ts` segun el destino.
+2. Ejecutar `npm run build`.
+3. Publicar el contenido de `dist/`.
+
+La app usa `HashRouter`, por lo que funciona bien en GitHub Pages sin reglas de rewrite adicionales.
+
+## Nota
+
+EFIPER es una herramienta local de estudio. No envia datos a servidores propios y no requiere autenticacion. Los sonidos y recursos multimedia incluidos forman parte de la experiencia personalizada del proyecto.
