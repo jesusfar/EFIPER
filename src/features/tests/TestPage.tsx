@@ -304,7 +304,7 @@ export function TestPage() {
         {q.type === 'multiple_select' && (
           <div className="space-y-2">
             <p className="text-xs text-muted -mt-2 mb-1">
-              Selecciona <strong>todas</strong> las correctas (puede haber 2, 3 o 4). Acertas solo si marcas exactamente las correctas.
+              Marca <strong>exactamente {(q.correctAnswer as string[]).length} respuestas correctas</strong> de las 6. Aciertas solo si marcas las correctas y ninguna de mas.
             </p>
             {q.options?.map((opt) => {
               const chosen = selected.includes(opt);
@@ -330,7 +330,7 @@ export function TestPage() {
             })}
             {!revealed && (
               <Button variant="primary" className="sfx-mute mt-2" disabled={selected.length === 0}
-                onClick={submitMulti}>Confirmar seleccion ({selected.length})</Button>
+                onClick={submitMulti}>Confirmar seleccion ({selected.length}/{(q.correctAnswer as string[]).length})</Button>
             )}
           </div>
         )}
