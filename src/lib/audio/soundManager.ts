@@ -60,7 +60,7 @@ const LOGO_HOVER_SFXS: Array<{ url: string; volumeBoost?: number }> = [
   { url: uwuLogoSfx },
   { url: jazwareLogoSfx },
   { url: specialLogoSfx },
-  { url: dekuLogoSfx },
+  { url: dekuLogoSfx, volumeBoost: 2.2 },
   { url: sapeeeLogoSfx },
   { url: barbaNegraLogoSfx },
   { url: spiderman2099LogoSfx },
@@ -73,6 +73,8 @@ const LOGO_HOVER_SFXS: Array<{ url: string; volumeBoost?: number }> = [
         ? 2.8
         : path.endsWith('/hide-away.mp3') || path.endsWith('/cyberpunk-2077.mp3')
           ? 2.2
+          : path.endsWith('/perro-bailando-pibble.mp3') || path.endsWith('/minions-chupenme-el.mp3')
+            ? 2.2
         : undefined,
   })),
 ];
