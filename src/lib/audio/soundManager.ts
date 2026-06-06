@@ -71,6 +71,8 @@ const LOGO_HOVER_SFXS: Array<{ url: string; volumeBoost?: number }> = [
       ? 1.65
       : path.endsWith('/fears-to-fathom-notification-sound.mp3')
         ? 2.8
+        : path.endsWith('/hide-away.mp3') || path.endsWith('/cyberpunk-2077.mp3')
+          ? 2.2
         : undefined,
   })),
 ];
