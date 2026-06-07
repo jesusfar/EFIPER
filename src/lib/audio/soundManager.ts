@@ -87,14 +87,25 @@ function playMp3(url: string, volumeBoost = 1): void {
   } catch { /* audio no disponible */ }
 }
 
-// Reproduce uno de los sonidos del logo al azar, nunca el mismo que el anterior.
-let lastLogoIdx = -1;
+// Reproduce uno de los sonidos del logo al azar evitando repetir los ultimos hovers.
+const LOGO_HOVER_RECENT_LIMIT = 7;
+const recentLogoHoverIdxs: number[] = [];
+
+function rememberLogoHover(idx: number): void {
+  recentLogoHoverIdxs.push(idx);
+  if (recentLogoHoverIdxs.length > LOGO_HOVER_RECENT_LIMIT) recentLogoHoverIdxs.shift();
+}
+
 export function playLogoHover(): void {
   if (!enabled) return;
   const n = LOGO_HOVER_SFXS.length;
-  let idx = Math.floor(Math.random() * n);
-  if (n > 1 && idx === lastLogoIdx) idx = (idx + 1 + Math.floor(Math.random() * (n - 1))) % n;
-  lastLogoIdx = idx;
+  const recent = new Set(recentLogoHoverIdxs);
+  const candidates = LOGO_HOVER_SFXS
+    .map((_, idx) => idx)
+    .filter((idx) => !recent.has(idx));
+  const pool = candidates.length > 0 ? candidates : LOGO_HOVER_SFXS.map((_, idx) => idx);
+  const idx = pool[Math.floor(Math.random() * pool.length)];
+  rememberLogoHover(idx);
   const sfx = LOGO_HOVER_SFXS[idx];
   playMp3(sfx.url, sfx.volumeBoost);
 }

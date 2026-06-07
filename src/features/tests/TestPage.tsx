@@ -225,7 +225,7 @@ export function TestPage() {
             const th = TOPIC_THEME[t];
             const active = topic === t;
             return (
-              <button key={t} onClick={() => setTopic(t)} className="pill sfx-mute"
+              <button key={t} onClick={() => setTopic(t)} className="pill"
                 style={active
                   ? { color: '#fff', background: th.gradient, border: `1px solid ${th.color}` }
                   : { color: th.color, background: th.soft, border: `1px solid ${th.border}` }}>
