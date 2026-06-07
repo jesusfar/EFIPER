@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { useStore, TOPIC_LABELS } from '../../store/useStore';
 import { questionsByTopic } from '../../data';
 import { isDue } from '../../lib/spaced-repetition/leitner';
@@ -138,8 +138,9 @@ function scoreQuestion(
 }
 
 export function TestPage() {
+  const location = useLocation();
   const [searchParams] = useSearchParams();
-  const reviewMode = searchParams.get('mode') === 'review';
+  const reviewMode = location.pathname.startsWith('/repaso/teoria') || searchParams.get('mode') === 'review';
   const recordAnswer = useStore((s) => s.recordAnswer);
   const reviews = useStore((s) => s.reviews);
   const [topic, setTopic] = useState<Topic | 'all'>('all');
@@ -237,7 +238,7 @@ export function TestPage() {
         <div>
           <div className="label mb-2">Cantidad de preguntas</div>
           <div className="flex flex-wrap gap-2">
-            {[10, 20, 50, 100].map((c) => (
+            {[10, 20, 50, 100, 250].map((c) => (
               <button key={c} onClick={() => setCount(c)}
                 className={`pill ${count === c ? 'pill-active' : 'pill-muted'}`}>{c}</button>
             ))}
@@ -247,6 +248,12 @@ export function TestPage() {
           </p>
         </div>
         <Button variant="primary" onClick={start}>Empezar ({Math.min(count, available)})</Button>
+        {!reviewMode && (
+          <div className="rounded-xl border border-accent/30 bg-panel-2/80 px-4 py-3 text-sm text-muted">
+            <span className="font-semibold text-ink">Advertencia:</span> este test guarda tus aciertos y errores en Leitner.
+            Para que EFIPER priorice automaticamente lo vencido o lo mas debil, entra despues a Repaso.
+          </div>
+        )}
       </div>
     );
   }

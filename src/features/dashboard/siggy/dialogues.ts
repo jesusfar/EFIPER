@@ -228,7 +228,7 @@ export const SIGGY_DIALOGUES: SiggyDialogue[] = [
   { id: 224, text: "Siglo 21: educación a distancia, distancia entre el alumno y el contenido, distancia entre la cuota y la experiencia." },
   { id: 225, text: "Tu stack emocional tiene dependencias vulnerables: pánico, procrastinación y ‘mañana arranco’." },
   { id: 226, text: "No vale vibecoding. Hay que escribir código con intención, esa vieja tecnología." },
-  { id: 227, text: "La saturación IT no perdona. Menos a quienes creen que public static void main es un hechizo." },
+  { id: 227, text: "La saturación IT no perdona. Menos a quienes creen que public static void main es un hechizo.", sprites: ["Frieren.png"] },
   { id: 228, text: "Daypo fue tu copiloto. El EFIP es turbulencia sin piloto automático." },
   { id: 229, text: "La plomería tiene caudal. Tu aprendizaje tiene goteo.", sprites: ["Plomero.png"] },
   { id: 230, text: "Siglo 21 no te abandonó. Te dejó en modo exploración libre sin tutorial." },

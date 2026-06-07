@@ -21,6 +21,10 @@ export function Layout({ children }: { children: ReactNode }) {
   const dismissLevelUpNotice = useStore((s) => s.dismissLevelUpNotice);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [location.pathname, location.search]);
+
+  useEffect(() => {
     if (!levelUpNotice) return;
     const id = window.setTimeout(dismissLevelUpNotice, 6200);
     return () => window.clearTimeout(id);

@@ -34,6 +34,7 @@ export function App() {
         <Route path="/oral" element={<OralPage />} />
         <Route path="/caso/:id" element={<CasePage />} />
         <Route path="/repaso" element={<ReviewsPage />} />
+        <Route path="/repaso/teoria" element={<TestPage />} />
         <Route path="/simulacro" element={<SimulationPage />} />
       </Routes>
     </Layout>

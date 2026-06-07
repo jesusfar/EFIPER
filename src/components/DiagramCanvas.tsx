@@ -51,7 +51,13 @@ function parseScene(json: string): Scene {
 // Texto del diagrama (para la corrección por reglas): etiquetas de nodos + de conexiones.
 export function sceneToText(json: string): string {
   const s = parseScene(json);
-  return [...s.nodes.map((n) => n.label), ...s.edges.map((e) => e.label ?? '')].join(' ');
+  const nodes = new Map(s.nodes.map((n) => [n.id, n.label]));
+  const edges = s.edges.map((e) => {
+    const from = nodes.get(e.from) ?? '';
+    const to = nodes.get(e.to) ?? '';
+    return `${from} --> ${to} ${e.label ?? ''}`;
+  });
+  return [...s.nodes.map((n) => n.label), ...edges].join('\n');
 }
 
 const uid = () => Math.random().toString(36).slice(2, 9);

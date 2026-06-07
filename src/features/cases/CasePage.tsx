@@ -50,6 +50,15 @@ const PALETTES: Record<RubricKind, PaletteItem[]> = {
 
 type Mode = 'draw' | 'write';
 
+function weightedScore(reports: Record<string, RubricReport>, rubric: { kind: RubricKind; weight: number }[]): number {
+  let sum = 0, wsum = 0;
+  for (const item of rubric) {
+    const r = reports[item.kind];
+    if (r) { sum += r.score * item.weight; wsum += item.weight; }
+  }
+  return wsum ? Math.round(sum / wsum) : 0;
+}
+
 export function CasePage() {
   const { id } = useParams();
   const c = getCase(id ?? '');
@@ -68,12 +77,7 @@ export function CasePage() {
 
   const total = useMemo(() => {
     if (!reports || !c) return null;
-    let sum = 0, wsum = 0;
-    for (const item of c.rubric) {
-      const r = reports[item.kind];
-      if (r) { sum += r.score * item.weight; wsum += item.weight; }
-    }
-    return wsum ? Math.round(sum / wsum) : 0;
+    return weightedScore(reports, c.rubric);
   }, [reports, c]);
 
   if (!c) return <p className="text-muted">Caso no encontrado. <Link className="text-stud-dim underline" to="/">Volver</Link></p>;
@@ -89,7 +93,10 @@ export function CasePage() {
     for (const b of BLOCKS) out[b.kind] = RUBRIC_FNS[b.kind](textForRubric(b));
     setReports(out);
     playSfx('confirm');
-    void addXp(150);
+    if (c) {
+      const xp = Math.round(weightedScore(out, c.rubric) * 1.5);
+      if (xp > 0) void addXp(xp);
+    }
   }
 
   return (
@@ -164,7 +171,6 @@ export function CasePage() {
 
       <div className="grid sm:flex sm:items-center gap-3">
         <Button variant="primary" className="sfx-mute" onClick={correct}>Corregir por rubrica</Button>
-        <Link to="/oral"><Button variant="go" className="w-full sm:w-auto">Pasar a defensa oral</Button></Link>
       </div>
 
       {reports && (
