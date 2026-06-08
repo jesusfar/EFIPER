@@ -49,7 +49,7 @@ function genRedes(): Question[] {
     borrowSub.push(mc(`gen-red-bsub-${n}`, 'Subnetting', 3,
       `Necesitás dividir una red en AL MENOS ${n} subredes. ¿Cuántos bits hay que pedirle prestados a la porción de host?`,
       num4(bits, [n, bits - 1, bits + 1]), 0,
-      `Con b bits se obtienen 2^b subredes; hace falta 2^b ≥ ${n} ⇒ b = ⌈log₂(${n})⌉ = ${bits} (2^${bits} = ${2 ** bits}). Pedir ${n} bits sería un error grosero.`));
+      `Con b bits prestados se obtienen 2^b subredes; hace falta 2^b ≥ ${n} ⇒ b = ⌈log₂(${n})⌉ = ${bits} (2^${bits} = ${2 ** bits}).`));
   }
   // Bits de host necesarios para alojar AL MENOS H hosts utilizables ⇒ ⌈log₂(H+2)⌉.
   const borrowHost: Q[] = [];
@@ -58,7 +58,7 @@ function genRedes(): Question[] {
     borrowHost.push(mc(`gen-red-bhost-${h}`, 'Subnetting', 3,
       `Cada subred debe alojar AL MENOS ${h} hosts utilizables. ¿Cuántos bits de host se necesitan como mínimo?`,
       num4(bits, [clog2(h), h, bits + 1]), 0,
-      `Con b bits de host hay 2^b − 2 utilizables; se necesita 2^b − 2 ≥ ${h} ⇒ 2^b ≥ ${h + 2} ⇒ b = ⌈log₂(${h + 2})⌉ = ${bits} (2^${bits} − 2 = ${2 ** bits - 2}). Olvidar el −2 lleva al error.`));
+      `Con b bits de host hay 2^b − 2 direcciones utilizables; se necesita 2^b − 2 ≥ ${h} ⇒ 2^b ≥ ${h + 2} ⇒ b = ⌈log₂(${h + 2})⌉ = ${bits} (2^${bits} − 2 = ${2 ** bits - 2} utilizables).`));
   }
   // Cuántas subredes /X salen de una red /Y ⇒ 2^(X−Y).
   const subnetsIn: Q[] = [];
@@ -69,7 +69,7 @@ function genRedes(): Question[] {
     subnetsIn.push(mc(`gen-red-subin-${si}`, 'Subnetting', 3,
       `¿Cuántas subredes /${x} se pueden crear a partir de una red /${y}?`,
       num4(n, [x - y, 2 ** (x - y + 1), x + y]), 0,
-      `Se prestan X−Y = ${x}−${y} = ${x - y} bits ⇒ 2^${x - y} = ${n} subredes. (La trampa es responder los bits prestados, ${x - y}, en vez de las subredes.)`));
+      `De /${y} a /${x} se prestan X−Y = ${x}−${y} = ${x - y} bits del host, y con ${x - y} bits hay 2^${x - y} = ${n} subredes.`));
   }
   // Dirección de RED de un host dado su prefijo (bloque dentro del último octeto).
   const netAddr: Q[] = [];
@@ -97,7 +97,7 @@ function genRedes(): Question[] {
     tput.push(mc(`gen-red-tput-${ti}`, 'Rendimiento', 3,
       `¿Cuánto tarda en transferirse un archivo de ${mb} MB por un enlace de ${mbps} Mbps (ideal)?`,
       num4(s, [mb / mbps, s * 2, s / 2]).map((o) => `${o} s`), 0,
-      `${mb} MB = ${mb * 8} Mb (×8). Tiempo = ${mb * 8} Mb / ${mbps} Mbps = ${s} s. La trampa es dividir MB/Mbps sin convertir a bits.`));
+      `Primero se pasa de bytes a bits: ${mb} MB = ${mb * 8} Mb (×8). Tiempo = ${mb * 8} Mb / ${mbps} Mbps = ${s} s.`));
   }
   return withTopic('redes_comunicaciones', interleave(borrowSub, borrowHost, subnetsIn, netAddr, tput));
 }
@@ -115,7 +115,7 @@ function genArquitectura(): Question[] {
     tc.push(mc(`gen-arq-tc-${n}`, 'Representación', 3,
       `El patrón binario ${b} (8 bits) interpretado en COMPLEMENTO A 2, ¿qué número decimal representa?`,
       opts4(signed, [n, n - 128, 256 - n]), 0,
-      `El bit más significativo es 1 ⇒ negativo. ${b} = ${n} − 256 = ${signed}. Sin signo sería ${n} (esa es la trampa más común).`));
+      `El bit más significativo es 1, así que en complemento a 2 el número es negativo: ${b} = ${n} − 256 = ${signed}.`));
   }
   // Líneas de dirección para AL MENOS N celdas ⇒ ⌈log₂(N)⌉. Trampa: N o sin ⌈⌉.
   const addrFor: Q[] = [];
@@ -126,7 +126,7 @@ function genArquitectura(): Question[] {
     addrFor.push(mc(`gen-arq-addr-${ai}`, 'Memoria', 3,
       `¿Cuántas líneas de dirección se necesitan para poder direccionar AL MENOS ${n} celdas de memoria?`,
       num4(bits, [bits - 1, n, bits + 1]), 0,
-      `Con k líneas se direccionan 2^k celdas; hace falta 2^k ≥ ${n} ⇒ k = ⌈log₂(${n})⌉ = ${bits} (2^${bits} = ${2 ** bits}). Truncar el log da ${bits - 1}, que no alcanza.`));
+      `Con k líneas se direccionan 2^k celdas; hace falta 2^k ≥ ${n} ⇒ k = ⌈log₂(${n})⌉ = ${bits}, ya que 2^${bits} = ${2 ** bits} ≥ ${n}.`));
   }
   // Tiempo de CPU = (instrucciones × CPI) / frecuencia.
   const cpu: Q[] = [];
@@ -149,7 +149,7 @@ function genArquitectura(): Question[] {
     cap.push(mc(`gen-arq-cap-${pi}`, 'Memoria', 3,
       `Una memoria tiene ${k} líneas de dirección y palabras de ${w} bits. ¿Cuál es su capacidad en BYTES?`,
       num4(bytes, [cells, cells * w, bytes * 2]), 0,
-      `Celdas = 2^${k} = ${cells.toLocaleString('es')}; cada una guarda ${w} bits = ${w / 8} byte(s). Capacidad = ${cells.toLocaleString('es')} × ${w}/8 = ${bytes.toLocaleString('es')} bytes. Dar ${(cells * w).toLocaleString('es')} sería responder en BITS.`));
+      `Celdas = 2^${k} = ${cells.toLocaleString('es')}; cada una guarda ${w} bits = ${w / 8} byte(s). Capacidad = ${cells.toLocaleString('es')} × ${w}/8 = ${bytes.toLocaleString('es')} bytes.`));
   }
   return withTopic('arquitectura_computadoras', interleave(tc, addrFor, cpu, cap));
 }
@@ -166,7 +166,7 @@ function genAlgoritmos(): Question[] {
     bs.push(mc(`gen-alg-bs-${n}`, 'Complejidad', 3,
       `¿Cuántas comparaciones hace en el PEOR caso una búsqueda binaria sobre ${n} elementos ordenados?`,
       num4(c, [Math.ceil(n / 2), c + 1, c - 1]), 0,
-      `Cada comparación descarta la mitad ⇒ peor caso ⌈log₂(${n}+1)⌉ = ${c}. Responder n/2 = ${Math.ceil(n / 2)} confunde búsqueda binaria con lineal.`));
+      `Cada comparación descarta la mitad de los elementos restantes ⇒ peor caso ⌈log₂(${n}+1)⌉ = ${c} comparaciones.`));
   }
   // Inverso: con k comparaciones, ¿cuántos elementos como máximo? ⇒ 2^k − 1.
   const inv: Q[] = [];
@@ -175,7 +175,7 @@ function genAlgoritmos(): Question[] {
     inv.push(mc(`gen-alg-inv-${k}`, 'Complejidad', 3,
       `Con ${k} comparaciones, ¿sobre cuántos elementos como máximo garantiza una búsqueda binaria encontrar (o descartar) el dato?`,
       num4(n, [2 ** k, k * k, 2 ** (k - 1)]), 0,
-      `Con k comparaciones se cubren 2^k − 1 elementos ⇒ 2^${k} − 1 = ${n}. La trampa es responder 2^k = ${2 ** k} (olvidar el −1).`));
+      `Con k comparaciones se puede cubrir un arreglo de hasta 2^k − 1 elementos ⇒ 2^${k} − 1 = ${n}.`));
   }
   // BubbleSort: comparaciones en el peor caso ⇒ n(n−1)/2. Trampa: n².
   const bub: Q[] = [];
@@ -184,7 +184,7 @@ function genAlgoritmos(): Question[] {
     bub.push(mc(`gen-alg-bub-${n}`, 'Ordenamiento', 3,
       `¿Cuántas comparaciones realiza BubbleSort en el PEOR caso sobre ${n} elementos?`,
       num4(comp, [n * n, n * (n - 1), n], ), 0,
-      `Compara cada par una vez: n(n−1)/2 = ${n}×${n - 1}/2 = ${comp}. Es O(n²), pero el número exacto NO es n² (=${n * n}) sino la mitad de n(n−1).`));
+      `BubbleSort compara cada par de elementos: n(n−1)/2 = ${n}×${n - 1}/2 = ${comp} comparaciones (del orden de O(n²)).`));
   }
   // Altura MÍNIMA de un árbol binario con n nodos ⇒ ⌈log₂(n+1)⌉ − 1.
   const minH: Q[] = [];
@@ -193,7 +193,7 @@ function genAlgoritmos(): Question[] {
     minH.push(mc(`gen-alg-minh-${n}`, 'Árboles', 3,
       `¿Cuál es la altura MÍNIMA posible de un árbol binario con ${n} nodos (raíz en altura 0)?`,
       num4(h, [h + 1, n, n - 1]), 0,
-      `Un árbol lo más balanceado posible tiene altura ⌈log₂(n+1)⌉ − 1 = ⌈log₂(${n + 1})⌉ − 1 = ${h}. Si estuviera desbalanceado (lista) la altura sería ${n - 1}.`));
+      `Un árbol lo más balanceado posible tiene altura ⌈log₂(n+1)⌉ − 1 = ⌈log₂(${n + 1})⌉ − 1 = ${h}.`));
   }
   // Complejidad de patrones de bucles (conceptual).
   const bigo: Q[] = [];
@@ -226,7 +226,7 @@ function genSistemasOperativos(): Question[] {
     pages.push(mc(`gen-so-page-${pi}`, 'Memoria virtual', 3,
       `Un proceso de ${proc} KB se carga con páginas de ${pg} KB. ¿Cuántos marcos de página necesita?`,
       num4(n, [Math.floor(proc / pg), n + 1, n - 1]), 0,
-      `Marcos = ⌈${proc}/${pg}⌉ = ${n} (hay que redondear hacia ARRIBA: la última página, aunque quede parcial, ocupa un marco entero). Truncar daría ${Math.floor(proc / pg)}.`));
+      `Marcos = ⌈${proc}/${pg}⌉ = ${n}. Se redondea hacia arriba porque la última página, aunque quede parcialmente usada, ocupa un marco entero.`));
   }
   // Fragmentación interna = marcos×página − tamaño del proceso.
   const frag: Q[] = [];
@@ -257,7 +257,7 @@ function genSistemasOperativos(): Question[] {
     sjfWait.push(mc(`gen-so-sjf-${si}`, 'Planificación', 3,
       `Con SJF (no apropiativo, los tres en t=0) y ráfagas ${a}, ${b} y ${c} ms, ¿tiempo de espera PROMEDIO?`,
       num4(sAvg, [fAvg, sAvg + 1, sAvg - 1]).map((o) => `${o} ms`), 0,
-      `SJF ejecuta de menor a mayor ráfaga (${[a, b, c].slice().sort((x, y) => x - y).join(', ')}): esperas 0, ${s1}, ${s1 + s2}. Promedio = (0+${s1}+${s1 + s2})/3 = ${sAvg} ms. (La trampa es usar el orden de llegada como en FIFO.)`));
+      `SJF ejecuta de menor a mayor ráfaga (${[a, b, c].slice().sort((x, y) => x - y).join(', ')}): esperas 0, ${s1}, ${s1 + s2}. Promedio = (0+${s1}+${s1 + s2})/3 = ${sAvg} ms.`));
   }
   return withTopic('sistemas_operativos', interleave(pages, frag, fifoWait, sjfWait));
 }
@@ -277,7 +277,7 @@ function genParadigmas(): Question[] {
     prec.push(mc(`gen-par-prec-${pi}`, 'Operadores', 3,
       `En Java, ¿qué imprime System.out.println(${a} + ${b} / ${c})?`,
       num4(res, [Math.floor((a + b) / c), a + Math.round(b / c) + 1, res + 1]), 0,
-      `Por precedencia se evalúa ${b} / ${c} primero, y como son int la división trunca: ${Math.floor(b / c)}. Luego ${a} + ${Math.floor(b / c)} = ${res}. Hacer (${a}+${b})/${c} = ${Math.floor((a + b) / c)} ignora la precedencia.`));
+      `Por precedencia, "/" se evalúa antes que "+": ${b} / ${c} con int trunca a ${Math.floor(b / c)}, y luego ${a} + ${Math.floor(b / c)} = ${res}.`));
   }
   // Orden de concatenación: a + b + "x" suma primero; "x" + a + b concatena.
   const concat: Q[] = [];
@@ -287,11 +287,11 @@ function genParadigmas(): Question[] {
     concat.push(mc(`gen-par-cat-a-${ci}`, 'String', 3,
       `En Java, ¿qué imprime System.out.println(${a} + ${b} + "x")?`,
       opts4(`${a + b}x`, [`${a}${b}x`, `x${a + b}`, `${a}${b}`]), 0,
-      `Se evalúa de izquierda a derecha: ${a} + ${b} (ambos int) = ${a + b}, y recién ahí se concatena la "x" ⇒ "${a + b}x". La trampa "${a}${b}x" sería si concatenara los dígitos.`));
+      `Se evalúa de izquierda a derecha: ${a} + ${b} (ambos int) suma a ${a + b}, y recién ahí se concatena con la "x" ⇒ "${a + b}x".`));
     concat.push(mc(`gen-par-cat-b-${ci}`, 'String', 3,
       `En Java, ¿qué imprime System.out.println("x" + ${a} + ${b})?`,
       opts4(`x${a}${b}`, [`x${a + b}`, `${a + b}x`, `${a}${b}x`]), 0,
-      `Al empezar con el String "x", todo lo que sigue se CONCATENA: "x" + ${a} = "x${a}", + ${b} = "x${a}${b}". No se suman: dar "x${a + b}" sería el error.`));
+      `Al empezar con el String "x", todo lo que sigue se CONCATENA: "x" + ${a} = "x${a}", y + ${b} = "x${a}${b}".`));
   }
   // Post-incremento en una expresión: x++ + x con x = a ⇒ a + (a+1) = 2a+1.
   const inc: Q[] = [];
@@ -300,7 +300,7 @@ function genParadigmas(): Question[] {
     inc.push(mc(`gen-par-inc-${a}`, 'Operadores', 3,
       `En Java: int x = ${a}; System.out.println(x++ + x); ¿Qué imprime?`,
       num4(res, [2 * a, 2 * a + 2, a], ), 0,
-      `x++ usa el valor actual (${a}) y luego incrementa x a ${a + 1}; el segundo x ya vale ${a + 1}. Resultado: ${a} + ${a + 1} = ${res}. Olvidar el incremento daría ${2 * a}.`));
+      `x++ usa el valor actual (${a}) y luego incrementa x a ${a + 1}; cuando se evalúa el segundo x, ya vale ${a + 1}. Resultado: ${a} + ${a + 1} = ${res}.`));
   }
   // 'char' + int da un int (su código), NO el carácter siguiente.
   const chr: Q[] = [];
@@ -309,7 +309,7 @@ function genParadigmas(): Question[] {
     chr.push(mc(`gen-par-char-${n}`, 'Tipos y operadores', 3,
       `En Java, ¿qué imprime System.out.println('A' + ${n})?`,
       opts4(`${code}`, [`'${String.fromCharCode(code)}'`, `${n}`, `A${n}`]), 0,
-      `'A' + ${n} hace aritmética de ENTEROS: 'A' vale 65, así que da ${code} (un int), NO el carácter '${String.fromCharCode(code)}'. Para obtener la letra habría que castear a char.`));
+      `'A' + ${n} hace aritmética de ENTEROS: 'A' vale 65, así que la expresión da ${code} (un int). Para obtener un carácter habría que castear el resultado a char.`));
   }
   return withTopic('paradigmas_lenguajes', interleave(prec, concat, inc, chr));
 }
@@ -327,7 +327,7 @@ function genBasesDatos(): Question[] {
     joinmult.push(mc(`gen-bd-jm-${i}`, 'JOIN', 3,
       `La tabla Pedido tiene ${p} filas y Detalle tiene ${d} filas (cada pedido tiene exactamente ${m} líneas de detalle, con su FK pedido_id). ¿Cuántas filas devuelve "Pedido INNER JOIN Detalle ON Detalle.pedido_id = Pedido.id"?`,
       num4(d, [p * d, p, p + d]), 0,
-      `El JOIN empareja cada detalle con su pedido por la FK: hay ${d} detalles ⇒ ${d} filas. NO es el producto cartesiano (${p}×${d}=${p * d}); la condición de join descarta las combinaciones que no coinciden.`));
+      `El JOIN empareja cada detalle con su único pedido a través de la FK: como hay ${d} detalles, el resultado tiene ${d} filas (la condición Detalle.pedido_id = Pedido.id une cada fila solo con la que coincide).`));
   }
   // T2 — GROUP BY colapsa en un grupo por valor distinto: la trampa es
   // responder la cantidad total de filas en vez de los grupos distintos.
@@ -339,7 +339,7 @@ function genBasesDatos(): Question[] {
     groupby.push(mc(`gen-bd-gb-${g}`, 'SQL', 3,
       `La tabla Venta tiene ${v} filas, con ventas realizadas por ${dist} vendedores distintos. ¿Cuántas filas devuelve "SELECT vendedor, COUNT(*) FROM Venta GROUP BY vendedor"?`,
       num4(dist, [v, v - dist, dist + 1]), 0,
-      `GROUP BY produce una fila por cada valor DISTINTO del campo agrupado: hay ${dist} vendedores ⇒ ${dist} filas, no las ${v} filas originales (esas se cuentan dentro de cada grupo).`));
+      `GROUP BY produce una fila por cada valor DISTINTO del campo agrupado: hay ${dist} vendedores ⇒ ${dist} filas. Las ${v} filas originales se reparten dentro de cada grupo (eso es lo que cuenta COUNT(*)).`));
   }
   // T3 — LEFT JOIN: conserva las filas de la izquierda sin coincidencia. La
   // trampa es olvidar las filas sin match (o contar el producto cartesiano).
@@ -361,7 +361,7 @@ function genBasesDatos(): Question[] {
     deg.push(mc(`gen-bd-deg-${a}-${b}`, 'Modelo relacional', 2,
       `Una relación R tiene grado ${a} (atributos) y cardinalidad 50 (filas). Si se hace una proyección sobre ${b} atributos (sin eliminar duplicados), ¿cuál es el GRADO del resultado?`,
       num4(b, [a, 50, a - b]), 0,
-      `La proyección elige columnas: el grado (nº de columnas) pasa a ser ${b}. La cardinalidad (nº de filas) no es lo que se pregunta; el grado depende de los atributos proyectados.`));
+      `El grado de una relación es su número de columnas; al proyectar sobre ${b} atributos, el resultado tiene grado ${b} (la cardinalidad, que es el número de filas, es un concepto aparte).`));
   }
   return withTopic('base_de_datos', interleave(joinmult, groupby, leftjoin, deg));
 }
