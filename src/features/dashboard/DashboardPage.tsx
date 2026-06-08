@@ -94,7 +94,13 @@ export function DashboardPage() {
         />
         <p className="mt-3 text-sm text-white/68">
           Tema mas debil:{' '}
-          <span className="font-semibold" style={weakest ? { color: TOPIC_THEME[weakest].color } : undefined}>
+          <span
+            className="font-bold"
+            style={weakest ? {
+              color: TOPIC_THEME[weakest].color,
+              textShadow: `0 0 6px ${TOPIC_THEME[weakest].color}, 0 0 14px ${TOPIC_THEME[weakest].color}, 0 0 24px ${TOPIC_THEME[weakest].border}`,
+            } : undefined}
+          >
             {weakest ? TOPIC_LABELS[weakest] : 'aun sin datos suficientes'}
           </span>
         </p>
