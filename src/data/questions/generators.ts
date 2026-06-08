@@ -272,30 +272,53 @@ function genParadigmas(): Question[] {
 // ──────────────────── BASES DE DATOS ────────────────────
 
 function genBasesDatos(): Question[] {
-  const cart: Q[] = [];
-  let xi = 0;
-  for (let a = 2; a <= 16; a++) for (let b = 2; b <= 16; b++) {
-    xi++;
-    cart.push(mc(`gen-bd-cart-${xi}`, 'Álgebra relacional', 2,
-      `Una tabla A tiene ${a} tuplas y B tiene ${b} tuplas. ¿Cuántas tuplas devuelve el producto cartesiano A × B?`,
-      num4(a * b, [a + b, a * b + a, a * b - b]), 0,
-      `El producto cartesiano combina cada tupla de A con cada una de B: ${a} × ${b} = ${a * b}.`));
+  // T1 — Cardinalidad de un INNER JOIN por FK: la trampa es responder el
+  // producto cartesiano (P×D) en lugar de D (la condición de join lo evita).
+  const joinmult: Q[] = [];
+  let i = 0;
+  for (let p = 4; p <= 30; p++) for (const m of [2, 3, 4, 5]) {
+    i++;
+    const d = p * m;
+    joinmult.push(mc(`gen-bd-jm-${i}`, 'JOIN', 3,
+      `La tabla Pedido tiene ${p} filas y Detalle tiene ${d} filas (cada pedido tiene exactamente ${m} líneas de detalle, con su FK pedido_id). ¿Cuántas filas devuelve "Pedido INNER JOIN Detalle ON Detalle.pedido_id = Pedido.id"?`,
+      num4(d, [p * d, p, p + d]), 0,
+      `El JOIN empareja cada detalle con su pedido por la FK: hay ${d} detalles ⇒ ${d} filas. NO es el producto cartesiano (${p}×${d}=${p * d}); la condición de join descarta las combinaciones que no coinciden.`));
   }
-  const join: Q[] = [];
-  for (let n = 3; n <= 20; n++) {
-    join.push(mc(`gen-bd-join-${n}`, 'JOIN', 3,
-      `Pedido tiene ${n} filas, cada una con una FK válida a Cliente. ¿Cuántas filas como máximo devuelve \`Pedido INNER JOIN Cliente\`?`,
-      num4(n, [n + 1, n * 2, n - 1]), 0,
-      `Relación N:1: cada Pedido matchea un solo Cliente ⇒ ${n} filas.`));
+  // T2 — GROUP BY colapsa en un grupo por valor distinto: la trampa es
+  // responder la cantidad total de filas en vez de los grupos distintos.
+  const groupby: Q[] = [];
+  let g = 0;
+  for (let v = 12; v <= 40; v++) for (const k of [3, 4, 5, 6]) {
+    g++;
+    const dist = Math.min(k, v);
+    groupby.push(mc(`gen-bd-gb-${g}`, 'SQL', 3,
+      `La tabla Venta tiene ${v} filas, con ventas realizadas por ${dist} vendedores distintos. ¿Cuántas filas devuelve "SELECT vendedor, COUNT(*) FROM Venta GROUP BY vendedor"?`,
+      num4(dist, [v, v - dist, dist + 1]), 0,
+      `GROUP BY produce una fila por cada valor DISTINTO del campo agrupado: hay ${dist} vendedores ⇒ ${dist} filas, no las ${v} filas originales (esas se cuentan dentro de cada grupo).`));
   }
+  // T3 — LEFT JOIN: conserva las filas de la izquierda sin coincidencia. La
+  // trampa es olvidar las filas sin match (o contar el producto cartesiano).
+  const leftjoin: Q[] = [];
+  let l = 0;
+  for (let c = 6; c <= 24; c++) for (const sinPed of [1, 2]) for (const ppc of [2, 3]) {
+    l++;
+    const conPed = c - sinPed;
+    const k = conPed * ppc;
+    const total = k + sinPed;
+    leftjoin.push(mc(`gen-bd-lj-${l}`, 'JOIN', 3,
+      `Cliente tiene ${c} filas; ${sinPed} de esos clientes no tienen pedidos y los demás tienen ${ppc} pedidos cada uno. ¿Cuántas filas devuelve "Cliente LEFT JOIN Pedido"?`,
+      num4(total, [k, c, c * ppc]), 0,
+      `LEFT JOIN conserva a TODOS los clientes: los ${conPed} con pedidos aportan ${conPed}×${ppc}=${k} filas, y los ${sinPed} sin pedidos aportan 1 fila cada uno (con NULL en las columnas de Pedido). Total = ${k}+${sinPed} = ${total}.`));
+  }
+  // T4 — Grado de una proyección (concepto de "grado" = nº de columnas).
   const deg: Q[] = [];
-  for (let a = 2; a <= 12; a++) for (const b of [2, 3, 4]) {
+  for (let a = 3; a <= 12; a++) for (const b of [2, 3, 4]) {
     deg.push(mc(`gen-bd-deg-${a}-${b}`, 'Modelo relacional', 2,
-      `Si una relación R tiene grado ${a} (atributos) y se le hace una proyección sobre ${b} atributos, ¿cuál es el grado del resultado?`,
-      num4(b, [a, a - b, b + 1]), 0,
-      `La proyección reduce el grado a la cantidad de atributos proyectados: ${b}. (El "grado" es el nº de columnas).`));
+      `Una relación R tiene grado ${a} (atributos) y cardinalidad 50 (filas). Si se hace una proyección sobre ${b} atributos (sin eliminar duplicados), ¿cuál es el GRADO del resultado?`,
+      num4(b, [a, 50, a - b]), 0,
+      `La proyección elige columnas: el grado (nº de columnas) pasa a ser ${b}. La cardinalidad (nº de filas) no es lo que se pregunta; el grado depende de los atributos proyectados.`));
   }
-  return withTopic('base_de_datos', interleave(join, deg, cart));
+  return withTopic('base_de_datos', interleave(joinmult, groupby, leftjoin, deg));
 }
 
 // ──────────────────── ANÁLISIS Y DISEÑO ────────────────────
