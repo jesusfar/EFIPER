@@ -280,7 +280,7 @@ export const SIGGY_DIALOGUES: SiggyDialogue[] = [
   { id: 276, text: "Tu código tiene olor a prompt recién copiado." },
   { id: 277, text: "El EFIP no se puede aprobar con screenshots de confianza." },
   { id: 278, text: "Un Indú no necesita robarte el trabajo. Vos se lo dejás en bandeja con variables llamadas cosa1." },
-  { id: 279, text: "La plomería paga más porque cuando decís ‘sé conectar cosas’, lo demostrós sin PowerPoint.", sprites: ["Plomero.png"] },
+  { id: 279, text: "La plomería paga más porque cuando decís ‘sé conectar cosas’, lo demostras sin PowerPoint.", sprites: ["Plomero.png"] },
   { id: 280, text: "Canvas te mira. Sabe que descargaste el PDF y nunca volviste." },
   { id: 281, text: "Vibecoding es como estudiar por pregunteros: puede funcionar una vez, pero no construye alma." },
   { id: 282, text: "Siglo 21: donde el alumno aprende a autogestionarse o a volverse experto en excusas." },
