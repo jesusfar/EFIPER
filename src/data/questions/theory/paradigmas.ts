@@ -283,4 +283,283 @@ export const paradigmasTheory = withTopic('paradigmas_lenguajes', [
       'Java admite herencia múltiple de clases con extends',
     ], [0, 1, 2, 3],
     'Objeto = instancia, constructor inicializa, encapsulamiento protege y polimorfismo usa overriding son correctas. La clase NO es instancia del objeto (es al revés) y Java no tiene herencia múltiple de clases.'),
+
+  mc('par-t-031', 'Tipos y operadores', 2,
+    '¿Cuál de los siguientes es un tipo primitivo en Java?',
+    [
+      'int',
+      'String',
+      'Integer',
+      'ArrayList',
+    ], 0,
+    'int es un tipo primitivo. String, Integer (wrapper) y ArrayList son clases (objetos), no primitivos.'),
+
+  mc('par-t-032', 'Tipos y operadores', 2,
+    'En Java, ¿cuál es el resultado de la expresión "7 / 2" si ambos operandos son int?',
+    [
+      '3',
+      '3.5',
+      '4',
+      '3.0',
+    ], 0,
+    'La división entre dos int es entera: descarta la parte decimal. 7 / 2 = 3. Para obtener 3.5 habría que usar double.'),
+
+  mc('par-t-033', 'Tipos y operadores', 2,
+    'En Java, ¿cuál es el resultado de "17 % 5"?',
+    [
+      '2',
+      '3',
+      '3.4',
+      '12',
+    ], 0,
+    'El operador % devuelve el resto de la división entera: 17 = 3×5 + 2, por lo tanto 17 % 5 = 2.'),
+
+  mc('par-t-034', 'Tipos y operadores', 3,
+    'Para obtener el resultado decimal de 7 dividido 2 en Java, hay que…',
+    [
+      'Castear a double: (double) 7 / 2 da 3.5',
+      'Usar 7 % 2',
+      'No es posible obtener decimales en Java',
+      'Usar siempre tipos int',
+    ], 0,
+    'Si al menos un operando es double, la división es real: (double) 7 / 2 = 3.5. Con ambos int, el resultado se trunca a 3.'),
+
+  tf('par-t-035', 'Tipos y operadores', 3,
+    'En Java, asignar un valor double a una variable int se hace automáticamente, sin necesidad de un cast.',
+    false,
+    'Falso. Pasar de double a int es una conversión ESTRECHA (puede perder datos), así que requiere un cast explícito: (int). De int a double sí es automático (ampliación).'),
+
+  mc('par-t-036', 'Tipos y operadores', 3,
+    'La conversión de int a double en Java…',
+    [
+      'Es automática (ampliación/widening), sin pérdida de información',
+      'Requiere un cast y pierde datos',
+      'No es posible',
+      'Es idéntica a convertir de double a int',
+    ], 0,
+    'int → double es una ampliación: cabe sin perder datos y el compilador la hace sola. El sentido inverso (double → int) sí necesita cast y puede truncar.'),
+
+  mc('par-t-037', 'Tipos y operadores', 3,
+    'En Java, ¿qué valor produce la expresión "(int) \'A\'"?',
+    [
+      '65 (su código en la tabla ASCII/Unicode)',
+      "El carácter 'A'",
+      '1',
+      '0',
+    ], 0,
+    "El carácter 'A' tiene código 65; al castearlo a int se obtiene ese valor numérico. Los char se pueden tratar como enteros en operaciones aritméticas.",
+  ),
+
+  ms('par-t-038', 'Tipos y operadores', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre tipos y operadores en Java:',
+    [
+      'La división entre dos int es entera (descarta el decimal)',
+      'El operador % devuelve el resto de la división',
+      'La conversión de int a double es automática',
+      'La conversión de double a int requiere un cast explícito',
+      '"7 / 2" da 3.5 cuando ambos operandos son int',
+      'La conversión de double a int es automática',
+    ], [0, 1, 2, 3],
+    'División int entera, % resto, int→double automático y double→int con cast son correctas. 7/2 con int da 3 (no 3.5) y double→int NO es automático.'),
+
+  mc('par-t-039', 'Operadores', 3,
+    'En Java, el operador && (AND lógico)…',
+    [
+      'Es de cortocircuito: si el primer operando es false, no evalúa el segundo',
+      'Siempre evalúa ambos operandos',
+      'Es un operador a nivel de bits',
+      'Devuelve un número entero',
+    ], 0,
+    'El && cortocircuita: si el primer operando ya determina el resultado (false), no evalúa el segundo. Esto evita errores (ej. comprobar null antes de acceder a un método).'),
+
+  mc('par-t-040', 'Control de flujo', 3,
+    'En Java, si en un switch se omite el break en un caso…',
+    [
+      'La ejecución "cae" (fall-through) y continúa con el siguiente caso',
+      'Salta automáticamente al final del switch',
+      'Se produce un error de compilación',
+      'Se repite el mismo caso',
+    ], 0,
+    'Sin break, la ejecución continúa en los casos siguientes (fall-through) hasta encontrar un break o el final del switch. A veces se usa a propósito, pero suele ser un error.'),
+
+  mc('par-t-041', 'Control de flujo', 2,
+    '¿Cuántas veces se ejecuta el cuerpo de "for (int i = 0; i < 5; i++)"?',
+    [
+      '5',
+      '4',
+      '6',
+      'Infinitas',
+    ], 0,
+    'i toma los valores 0, 1, 2, 3 y 4 (mientras i < 5): el cuerpo se ejecuta 5 veces.'),
+
+  tf('par-t-042', 'Control de flujo', 3,
+    'Un bucle do-while ejecuta su cuerpo al menos una vez, ya que evalúa la condición DESPUÉS de ejecutarlo (a diferencia del while).',
+    true,
+    'Verdadero. El do-while ejecuta el cuerpo primero y luego evalúa la condición; el while la evalúa antes y, si es falsa, puede no ejecutarse ninguna vez.'),
+
+  mc('par-t-043', 'String', 2,
+    'En Java, los objetos String son…',
+    [
+      'Inmutables: no se pueden modificar después de creados',
+      'Mutables: se pueden cambiar en su lugar',
+      'Tipos primitivos',
+      'Siempre null por defecto',
+    ], 0,
+    'Una vez creado, un String no cambia: cualquier "modificación" (concatenar, reemplazar) genera un nuevo objeto String. Por eso son seguros para compartir.'),
+
+  mc('par-t-044', 'String', 3,
+    'Cada concatenación de String con el operador "+"…',
+    [
+      'Crea un nuevo objeto String (por la inmutabilidad); para muchas concatenaciones conviene StringBuilder',
+      'Modifica el String original en su lugar',
+      'No consume memoria adicional',
+      'Es más rápida que StringBuilder dentro de un bucle',
+    ], 0,
+    'Como String es inmutable, cada "+" crea un objeto nuevo; en un bucle eso genera muchos objetos temporales. StringBuilder modifica un buffer mutable, mucho más eficiente.'),
+
+  mc('par-t-045', 'String', 3,
+    'En Java, para comparar el CONTENIDO de dos String conviene usar…',
+    [
+      '.equals() (== compara referencias, no el contenido)',
+      '== en todos los casos',
+      'Los operadores > y <',
+      'El operador +',
+    ], 0,
+    '.equals() compara los caracteres (el contenido); == compara si son el mismo objeto en memoria, lo que puede dar false aunque el texto sea igual.'),
+
+  tf('par-t-046', 'String', 3,
+    'En Java, comparar dos String con == siempre devuelve true si tienen el mismo contenido.',
+    false,
+    'Falso. == compara REFERENCIAS, no contenido: dos String con igual texto pero distintos objetos dan false. Para comparar el contenido se usa .equals().'),
+
+  ms('par-t-047', 'String', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre String en Java:',
+    [
+      'String es inmutable (no cambia tras crearse)',
+      '.equals() compara el contenido de los String',
+      '== compara referencias (si son el mismo objeto)',
+      'StringBuilder conviene para concatenar muchas veces (ej. en un bucle)',
+      'String es mutable y se puede modificar en su lugar',
+      '== compara el contenido de dos String',
+    ], [0, 1, 2, 3],
+    'String inmutable, .equals() (contenido), == (referencias) y StringBuilder (muchas concatenaciones) son correctas. String NO es mutable y == NO compara contenido.'),
+
+  mc('par-t-048', 'Arrays', 2,
+    'En Java, un arreglo (array)…',
+    [
+      'Tiene un tamaño fijo definido al crearse y se accede por índice desde 0',
+      'Crece dinámicamente sin ningún límite',
+      'No tiene índices',
+      'Es exactamente lo mismo que un ArrayList',
+    ], 0,
+    'El array reserva un tamaño fijo al crearse (new int[n]) y se indexa desde 0 hasta n−1. Para colecciones que crecen se usa ArrayList.'),
+
+  mc('par-t-049', 'Arrays', 3,
+    'Acceder a un índice fuera del rango de un array en Java…',
+    [
+      'Lanza una excepción ArrayIndexOutOfBoundsException en tiempo de ejecución',
+      'Devuelve null',
+      'Devuelve 0',
+      'Produce un error de compilación',
+    ], 0,
+    'Java verifica los límites en ejecución: acceder fuera de rango (ej. índice n en un array de tamaño n) lanza ArrayIndexOutOfBoundsException.'),
+
+  mc('par-t-050', 'Arrays', 3,
+    '¿Cuál es la diferencia entre un array y un ArrayList?',
+    [
+      'El array es de tamaño fijo; el ArrayList crece dinámicamente y ofrece métodos (add, remove, size)',
+      'El ArrayList es de tamaño fijo y el array dinámico',
+      'El array crece dinámicamente al agregar elementos',
+      'Son estructuras idénticas',
+    ], 0,
+    'El array tiene tamaño fijo y es más eficiente; el ArrayList (del framework de colecciones) redimensiona solo y trae métodos cómodos, a costa de algo de overhead.'),
+
+  tf('par-t-051', 'Arrays', 3,
+    'En Java, los arreglos (arrays) tienen un tamaño fijo definido al crearse y no pueden cambiarlo después.',
+    true,
+    'Verdadero. El tamaño del array es fijo. Para una colección que crece o se achica dinámicamente se usa ArrayList u otra estructura del framework de colecciones.'),
+
+  mc('par-t-052', 'Excepciones', 2,
+    'En Java, el bloque try-catch sirve para…',
+    [
+      'Capturar y manejar excepciones que pueden ocurrir durante la ejecución',
+      'Declarar variables locales',
+      'Definir una nueva clase',
+      'Crear un bucle de repetición',
+    ], 0,
+    'El código que puede fallar va en el try; si lanza una excepción, el catch correspondiente la captura y la maneja, evitando que el programa se detenga abruptamente.'),
+
+  mc('par-t-053', 'Excepciones', 3,
+    'El bloque finally en un try-catch…',
+    [
+      'Se ejecuta siempre, ocurra o no una excepción (ideal para liberar recursos)',
+      'Solo se ejecuta si ocurre una excepción',
+      'Solo se ejecuta si NO ocurre ninguna excepción',
+      'Nunca se ejecuta',
+    ], 0,
+    'El finally corre pase lo que pase (haya excepción o no, e incluso con un return en el try), por eso es ideal para cerrar archivos, conexiones u otros recursos.'),
+
+  mc('par-t-054', 'Excepciones', 3,
+    '¿Cuál es la diferencia entre las excepciones checked y unchecked?',
+    [
+      'Las checked deben declararse o capturarse (el compilador lo exige); las unchecked (RuntimeException) no',
+      'Las unchecked deben declararse obligatoriamente',
+      'Son exactamente lo mismo',
+      'Las checked solo ocurren en tiempo de compilación',
+    ], 0,
+    'Las checked (ej. IOException) obligan a manejarlas (try-catch o throws); las unchecked (RuntimeException, ej. NullPointer) no lo exigen, suelen ser errores de programación.'),
+
+  mc('par-t-055', 'Excepciones', 3,
+    'NullPointerException y ArrayIndexOutOfBoundsException son ejemplos de…',
+    [
+      'Excepciones unchecked (heredan de RuntimeException)',
+      'Excepciones checked',
+      'Errores de compilación',
+      'Advertencias (warnings) del compilador',
+    ], 0,
+    'Ambas son RuntimeException (unchecked): el compilador no obliga a capturarlas; suelen indicar errores de lógica que conviene prevenir con validaciones.'),
+
+  tf('par-t-056', 'Excepciones', 3,
+    'El bloque finally solo se ejecuta cuando NO se lanzó ninguna excepción en el try.',
+    false,
+    'Falso. El finally se ejecuta SIEMPRE: haya o no excepción, e incluso si el try tiene un return. Por eso es el lugar ideal para liberar recursos.'),
+
+  ms('par-t-057', 'Excepciones', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre el manejo de excepciones:',
+    [
+      'try-catch captura y maneja excepciones en tiempo de ejecución',
+      'El bloque finally se ejecuta siempre, ocurra o no una excepción',
+      'Las excepciones checked deben declararse o capturarse',
+      'Las excepciones unchecked heredan de RuntimeException',
+      'El bloque finally solo se ejecuta si ocurrió una excepción',
+      'Las excepciones unchecked deben declararse obligatoriamente',
+    ], [0, 1, 2, 3],
+    'try-catch (captura), finally (siempre), checked (obligan a manejar) y unchecked (RuntimeException) son correctas. El finally corre siempre y las unchecked NO obligan a declararse.'),
+
+  mc('par-t-058', 'Tipos y operadores', 3,
+    'El autoboxing en Java es…',
+    [
+      'La conversión automática entre un primitivo (int) y su clase envoltorio (Integer)',
+      'Convertir un objeto en primitivo manualmente con un cast',
+      'La creación de un arreglo de objetos',
+      'El lanzamiento de una excepción',
+    ], 0,
+    'El autoboxing convierte automáticamente un primitivo a su wrapper (int → Integer) y el unboxing al revés, lo que permite usar primitivos en colecciones genéricas (que guardan objetos).'),
+
+  tf('par-t-059', 'Tipos y operadores', 3,
+    'El autoboxing permite que un int se convierta automáticamente a Integer (y el unboxing al revés), lo que resulta útil al usar colecciones genéricas que solo aceptan objetos.',
+    true,
+    'Verdadero. Gracias al autoboxing/unboxing se pueden guardar primitivos en estructuras como ArrayList<Integer>, ya que las colecciones genéricas almacenan objetos, no primitivos.'),
+
+  ms('par-t-060', 'Repaso', 3,
+    'Repaso: seleccioná TODAS las afirmaciones correctas:',
+    [
+      'La división entre dos int trunca el decimal',
+      'String es inmutable en Java',
+      'El bloque finally se ejecuta siempre',
+      'Los arrays tienen un tamaño fijo definido al crearse',
+      '== compara el contenido de dos String',
+      'Los arrays crecen dinámicamente al agregar elementos',
+    ], [0, 1, 2, 3],
+    'División int trunca, String inmutable, finally siempre y arrays de tamaño fijo son correctas. == compara referencias (no contenido) y los arrays NO crecen (eso es ArrayList).'),
 ]);
