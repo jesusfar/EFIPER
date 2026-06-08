@@ -844,4 +844,277 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
       'Reducir la cantidad de núcleos',
     ], 0,
     'El ILP aprovecha que instrucciones sin dependencias pueden solaparse (pipeline) o lanzarse a la vez (superescalar: varias unidades de ejecución por ciclo).'),
+
+  mc('arq-t-091', 'Memoria', 3,
+    'Sobre los niveles de caché L1, L2 y L3, ¿cuál afirmación es correcta?',
+    [
+      'L1 es la más pequeña y rápida (cerca del núcleo); L3 es la más grande y lenta, a menudo compartida entre núcleos',
+      'L3 es la más rápida y pequeña, y L1 la más grande',
+      'L1 es compartida entre todos los núcleos y L3 es privada de cada uno',
+      'No hay diferencias de velocidad ni tamaño entre los niveles',
+    ], 0,
+    'Al alejarse del núcleo, la caché crece y se vuelve más lenta: L1 (chica/rápida, por núcleo) → L2 → L3 (grande/lenta, suele compartirse entre núcleos).'),
+
+  tf('arq-t-092', 'Memoria', 3,
+    'En una caché de varios niveles, la L1 es siempre de mayor tamaño que la L3.',
+    false,
+    'Falso. Es al revés: L1 es la más PEQUEÑA y rápida (cerca del núcleo); L3 es la más GRANDE (y más lenta). El tamaño crece y la velocidad baja al alejarse del núcleo.'),
+
+  mc('arq-t-093', 'Memoria virtual', 3,
+    'La MMU (Unidad de Gestión de Memoria)…',
+    [
+      'Traduce direcciones virtuales a físicas y aplica la protección de memoria',
+      'Planifica los procesos en la CPU',
+      'Es la memoria caché de nivel 1',
+      'Decodifica las instrucciones del programa',
+    ], 0,
+    'La MMU realiza la traducción virtual→física (usando la tabla de páginas/TLB) y verifica los permisos de acceso, aislando los espacios de los procesos.'),
+
+  mc('arq-t-094', 'Memoria virtual', 3,
+    'La TLB (Translation Lookaside Buffer)…',
+    [
+      'Cachea las traducciones de página recientes para acelerar la conversión virtual→física',
+      'Almacena el programa completo en ejecución',
+      'Es la memoria principal del sistema',
+      'Reemplaza por completo a la tabla de páginas',
+    ], 0,
+    'La TLB es una caché de traducciones: evita consultar la tabla de páginas en RAM en cada acceso, acelerando enormemente la traducción de direcciones.'),
+
+  tf('arq-t-095', 'Memoria virtual', 3,
+    'Un acierto en la TLB (TLB hit) evita tener que recorrer la tabla de páginas en memoria, acelerando la traducción de la dirección.',
+    true,
+    'Verdadero. Si la traducción está en la TLB (hit), se obtiene el marco físico de inmediato; recorrer la tabla de páginas en RAM solo es necesario ante un TLB miss.'),
+
+  ms('arq-t-096', 'Memoria virtual', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre la memoria virtual a nivel de hardware:',
+    [
+      'La MMU traduce direcciones virtuales a físicas',
+      'La TLB cachea traducciones para acelerar el acceso',
+      'La tabla de páginas mapea páginas virtuales a marcos físicos',
+      'Un page fault trae la página faltante desde el disco',
+      'La MMU se encarga de planificar la CPU',
+      'La TLB almacena el programa completo en ejecución',
+    ], [0, 1, 2, 3],
+    'MMU (traduce + protege), TLB (cachea traducciones), tabla de páginas (mapea) y page fault (trae del disco) son correctas. La MMU no planifica la CPU y la TLB no guarda el programa.'),
+
+  mc('arq-t-097', 'Aritmética binaria', 2,
+    'Multiplicar un número binario por 2 equivale a…',
+    [
+      'Desplazarlo un bit a la izquierda',
+      'Desplazarlo un bit a la derecha',
+      'Invertir todos sus bits',
+      'Sumarle 1',
+    ], 0,
+    'Cada desplazamiento a la izquierda multiplica por 2 (agrega un 0 a la derecha): x << 1 = x × 2.'),
+
+  mc('arq-t-098', 'Aritmética binaria', 3,
+    'Dividir un entero binario sin signo por 4 equivale a…',
+    [
+      'Desplazarlo 2 bits a la derecha',
+      'Desplazarlo 2 bits a la izquierda',
+      'Multiplicarlo por 2',
+      'Sumarle 4',
+    ], 0,
+    'Cada desplazamiento a la derecha divide por 2 (descartando el bit menos significativo): >> 2 equivale a dividir por 2² = 4.'),
+
+  mc('arq-t-099', 'Aritmética binaria', 3,
+    '¿Cuánto vale en decimal el resultado de la operación 5 << 3 (desplazamiento a la izquierda)?',
+    [
+      '40',
+      '15',
+      '8',
+      '20',
+    ], 0,
+    '"x << n" equivale a x × 2ⁿ: 5 × 2³ = 5 × 8 = 40.'),
+
+  tf('arq-t-100', 'Aritmética binaria', 3,
+    'Desplazar un número binario un bit a la DERECHA equivale a multiplicarlo por 2.',
+    false,
+    'Falso. Desplazar a la DERECHA DIVIDE por 2 (descarta el bit menos significativo). Multiplicar por 2 es desplazar a la IZQUIERDA.'),
+
+  mc('arq-t-101', 'Representación', 3,
+    'Un problema típico de la representación en punto flotante (IEEE 754) es…',
+    [
+      'Que muchos decimales no se representan de forma exacta, generando errores de redondeo (ej. 0,1 + 0,2)',
+      'Que no puede representar números negativos',
+      'Que solo puede representar números enteros',
+      'Que tiene precisión infinita',
+    ], 0,
+    'Con bits finitos, valores como 0,1 no tienen representación exacta en binario; por eso las sumas de flotantes acumulan pequeños errores de redondeo.'),
+
+  mc('arq-t-102', 'Rendimiento', 2,
+    'La unidad MIPS mide…',
+    [
+      'Millones de instrucciones por segundo (rendimiento de la CPU)',
+      'La capacidad de la memoria',
+      'El ancho del bus de datos',
+      'La frecuencia del reloj',
+    ], 0,
+    'MIPS = millones de instrucciones por segundo, una medida (limitada) de la velocidad de ejecución del procesador.'),
+
+  mc('arq-t-103', 'Rendimiento', 2,
+    'Los FLOPS miden…',
+    [
+      'Operaciones de punto flotante por segundo (rendimiento en cálculo numérico/científico)',
+      'Instrucciones enteras por segundo',
+      'Bits por segundo de la red',
+      'La capacidad del disco',
+    ], 0,
+    'FLOPS (Floating Point Operations Per Second) miden la capacidad de cálculo con números reales, clave en computación científica, IA y supercomputación.'),
+
+  tf('arq-t-104', 'Rendimiento', 3,
+    'Los MIPS son una medida perfecta y universal para comparar el rendimiento de CPU de arquitecturas distintas.',
+    false,
+    'Falso. Los MIPS dependen del conjunto de instrucciones: una instrucción CISC hace más trabajo que una RISC, así que comparar MIPS entre arquitecturas distintas es engañoso.'),
+
+  mc('arq-t-105', 'E/S', 3,
+    'En la E/S mapeada en memoria (memory-mapped I/O)…',
+    [
+      'Los registros de los dispositivos se acceden con direcciones del mismo espacio de memoria, usando las instrucciones normales de load/store',
+      'Se usan instrucciones de E/S especiales y un espacio de direcciones separado',
+      'No es posible acceder a los dispositivos',
+      'Los dispositivos no tienen registros accesibles',
+    ], 0,
+    'En memory-mapped I/O, los registros de los dispositivos ocupan direcciones del espacio de memoria; se leen/escriben con load/store comunes, sin instrucciones especiales.'),
+
+  mc('arq-t-106', 'E/S', 3,
+    'La E/S por puertos (port-mapped / aislada)…',
+    [
+      'Usa un espacio de direcciones separado y instrucciones específicas (IN/OUT) para los dispositivos',
+      'Comparte el mismo espacio de direcciones que la memoria',
+      'Es exactamente lo mismo que la memory-mapped I/O',
+      'No existe en la práctica',
+    ], 0,
+    'La port-mapped I/O separa el espacio de E/S del de memoria y usa instrucciones dedicadas (IN/OUT), a diferencia de la memory-mapped que comparte el espacio con load/store.'),
+
+  ms('arq-t-107', 'E/S', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre E/S y buses:',
+    [
+      'La E/S mapeada en memoria usa el espacio de direcciones con load/store',
+      'La E/S por puertos usa instrucciones específicas (IN/OUT)',
+      'El bus de control transporta señales de lectura/escritura y temporización',
+      'El DMA libera a la CPU de realizar las transferencias byte a byte',
+      'La E/S mapeada en memoria requiere instrucciones IN/OUT especiales',
+      'El DMA obliga a la CPU a copiar cada byte de la transferencia',
+    ], [0, 1, 2, 3],
+    'Memory-mapped (load/store), port-mapped (IN/OUT), bus de control (señales) y DMA (libera a la CPU) son correctas. Las dos falsas contradicen la memory-mapped y el propósito del DMA.'),
+
+  mc('arq-t-108', 'Paralelismo', 3,
+    'Un procesador superescalar…',
+    [
+      'Tiene varias unidades de ejecución y puede lanzar/completar más de una instrucción por ciclo',
+      'Ejecuta una instrucción cada varios ciclos',
+      'No utiliza pipeline',
+      'Posee un único registro',
+    ], 0,
+    'El superescalar replica unidades de ejecución para emitir varias instrucciones por ciclo (más allá del pipeline simple, que apunta a una por ciclo).'),
+
+  tf('arq-t-109', 'Paralelismo', 3,
+    'Un procesador superescalar solo puede completar, como máximo, una instrucción por ciclo de reloj.',
+    false,
+    'Falso. El superescalar tiene varias unidades de ejecución y puede completar VARIAS instrucciones por ciclo. Completar una por ciclo es el límite de un pipeline escalar simple.'),
+
+  mc('arq-t-110', 'Caché', 3,
+    'Si una caché usa la política write-back y se corta la energía antes de desalojar una línea modificada…',
+    [
+      'Se pueden perder los cambios que todavía no se escribieron en la memoria principal',
+      'No hay ningún riesgo: la memoria siempre está sincronizada',
+      'La memoria principal siempre tiene el dato más nuevo',
+      'Es imposible que ocurra esa situación',
+    ], 0,
+    'En write-back la escritura a memoria se posterga hasta desalojar la línea; si se corta la energía antes, los cambios pendientes en la caché se pierden (a diferencia de write-through).'),
+
+  mc('arq-t-111', 'Caché', 3,
+    'Una caché de 32 KiB con líneas (bloques) de 64 bytes tiene…',
+    [
+      '512 líneas',
+      '256 líneas',
+      '1024 líneas',
+      '32 líneas',
+    ], 0,
+    'Cantidad de líneas = tamaño / tamaño de línea = 32 × 1024 bytes / 64 bytes = 32768 / 64 = 512 líneas.'),
+
+  mc('arq-t-112', 'Caché', 2,
+    'Si la tasa de aciertos (hit rate) de una caché es del 95%, ¿cuál es la tasa de fallos (miss rate)?',
+    [
+      '5%',
+      '95%',
+      '50%',
+      '100%',
+    ], 0,
+    'Hit rate + miss rate = 100%. Si los aciertos son 95%, los fallos son 100% − 95% = 5%.'),
+
+  mc('arq-t-113', 'Caché', 3,
+    'El acceso a la caché tarda 2 ns y a la RAM 100 ns. Con una tasa de aciertos del 90%, ¿cuál es el tiempo medio de acceso aproximado?',
+    [
+      '12 ns',
+      '2 ns',
+      '100 ns',
+      '10 ns',
+    ], 0,
+    'Tiempo medio ≈ tiempo de caché + (miss rate × penalización) = 2 + (0,10 × 100) = 2 + 10 = 12 ns.'),
+
+  tf('arq-t-114', 'Caché', 2,
+    'El principio de localidad de referencia es lo que hace que las cachés resulten efectivas en la práctica.',
+    true,
+    'Verdadero. Como los programas reutilizan datos recientes (localidad temporal) y cercanos (espacial), una caché pequeña logra capturar la mayoría de los accesos.'),
+
+  mc('arq-t-115', 'CPU', 3,
+    'En un procesador, una "palabra" (word) es…',
+    [
+      'La unidad de datos que la CPU procesa de una vez (ej. 32 o 64 bits); define el ancho de registros y del bus interno',
+      'Siempre exactamente 8 bits',
+      'El tamaño total de la memoria caché',
+      'Un carácter de texto',
+    ], 0,
+    'La palabra es el tamaño "natural" de datos del procesador (32 o 64 bits en CPU modernas); determina el ancho de los registros y de las operaciones internas.'),
+
+  ms('arq-t-116', 'Memoria', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre la jerarquía de memoria:',
+    [
+      'L1 < L2 < L3 en tamaño',
+      'Los registros son más rápidos que la caché',
+      'La caché es más rápida que la RAM',
+      'La RAM es más rápida que el disco',
+      'El disco es más rápido que la RAM',
+      'La L1 es de mayor tamaño que la L3',
+    ], [0, 1, 2, 3],
+    'En la jerarquía: tamaño L1<L2<L3 y velocidad registros>caché>RAM>disco. Las dos falsas invierten esa relación (el disco es el más lento y L1 la caché más chica).'),
+
+  mc('arq-t-117', 'Memoria', 3,
+    '¿Por qué la jerarquía de memoria usa varios niveles en lugar de una sola memoria grande y rápida?',
+    [
+      'Porque no existe una memoria que sea, a la vez, muy grande, muy rápida y barata; la jerarquía combina velocidad (cerca) con capacidad (lejos) a costo razonable',
+      'Porque el procesador no puede acceder directamente a la RAM',
+      'Porque la caché es más barata por byte que el disco',
+      'Porque la ROM reemplaza la función de la RAM',
+    ], 0,
+    'Hay un compromiso costo/velocidad/capacidad: poca memoria rápida y cara cerca de la CPU (registros, caché) y mucha lenta y barata más lejos (RAM, disco).'),
+
+  tf('arq-t-118', 'Memoria virtual', 3,
+    'La MMU, además de traducir direcciones, participa en la protección de memoria verificando los permisos de cada página y aislando los procesos.',
+    true,
+    'Verdadero. La MMU comprueba los permisos por página (lectura/escritura/ejecución) y mantiene aislados los espacios de los procesos, generando una falla si se viola el acceso.'),
+
+  mc('arq-t-119', 'Pipeline', 3,
+    'Un pipeline de 5 etapas, ideal y lleno, completa una instrucción por ciclo. Para ejecutar 1000 instrucciones (ignorando el llenado inicial), ¿cuántos ciclos toma aproximadamente?',
+    [
+      'Aproximadamente 1000 ciclos',
+      '5000 ciclos',
+      '200 ciclos',
+      '1 ciclo',
+    ], 0,
+    'Sin pipeline serían ~5000 ciclos (5 etapas × 1000). Con el pipeline lleno se completa ~1 instrucción por ciclo ⇒ ~1000 ciclos (más 4 de llenado inicial).'),
+
+  ms('arq-t-120', 'Repaso', 3,
+    'Repaso integrador: marcá TODAS las afirmaciones correctas sobre arquitectura:',
+    [
+      'El complemento a 2 representa los enteros negativos',
+      'La caché aprovecha la localidad de referencia',
+      'El pipeline aumenta el throughput de instrucciones',
+      'La MMU y la TLB gestionan/aceleran la traducción de memoria virtual',
+      'La memoria RAM es no volátil (conserva los datos sin energía)',
+      'Una mayor frecuencia de reloj siempre implica mejor rendimiento real',
+    ], [0, 1, 2, 3],
+    'Complemento a 2, caché/localidad, pipeline/throughput y MMU/TLB son correctas. La RAM es VOLÁTIL y más GHz no siempre da más rendimiento (dependen CPI, arquitectura y memoria).'),
 ]);
