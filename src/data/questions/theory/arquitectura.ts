@@ -281,4 +281,282 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
       'Usa platos magnéticos giratorios',
     ], 0,
     'El SSD usa memoria flash (sin partes móviles): más veloz, silencioso y resistente. El HDD sí tiene platos giratorios y cabezales mecánicos.'),
+
+  mc('arq-t-031', 'Representación', 2,
+    '¿Cuál es la representación binaria del número 45 (decimal)?',
+    [
+      '101101',
+      '101011',
+      '110101',
+      '101110',
+    ], 0,
+    '45 = 32 + 8 + 4 + 1 = 2⁵ + 2³ + 2² + 2⁰ ⇒ 101101.'),
+
+  mc('arq-t-032', 'Representación', 2,
+    '¿Cuál es el valor decimal del número binario 11010?',
+    [
+      '26',
+      '24',
+      '28',
+      '22',
+    ], 0,
+    '11010 = 16 + 8 + 0 + 2 + 0 = 26 (sumando las potencias de 2 con bit en 1).'),
+
+  mc('arq-t-033', 'Representación', 2,
+    '¿Cuál es el valor decimal del número hexadecimal 0x1A?',
+    [
+      '26',
+      '16',
+      '32',
+      '110',
+    ], 0,
+    '0x1A = 1×16 + 10 (A) = 16 + 10 = 26.'),
+
+  mc('arq-t-034', 'Representación', 3,
+    'El número octal 17 (base 8) equivale en decimal a…',
+    [
+      '15',
+      '17',
+      '23',
+      '11',
+    ], 0,
+    '17 en octal = 1×8 + 7×1 = 8 + 7 = 15. (En octal cada posición vale una potencia de 8).'),
+
+  mc('arq-t-035', 'Aritmética binaria', 3,
+    '¿Cuál es el resultado de la suma binaria 1011 + 0110?',
+    [
+      '10001',
+      '1111',
+      '10000',
+      '1001',
+    ], 0,
+    '1011 (11) + 0110 (6) = 17 = 10001. Se suma bit a bit propagando el acarreo.'),
+
+  mc('arq-t-036', 'Aritmética binaria', 3,
+    'En una suma en complemento a 2, ocurre OVERFLOW (desbordamiento) cuando…',
+    [
+      'El resultado excede el rango representable (ej. sumar dos positivos y obtener un negativo)',
+      'Se produce acarreo del bit menos significativo',
+      'El resultado es exactamente cero',
+      'Se suman dos números de distinto signo',
+    ], 0,
+    'El overflow aparece al sumar dos operandos del mismo signo y obtener un resultado del signo contrario (fuera de rango). Sumar signos distintos nunca desborda.'),
+
+  tf('arq-t-037', 'Aritmética binaria', 3,
+    'El acarreo (carry) y el desbordamiento (overflow) son distintos: el carry es el bit que sale del bit más significativo, mientras que el overflow indica que el resultado con signo quedó incorrecto.',
+    true,
+    'Verdadero. En aritmética sin signo importa el carry; en complemento a 2 importa el overflow. Pueden darse de forma independiente.'),
+
+  mc('arq-t-038', 'Códigos', 3,
+    'El código BCD (Decimal Codificado en Binario) representa…',
+    [
+      'Cada dígito decimal por separado con 4 bits (ej. 25 = 0010 0101)',
+      'El número completo en binario puro',
+      'Caracteres de texto',
+      'Números de punto flotante',
+    ], 0,
+    'BCD codifica dígito por dígito en grupos de 4 bits, lo que facilita mostrar decimales pero usa más bits que el binario puro.'),
+
+  mc('arq-t-039', 'Códigos', 3,
+    'En BCD, el número decimal 39 se representa como…',
+    [
+      '0011 1001',
+      '00100111',
+      '0011 1000',
+      '0100 1001',
+    ], 0,
+    'En BCD cada dígito va en 4 bits: 3 = 0011 y 9 = 1001 ⇒ 0011 1001. (En binario PURO, 39 sería 100111.)'),
+
+  mc('arq-t-040', 'Códigos', 2,
+    'Un bit de paridad sirve para…',
+    [
+      'Detectar errores simples de transmisión (verifica que la cantidad de unos sea par o impar)',
+      'Corregir cualquier error de transmisión',
+      'Cifrar los datos transmitidos',
+      'Aumentar la velocidad de transmisión',
+    ], 0,
+    'El bit de paridad ajusta el total de unos a par (o impar); si en la recepción no cuadra, hubo un error. Solo detecta, no corrige.'),
+
+  tf('arq-t-041', 'Códigos', 3,
+    'El bit de paridad detecta errores de un solo bit, pero no puede corregirlos ni detectar errores que afecten a una cantidad par de bits.',
+    true,
+    'Verdadero. Si se invierten dos bits, la paridad vuelve a cuadrar y el error pasa inadvertido; para corregir se necesitan códigos más potentes (ej. Hamming).'),
+
+  mc('arq-t-042', 'Códigos', 3,
+    'El código Gray se caracteriza por…',
+    [
+      'Que dos valores consecutivos difieren en un solo bit',
+      'Representar cada dígito decimal con 4 bits',
+      'Ser un código de cifrado',
+      'Ser idéntico al binario puro',
+    ], 0,
+    'En Gray, pasar de un valor al siguiente cambia un único bit; esto reduce errores en sensores/encoders, donde varios bits cambiando a la vez podrían leerse mal.'),
+
+  ms('arq-t-043', 'Códigos', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre los códigos:',
+    [
+      'BCD codifica cada dígito decimal en 4 bits',
+      'En el código Gray, valores consecutivos difieren en un solo bit',
+      'El bit de paridad detecta errores de un solo bit',
+      'ASCII codifica caracteres (letras, dígitos, símbolos)',
+      'BCD representa el número completo en binario puro',
+      'El bit de paridad puede corregir los errores que detecta',
+    ], [0, 1, 2, 3],
+    'BCD (4 bits/dígito), Gray (cambia 1 bit), paridad (detecta 1 bit) y ASCII (caracteres) son correctas. BCD no es binario puro y la paridad solo detecta, no corrige.'),
+
+  mc('arq-t-044', 'Memoria', 3,
+    '¿Cuál es la diferencia entre la RAM estática (SRAM) y la dinámica (DRAM)?',
+    [
+      'La SRAM es más rápida y no necesita refresco (usa flip-flops); la DRAM es más lenta, densa y barata, y requiere refresco periódico',
+      'La DRAM es más rápida que la SRAM',
+      'La SRAM necesita refresco constante de sus celdas',
+      'Son tecnologías idénticas',
+    ], 0,
+    'La SRAM (rápida, cara) se usa en la caché; la DRAM (densa, barata, con refresco) se usa como memoria principal. El refresco de la DRAM es por sus condensadores.'),
+
+  tf('arq-t-045', 'Memoria', 3,
+    'La DRAM almacena cada bit en un condensador que pierde carga con el tiempo, por eso necesita refrescarse periódicamente.',
+    true,
+    'Verdadero. El condensador se descarga, así que la DRAM relee y reescribe sus celdas continuamente para no perder los datos; la SRAM (flip-flops) no lo necesita.'),
+
+  mc('arq-t-046', 'Caché', 3,
+    'En un mapeo de caché DIRECTO…',
+    [
+      'Cada bloque de memoria puede ubicarse en una única línea de caché determinada (por su dirección, módulo el nº de líneas)',
+      'Cada bloque puede ir a cualquier línea de la caché',
+      'No se utilizan líneas de caché',
+      'Cada bloque va a un conjunto de líneas a elección',
+    ], 0,
+    'El mapeo directo es simple y rápido de buscar, pero como cada bloque tiene una sola línea posible, sufre fallos por conflicto cuando varios bloques compiten por la misma línea.'),
+
+  mc('arq-t-047', 'Caché', 3,
+    'En un mapeo de caché TOTALMENTE asociativo…',
+    [
+      'Un bloque de memoria puede ubicarse en CUALQUIER línea de la caché',
+      'Un bloque va siempre a una única línea fija',
+      'No existe memoria caché',
+      'Solo cabe un bloque en toda la caché',
+    ], 0,
+    'El totalmente asociativo da máxima flexibilidad (menos fallos por conflicto), pero buscar un bloque exige comparar todas las líneas, lo que es más caro y lento.'),
+
+  mc('arq-t-048', 'Caché', 3,
+    'El mapeo asociativo por conjuntos (set-associative)…',
+    [
+      'Es un punto medio: un bloque va a un conjunto específico y, dentro de él, a cualquier línea',
+      'Es idéntico al mapeo directo',
+      'No utiliza conjuntos',
+      'Permite un único bloque por toda la caché',
+    ], 0,
+    'El set-associative equilibra costo y flexibilidad: el bloque se restringe a un conjunto (como el directo) pero puede ir a cualquier vía dentro de él (como el asociativo).'),
+
+  ms('arq-t-049', 'Caché', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre el mapeo de caché:',
+    [
+      'El mapeo directo asigna cada bloque a una única línea fija',
+      'El totalmente asociativo permite ubicar un bloque en cualquier línea',
+      'El asociativo por conjuntos es un punto medio entre ambos',
+      'Mayor asociatividad reduce los fallos por conflicto, pero encarece la búsqueda',
+      'El mapeo directo permite ubicar un bloque en cualquier línea',
+      'El totalmente asociativo asigna una línea fija por bloque',
+    ], [0, 1, 2, 3],
+    'Directo = línea fija; asociativo = cualquier línea; set-associative = intermedio; más asociatividad = menos conflictos pero más costo. Las dos falsas intercambian directo y asociativo.'),
+
+  mc('arq-t-050', 'Caché', 3,
+    '¿Cuál es la diferencia entre las políticas write-through y write-back en una caché?',
+    [
+      'Write-through escribe a la vez en caché y memoria; write-back escribe en memoria solo al desalojar la línea (más rápido, pero necesita un bit "sucio")',
+      'Write-back escribe siempre en memoria de inmediato',
+      'Write-through nunca escribe en la memoria principal',
+      'Son políticas idénticas',
+    ], 0,
+    'Write-through mantiene memoria y caché siempre coherentes (más tráfico); write-back posterga la escritura a memoria hasta desalojar la línea modificada, reduciendo accesos.'),
+
+  mc('arq-t-051', 'E/S', 2,
+    'El sondeo (polling) en la entrada/salida consiste en…',
+    [
+      'Que la CPU consulte repetidamente el estado del dispositivo, desperdiciando ciclos mientras espera',
+      'Que el dispositivo interrumpa a la CPU cuando termina',
+      'Transferir datos sin intervención de la CPU',
+      'Cifrar los datos antes de transferirlos',
+    ], 0,
+    'En polling la CPU pregunta una y otra vez "¿ya estás listo?", malgastando ciclos. Las interrupciones evitan esa espera activa.'),
+
+  tf('arq-t-052', 'E/S', 3,
+    'El DMA (Acceso Directo a Memoria) permite que un dispositivo transfiera datos a/desde la memoria sin la intervención continua de la CPU.',
+    true,
+    'Verdadero. El controlador de DMA realiza la transferencia y avisa a la CPU al terminar (interrupción), liberándola de copiar los datos byte por byte.'),
+
+  ms('arq-t-053', 'E/S', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre las técnicas de E/S:',
+    [
+      'El polling consulta repetidamente el dispositivo, desperdiciando ciclos de CPU',
+      'Las interrupciones avisan a la CPU cuando ocurre el evento',
+      'El DMA transfiere datos entre dispositivo y memoria sin la CPU',
+      'El DMA libera a la CPU para otras tareas durante la transferencia',
+      'El polling es más eficiente que el esquema por interrupciones',
+      'El DMA requiere que la CPU copie byte por byte',
+    ], [0, 1, 2, 3],
+    'Polling = espera activa; interrupciones = aviso; DMA = transferencia sin CPU que la libera. Las dos falsas contradicen la eficiencia de las interrupciones y el propósito del DMA.'),
+
+  mc('arq-t-054', 'CPU', 3,
+    'El registro de banderas (flags / registro de estado) almacena…',
+    [
+      'Indicadores del resultado de las operaciones (cero, acarreo, signo, overflow)',
+      'El programa completo en ejecución',
+      'Los datos de propósito general del usuario',
+      'El contenido de la memoria caché',
+    ], 0,
+    'Cada bandera refleja una condición del último resultado de la ALU; las instrucciones de salto condicional las consultan para decidir el flujo.'),
+
+  tf('arq-t-055', 'CPU', 2,
+    'La bandera Z (cero) se activa cuando el resultado de una operación es cero.',
+    true,
+    'Verdadero. La flag Z se pone en 1 si el resultado fue cero; se usa, por ejemplo, en saltos del tipo "salta si es igual" (JZ/JE).'),
+
+  tf('arq-t-056', 'CPU', 3,
+    'Las banderas de estado (zero, carry, sign, overflow) las usan las instrucciones de salto condicional para tomar decisiones.',
+    true,
+    'Verdadero. Una comparación deja su huella en las flags y el salto condicional las evalúa para bifurcar el programa (if/else, bucles, etc.).'),
+
+  mc('arq-t-057', 'Memoria', 3,
+    'Una memoria de "1K × 8" significa…',
+    [
+      '1024 posiciones, cada una de 8 bits (1 byte)',
+      '1024 bits en total',
+      '8 posiciones de 1024 bits cada una',
+      '1 posición de 8 KB',
+    ], 0,
+    '"1K × 8" = 1024 palabras de 8 bits = 1024 bytes = 1 KiB. El primer número es la cantidad de posiciones y el segundo, el ancho de cada palabra.'),
+
+  mc('arq-t-058', 'Memoria', 3,
+    'Para direccionar una memoria de 1024 posiciones se necesitan…',
+    [
+      '10 líneas de dirección',
+      '1024 líneas de dirección',
+      '8 líneas de dirección',
+      '11 líneas de dirección',
+    ], 0,
+    '2¹⁰ = 1024, por lo tanto se necesitan 10 líneas de dirección para distinguir las 1024 posiciones.'),
+
+  mc('arq-t-059', 'Memoria', 3,
+    'Una memoria con 12 líneas de dirección y palabras de 8 bits tiene una capacidad de…',
+    [
+      '4 KiB (4096 bytes)',
+      '12 KiB',
+      '96 bits',
+      '2 KiB',
+    ], 0,
+    '12 líneas ⇒ 2¹² = 4096 posiciones; cada palabra es de 8 bits (1 byte) ⇒ 4096 × 1 byte = 4096 bytes = 4 KiB.'),
+
+  ms('arq-t-060', 'Memoria', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre la memoria:',
+    [
+      'Con k líneas de dirección se pueden direccionar 2^k posiciones',
+      'La SRAM es más rápida que la DRAM',
+      'La ROM es no volátil (conserva los datos sin energía)',
+      'La memoria caché suele implementarse con SRAM',
+      'La DRAM no necesita refresco periódico',
+      'Con k líneas de dirección se direccionan k posiciones',
+    ], [0, 1, 2, 3],
+    'k líneas → 2^k posiciones; SRAM > DRAM en velocidad; ROM no volátil; caché con SRAM. Las falsas: la DRAM SÍ necesita refresco y k líneas dan 2^k (no k) posiciones.'),
 ]);
