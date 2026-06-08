@@ -2,9 +2,10 @@ import type { Question, Topic } from '../../types';
 import { mc, tf, withTopic } from './builder';
 
 // ── Generadores de preguntas (cálculo / aplicación) ──
-// Enumeran espacios de parámetros grandes e INTERCALAN varias plantillas, de
-// modo que cada eje ofrece cientos de preguntas únicas y variadas. La opción
-// correcta queda primera acá; el banco (index.ts) baraja las opciones.
+// Enumeran espacios de parámetros grandes e INTERCALAN varias plantillas. Las
+// preguntas están pensadas para OBLIGAR A RAZONAR: la respuesta "obvia" o de un
+// solo paso suele quedar como distractor-trampa. La opción correcta queda
+// primera acá; el banco (index.ts) baraja las opciones.
 
 type Q = Omit<Question, 'topic'>;
 
@@ -16,7 +17,7 @@ function interleave(...lists: Q[][]): Q[] {
   return out;
 }
 
-/** 4 opciones numéricas únicas: la correcta + 3 distractores cercanos. */
+/** 4 opciones numéricas únicas y NO NEGATIVAS: correcta + distractores. */
 function num4(correct: number, d: number[]): string[] {
   const set = [String(correct)];
   for (const x of d) { const s = String(x); if (!set.includes(s) && Number(x) >= 0) set.push(s); if (set.length === 4) break; }
@@ -25,107 +26,109 @@ function num4(correct: number, d: number[]): string[] {
   return set;
 }
 
+/** 4 opciones únicas a partir de candidatos arbitrarios (admite negativos/strings). */
+function opts4(correct: number | string, cands: Array<number | string>): string[] {
+  const set = [String(correct)];
+  for (const c of cands) { const s = String(c); if (!set.includes(s)) set.push(s); if (set.length === 4) break; }
+  let k = 1;
+  while (set.length < 4) { const s = String(Number(correct) + k * 7); if (!set.includes(s)) set.push(s); k++; }
+  return set;
+}
+
+const clog2 = (n: number) => Math.ceil(Math.log2(n));
+
 // ────────────────────────── REDES ──────────────────────────
+// Razonamiento de subnetting: cálculos inversos (bits prestados) y dirección de
+// red de un host. La trampa es responder el número dado o saltear el ⌈log₂⌉.
 
 function genRedes(): Question[] {
-  const bin: Q[] = [];
-  for (let o = 1; o <= 150; o++) {
-    const b = o.toString(2).padStart(8, '0');
-    bin.push(mc(`gen-red-bin-${o}`, 'Direccionamiento binario', 2,
-      `¿Cuál es la representación binaria (8 bits) del octeto ${o}?`,
-      [b, (o ^ 1).toString(2).padStart(8, '0'), (o ^ 2).toString(2).padStart(8, '0'), (o ^ 4).toString(2).padStart(8, '0')], 0,
-      `${o} en binario de 8 bits es ${b}. Verificá sumando las potencias de 2 con bit en 1.`));
+  // Bits a pedir prestados para obtener AL MENOS N subredes ⇒ ⌈log₂(N)⌉.
+  const borrowSub: Q[] = [];
+  for (let n = 3; n <= 160; n++) {
+    const bits = clog2(n);
+    borrowSub.push(mc(`gen-red-bsub-${n}`, 'Subnetting', 3,
+      `Necesitás dividir una red en AL MENOS ${n} subredes. ¿Cuántos bits hay que pedirle prestados a la porción de host?`,
+      num4(bits, [n, bits - 1, bits + 1]), 0,
+      `Con b bits se obtienen 2^b subredes; hace falta 2^b ≥ ${n} ⇒ b = ⌈log₂(${n})⌉ = ${bits} (2^${bits} = ${2 ** bits}). Pedir ${n} bits sería un error grosero.`));
   }
-  const hosts: Q[] = [];
-  for (let p = 22; p <= 30; p++) {
-    const hb = 32 - p, usable = 2 ** hb - 2;
-    hosts.push(mc(`gen-red-host-${p}`, 'Subnetting', 2,
-      `¿Cuántas direcciones de host UTILIZABLES tiene una subred /${p}?`,
-      num4(usable, [2 ** hb, 2 ** hb - 1, 2 ** (hb - 1) - 2]), 0,
-      `/${p} deja ${hb} bits de host ⇒ 2^${hb} = ${2 ** hb}, menos red y broadcast = ${usable} utilizables.`));
+  // Bits de host necesarios para alojar AL MENOS H hosts utilizables ⇒ ⌈log₂(H+2)⌉.
+  const borrowHost: Q[] = [];
+  for (let h = 2; h <= 160; h++) {
+    const bits = clog2(h + 2);
+    borrowHost.push(mc(`gen-red-bhost-${h}`, 'Subnetting', 3,
+      `Cada subred debe alojar AL MENOS ${h} hosts utilizables. ¿Cuántos bits de host se necesitan como mínimo?`,
+      num4(bits, [clog2(h), h, bits + 1]), 0,
+      `Con b bits de host hay 2^b − 2 utilizables; se necesita 2^b − 2 ≥ ${h} ⇒ 2^b ≥ ${h + 2} ⇒ b = ⌈log₂(${h + 2})⌉ = ${bits} (2^${bits} − 2 = ${2 ** bits - 2}). Olvidar el −2 lleva al error.`));
   }
-  const subs: Q[] = [];
-  for (let b = 1; b <= 10; b++) {
-    subs.push(mc(`gen-red-sub-${b}`, 'Subnetting', 2,
-      `Si tomás prestados ${b} bits de host para crear subredes, ¿cuántas subredes obtenés?`,
-      num4(2 ** b, [2 ** b - 1, 2 ** (b + 1), 2 ** (b - 1)]), 0,
-      `Con ${b} bits prestados ⇒ 2^${b} = ${2 ** b} subredes.`));
+  // Cuántas subredes /X salen de una red /Y ⇒ 2^(X−Y).
+  const subnetsIn: Q[] = [];
+  let si = 0;
+  for (const y of [8, 16, 22, 24]) for (let x = y + 1; x <= y + 8 && x <= 30; x++) {
+    si++;
+    const n = 2 ** (x - y);
+    subnetsIn.push(mc(`gen-red-subin-${si}`, 'Subnetting', 3,
+      `¿Cuántas subredes /${x} se pueden crear a partir de una red /${y}?`,
+      num4(n, [x - y, 2 ** (x - y + 1), x + y]), 0,
+      `Se prestan X−Y = ${x}−${y} = ${x - y} bits ⇒ 2^${x - y} = ${n} subredes. (La trampa es responder los bits prestados, ${x - y}, en vez de las subredes.)`));
   }
-  const maskMap: Record<number, string> = {
-    8: '255.0.0.0', 16: '255.255.0.0', 24: '255.255.255.0', 25: '255.255.255.128',
-    26: '255.255.255.192', 27: '255.255.255.224', 28: '255.255.255.240', 29: '255.255.255.248', 30: '255.255.255.252',
-  };
-  const maskPool = ['255.0.0.0', '255.255.0.0', '255.255.255.0', '255.255.255.128', '255.255.255.192', '255.255.255.224', '255.255.255.240', '255.255.255.248', '255.255.255.252', '255.255.255.255'];
-  const m2c: Q[] = [], c2m: Q[] = [];
-  for (const p of Object.keys(maskMap).map(Number)) {
-    const mask = maskMap[p];
-    m2c.push(mc(`gen-red-m2c-${p}`, 'Direccionamiento', 2,
-      `La máscara ${mask} en notación CIDR equivale a…`,
-      [`/${p}`, `/${p + 1}`, `/${p - 1}`, `/${p + 2}`], 0,
-      `${mask} tiene ${p} bits en 1 ⇒ /${p}.`));
-    c2m.push(mc(`gen-red-c2m-${p}`, 'Direccionamiento', 2,
-      `¿Cuál es la máscara decimal correspondiente al prefijo /${p}?`,
-      [mask, ...maskPool.filter((m) => m !== mask).slice(0, 3)], 0,
-      `/${p} ⇒ ${p} bits en 1 ⇒ ${mask}.`));
+  // Dirección de RED de un host dado su prefijo (bloque dentro del último octeto).
+  const netAddr: Q[] = [];
+  let na = 0;
+  for (const p of [25, 26, 27, 28]) {
+    const block = 2 ** (32 - p);
+    for (let host = 1; host <= 254 && na < 90; host++) {
+      if (host % block === 0 || host % block === block - 1) continue; // host interior
+      na++;
+      const net = Math.floor(host / block) * block;
+      const bcast = net + block - 1;
+      const other = net + block <= 255 ? net + block : net - block;
+      netAddr.push(mc(`gen-red-net-${p}-${host}`, 'Subnetting', 3,
+        `El host 192.168.10.${host} usa la máscara /${p}. ¿Cuál es su dirección de RED (subred)?`,
+        [`192.168.10.${net}`, `192.168.10.${host}`, `192.168.10.${bcast}`, `192.168.10.${other}`], 0,
+        `/${p} crea bloques de ${block} direcciones. ${host} cae en el bloque que arranca en ⌊${host}/${block}⌋×${block} = ${net}, así que la red es 192.168.10.${net} (y el broadcast .${bcast}).`));
+    }
   }
+  // Tiempo de transferencia (la trampa: olvidar el ×8 de MB→Mb).
   const tput: Q[] = [];
   let ti = 0;
   for (const mb of [10, 20, 50, 100, 200, 500]) for (const mbps of [10, 20, 50, 100]) {
     ti++;
     const s = Math.round((mb * 8 / mbps) * 10) / 10;
     tput.push(mc(`gen-red-tput-${ti}`, 'Rendimiento', 3,
-      `¿Cuánto tarda en transferirse un archivo de ${mb} MB por un enlace de ${mbps} Mbps (ideal, sin overhead)?`,
-      num4(s, [s * 2, s / 2, mb / mbps]).map((o) => `${o} s`), 0,
-      `${mb} MB = ${mb * 8} Mb. Tiempo = ${mb * 8} Mb / ${mbps} Mbps = ${s} s (MB→Mb multiplica por 8).`));
+      `¿Cuánto tarda en transferirse un archivo de ${mb} MB por un enlace de ${mbps} Mbps (ideal)?`,
+      num4(s, [mb / mbps, s * 2, s / 2]).map((o) => `${o} s`), 0,
+      `${mb} MB = ${mb * 8} Mb (×8). Tiempo = ${mb * 8} Mb / ${mbps} Mbps = ${s} s. La trampa es dividir MB/Mbps sin convertir a bits.`));
   }
-  const cls: Q[] = [];
-  const classOf = (o: number) => o < 128 ? 'A' : o < 192 ? 'B' : o < 224 ? 'C' : o < 240 ? 'D' : 'E';
-  for (let o = 1; o <= 239; o += 7) {
-    const c = classOf(o);
-    cls.push(mc(`gen-red-cls-${o}`, 'Clases IP', 2,
-      `Una IP cuyo primer octeto es ${o} pertenece a la clase…`,
-      ['A', 'B', 'C', 'D'].includes(c) ? ['A', 'B', 'C', 'D'] : ['A', 'B', 'C', 'E'],
-      ['A', 'B', 'C', 'D'].includes(c) ? ['A', 'B', 'C', 'D'].indexOf(c) : ['A', 'B', 'C', 'E'].indexOf(c),
-      `Clase A: 1-126 · B: 128-191 · C: 192-223 · D: 224-239 · E: 240-255. Primer octeto ${o} ⇒ clase ${c}.`));
-  }
-  return withTopic('redes_comunicaciones', interleave(hosts, subs, m2c, c2m, tput, cls, bin));
+  return withTopic('redes_comunicaciones', interleave(borrowSub, borrowHost, subnetsIn, netAddr, tput));
 }
 
 // ──────────────────────── ARQUITECTURA ────────────────────────
+// Complemento a 2 (trampa: leer sin signo), líneas de dirección para N celdas
+// (⌈log₂⌉ inverso), tiempo de CPU y capacidad en bytes (trampa: bits vs bytes).
 
 function genArquitectura(): Question[] {
-  const d2b: Q[] = [];
-  for (let n = 16; n <= 170; n++) {
-    const b = n.toString(2);
-    d2b.push(mc(`gen-arq-d2b-${n}`, 'Sistemas de numeración', 2,
-      `¿Cuál es la representación binaria de ${n} (decimal)?`,
-      [b, (n + 1).toString(2), (n - 1).toString(2), (n ^ 4).toString(2)], 0,
-      `${n} en binario es ${b}. Sumá las potencias de 2 con bit en 1 para verificar.`));
+  // Complemento a 2: patrón con MSB=1 ⇒ negativo. Trampa: el valor sin signo.
+  const tc: Q[] = [];
+  for (let n = 129; n <= 255; n++) {
+    const b = n.toString(2).padStart(8, '0');
+    const signed = n - 256;
+    tc.push(mc(`gen-arq-tc-${n}`, 'Representación', 3,
+      `El patrón binario ${b} (8 bits) interpretado en COMPLEMENTO A 2, ¿qué número decimal representa?`,
+      opts4(signed, [n, n - 128, 256 - n]), 0,
+      `El bit más significativo es 1 ⇒ negativo. ${b} = ${n} − 256 = ${signed}. Sin signo sería ${n} (esa es la trampa más común).`));
   }
-  const h2d: Q[] = [];
-  for (let n = 160; n <= 460; n += 5) {
-    const hex = n.toString(16).toUpperCase();
-    h2d.push(mc(`gen-arq-h2d-${n}`, 'Sistemas de numeración', 2,
-      `¿Cuál es el valor decimal del hexadecimal 0x${hex}?`,
-      num4(n, [n + 16, n - 1, n + 1]), 0,
-      `0x${hex} = ${n}. Cada dígito vale dígito × 16^posición.`));
+  // Líneas de dirección para AL MENOS N celdas ⇒ ⌈log₂(N)⌉. Trampa: N o sin ⌈⌉.
+  const addrFor: Q[] = [];
+  let ai = 0;
+  for (let n = 100; n <= 2100; n += 9) {
+    ai++;
+    const bits = clog2(n);
+    addrFor.push(mc(`gen-arq-addr-${ai}`, 'Memoria', 3,
+      `¿Cuántas líneas de dirección se necesitan para poder direccionar AL MENOS ${n} celdas de memoria?`,
+      num4(bits, [bits - 1, n, bits + 1]), 0,
+      `Con k líneas se direccionan 2^k celdas; hace falta 2^k ≥ ${n} ⇒ k = ⌈log₂(${n})⌉ = ${bits} (2^${bits} = ${2 ** bits}). Truncar el log da ${bits - 1}, que no alcanza.`));
   }
-  const d2h: Q[] = [];
-  for (let n = 16; n <= 120; n++) {
-    const hex = n.toString(16).toUpperCase();
-    d2h.push(mc(`gen-arq-d2h-${n}`, 'Sistemas de numeración', 2,
-      `¿Cuál es la representación hexadecimal de ${n} (decimal)?`,
-      [hex, (n + 1).toString(16).toUpperCase(), (n - 1).toString(16).toUpperCase(), (n + 16).toString(16).toUpperCase()], 0,
-      `${n} en hexadecimal es 0x${hex}.`));
-  }
-  const addr: Q[] = [];
-  for (let bits = 4; bits <= 24; bits++) {
-    const cells = 2 ** bits;
-    addr.push(mc(`gen-arq-addr-${bits}`, 'Memoria', 2,
-      `Si el bus de direcciones tiene ${bits} líneas, ¿cuántas celdas distintas puede direccionar?`,
-      num4(cells, [2 ** (bits + 1), 2 ** (bits - 1), bits * 1024]), 0,
-      `${bits} líneas ⇒ 2^${bits} = ${cells.toLocaleString('es')} celdas direccionables.`));
-  }
+  // Tiempo de CPU = (instrucciones × CPI) / frecuencia.
   const cpu: Q[] = [];
   let ci = 0;
   for (const mips of [2, 3, 4, 5, 6, 8]) for (const cpi of [1, 2, 3, 4]) for (const ghz of [1, 2, 4]) {
@@ -133,56 +136,86 @@ function genArquitectura(): Question[] {
     const ms = Math.round((mips * 1e6 * cpi / (ghz * 1e9)) * 1000 * 100) / 100;
     cpu.push(mc(`gen-arq-cpu-${ci}`, 'Rendimiento de CPU', 3,
       `Un programa ejecuta ${mips} millones de instrucciones con CPI=${cpi} en una CPU de ${ghz} GHz. ¿Tiempo de CPU?`,
-      num4(ms, [ms * 2, ms / 2, ms + cpi]).map((o) => `${o} ms`), 0,
+      num4(ms, [Math.round((mips / ghz) * 100) / 100, ms * 2, ms / 2]).map((o) => `${o} ms`), 0,
       `Tiempo = (Instrucciones × CPI) / Frecuencia = (${mips}M × ${cpi}) / ${ghz}GHz = ${ms} ms.`));
   }
-  return withTopic('arquitectura_computadoras', interleave(addr, cpu, h2d, d2h, d2b));
+  // Capacidad en BYTES = (2^K × W) / 8. Trampa: dar bits, o ignorar el ancho.
+  const cap: Q[] = [];
+  let pi = 0;
+  for (let k = 8; k <= 16; k++) for (const w of [8, 16, 32]) {
+    pi++;
+    const cells = 2 ** k;
+    const bytes = cells * w / 8;
+    cap.push(mc(`gen-arq-cap-${pi}`, 'Memoria', 3,
+      `Una memoria tiene ${k} líneas de dirección y palabras de ${w} bits. ¿Cuál es su capacidad en BYTES?`,
+      num4(bytes, [cells, cells * w, bytes * 2]), 0,
+      `Celdas = 2^${k} = ${cells.toLocaleString('es')}; cada una guarda ${w} bits = ${w / 8} byte(s). Capacidad = ${cells.toLocaleString('es')} × ${w}/8 = ${bytes.toLocaleString('es')} bytes. Dar ${(cells * w).toLocaleString('es')} sería responder en BITS.`));
+  }
+  return withTopic('arquitectura_computadoras', interleave(tc, addrFor, cpu, cap));
 }
 
 // ──────────────────────── ALGORITMOS ────────────────────────
+// Comparaciones de búsqueda binaria (directo e inverso), comparaciones de
+// BubbleSort (trampa n²), altura mínima de un árbol y complejidad de bucles.
 
 function genAlgoritmos(): Question[] {
+  // Búsqueda binaria: comparaciones en el peor caso ⇒ ⌈log₂(n+1)⌉. Trampa n/2.
   const bs: Q[] = [];
   for (let n = 8; n <= 250; n++) {
-    const c = Math.ceil(Math.log2(n + 1));
+    const c = clog2(n + 1);
     bs.push(mc(`gen-alg-bs-${n}`, 'Complejidad', 3,
       `¿Cuántas comparaciones hace en el PEOR caso una búsqueda binaria sobre ${n} elementos ordenados?`,
-      num4(c, [c + 1, c - 1, Math.ceil(n / 2)]), 0,
-      `Peor caso ≈ ⌈log₂(n+1)⌉ = ⌈log₂(${n + 1})⌉ = ${c} comparaciones.`));
+      num4(c, [Math.ceil(n / 2), c + 1, c - 1]), 0,
+      `Cada comparación descarta la mitad ⇒ peor caso ⌈log₂(${n}+1)⌉ = ${c}. Responder n/2 = ${Math.ceil(n / 2)} confunde búsqueda binaria con lineal.`));
   }
-  const tree: Q[] = [];
-  for (let h = 1; h <= 12; h++) {
-    const nodes = 2 ** (h + 1) - 1;
-    tree.push(mc(`gen-alg-tree-${h}`, 'Árboles', 3,
-      `¿Cuántos nodos tiene como máximo un árbol binario de altura ${h} (raíz en altura 0)?`,
-      num4(nodes, [2 ** h - 1, 2 ** (h + 1), nodes + 2]), 0,
-      `Árbol binario lleno de altura ${h}: 2^(h+1)−1 = 2^${h + 1}−1 = ${nodes} nodos.`));
+  // Inverso: con k comparaciones, ¿cuántos elementos como máximo? ⇒ 2^k − 1.
+  const inv: Q[] = [];
+  for (let k = 3; k <= 16; k++) {
+    const n = 2 ** k - 1;
+    inv.push(mc(`gen-alg-inv-${k}`, 'Complejidad', 3,
+      `Con ${k} comparaciones, ¿sobre cuántos elementos como máximo garantiza una búsqueda binaria encontrar (o descartar) el dato?`,
+      num4(n, [2 ** k, k * k, 2 ** (k - 1)]), 0,
+      `Con k comparaciones se cubren 2^k − 1 elementos ⇒ 2^${k} − 1 = ${n}. La trampa es responder 2^k = ${2 ** k} (olvidar el −1).`));
   }
-  const heap: Q[] = [];
-  for (let i = 0; i <= 40; i++) {
-    heap.push(mc(`gen-alg-heap-${i}`, 'Heaps', 3,
-      `En un heap representado con arreglo (base 0), ¿cuál es el índice del hijo IZQUIERDO del nodo en la posición ${i}?`,
-      num4(2 * i + 1, [2 * i, 2 * i + 2, i + 1]), 0,
-      `Hijo izquierdo de i = 2·i+1 = 2·${i}+1 = ${2 * i + 1}. (El derecho es 2·i+2).`));
+  // BubbleSort: comparaciones en el peor caso ⇒ n(n−1)/2. Trampa: n².
+  const bub: Q[] = [];
+  for (let n = 4; n <= 44; n++) {
+    const comp = n * (n - 1) / 2;
+    bub.push(mc(`gen-alg-bub-${n}`, 'Ordenamiento', 3,
+      `¿Cuántas comparaciones realiza BubbleSort en el PEOR caso sobre ${n} elementos?`,
+      num4(comp, [n * n, n * (n - 1), n], ), 0,
+      `Compara cada par una vez: n(n−1)/2 = ${n}×${n - 1}/2 = ${comp}. Es O(n²), pero el número exacto NO es n² (=${n * n}) sino la mitad de n(n−1).`));
   }
+  // Altura MÍNIMA de un árbol binario con n nodos ⇒ ⌈log₂(n+1)⌉ − 1.
+  const minH: Q[] = [];
+  for (let n = 3; n <= 63; n++) {
+    const h = clog2(n + 1) - 1;
+    minH.push(mc(`gen-alg-minh-${n}`, 'Árboles', 3,
+      `¿Cuál es la altura MÍNIMA posible de un árbol binario con ${n} nodos (raíz en altura 0)?`,
+      num4(h, [h + 1, n, n - 1]), 0,
+      `Un árbol lo más balanceado posible tiene altura ⌈log₂(n+1)⌉ − 1 = ⌈log₂(${n + 1})⌉ − 1 = ${h}. Si estuviera desbalanceado (lista) la altura sería ${n - 1}.`));
+  }
+  // Complejidad de patrones de bucles (conceptual).
   const bigo: Q[] = [];
   const cases: [string, string, string][] = [
-    ['un bucle simple sobre n', 'O(n)', 'Un único bucle recorre n elementos ⇒ O(n).'],
-    ['dos bucles anidados sobre n', 'O(n²)', 'Cada nivel de anidamiento multiplica por n ⇒ O(n²).'],
-    ['tres bucles anidados sobre n', 'O(n³)', 'Tres anidamientos ⇒ O(n³).'],
-    ['dividir el problema a la mitad en cada paso', 'O(log n)', 'Reducir a la mitad repetidamente ⇒ O(log n).'],
-    ['un bucle externo de n que en cada paso divide el rango a la mitad', 'O(n log n)', 'Trabajo lineal por nivel logarítmico ⇒ O(n log n).'],
+    ['un bucle simple sobre n', 'O(n)', 'Un único recorrido lineal.'],
+    ['dos bucles anidados sobre n', 'O(n²)', 'Cada anidamiento multiplica por n.'],
+    ['tres bucles anidados sobre n', 'O(n³)', 'Tres anidamientos.'],
+    ['un bucle que en cada paso divide n a la mitad', 'O(log n)', 'Reducción a la mitad ⇒ logarítmico.'],
+    ['un bucle externo de n que adentro divide el rango a la mitad', 'O(n log n)', 'Trabajo lineal por nivel logarítmico.'],
   ];
-  const optionPool = ['O(1)', 'O(log n)', 'O(n)', 'O(n log n)', 'O(n²)', 'O(n³)'];
+  const pool = ['O(1)', 'O(log n)', 'O(n)', 'O(n log n)', 'O(n²)', 'O(n³)'];
   cases.forEach(([desc, ans, exp], k) => {
-    const opts = [ans, ...optionPool.filter((o) => o !== ans)].slice(0, 4);
+    const o = [ans, ...pool.filter((x) => x !== ans)].slice(0, 4);
     bigo.push(mc(`gen-alg-bigo-${k}`, 'Complejidad', 2,
-      `¿Cuál es la complejidad temporal de un algoritmo con ${desc}?`, opts, 0, exp));
+      `¿Cuál es la complejidad temporal de un algoritmo con ${desc}?`, o, 0, exp));
   });
-  return withTopic('algoritmos_estructuras', interleave(tree, bigo, heap, bs));
+  return withTopic('algoritmos_estructuras', interleave(bs, inv, bub, minH, bigo));
 }
 
 // ──────────────────── SISTEMAS OPERATIVOS ────────────────────
+// Marcos de página (⌈⌉ + fragmentación), planificación FIFO/SJF (con la trampa
+// del orden) y fragmentación interna.
 
 function genSistemasOperativos(): Question[] {
   const pages: Q[] = [];
@@ -192,81 +225,93 @@ function genSistemasOperativos(): Question[] {
     const n = Math.ceil(proc / pg);
     pages.push(mc(`gen-so-page-${pi}`, 'Memoria virtual', 3,
       `Un proceso de ${proc} KB se carga con páginas de ${pg} KB. ¿Cuántos marcos de página necesita?`,
-      num4(n, [n - 1, n + 1, Math.floor(proc / pg)]), 0,
-      `Marcos = ⌈${proc}/${pg}⌉ = ${n}. La última página puede quedar parcial (fragmentación interna).`));
+      num4(n, [Math.floor(proc / pg), n + 1, n - 1]), 0,
+      `Marcos = ⌈${proc}/${pg}⌉ = ${n} (hay que redondear hacia ARRIBA: la última página, aunque quede parcial, ocupa un marco entero). Truncar daría ${Math.floor(proc / pg)}.`));
   }
-  const fifoWait: Q[] = [], fifoTurn: Q[] = [];
+  // Fragmentación interna = marcos×página − tamaño del proceso.
+  const frag: Q[] = [];
   let fi = 0;
-  for (const a of [2, 3, 4, 5, 6]) for (const b of [3, 4, 6, 8]) for (const c of [2, 5, 7]) {
+  for (let proc = 10; proc <= 250; proc += 9) for (const pg of [4, 8, 16]) {
+    if (proc % pg === 0) continue; // sin fragmentación no es interesante
     fi++;
-    const avgWait = Math.round(((0 + a + (a + b)) / 3) * 100) / 100;
-    const avgTurn = Math.round(((a + (a + b) + (a + b + c)) / 3) * 100) / 100;
-    fifoWait.push(mc(`gen-so-fifo-w-${fi}`, 'Planificación', 3,
+    const n = Math.ceil(proc / pg);
+    const waste = n * pg - proc;
+    frag.push(mc(`gen-so-frag-${fi}`, 'Memoria virtual', 3,
+      `Un proceso de ${proc} KB usa páginas de ${pg} KB. ¿Cuánta memoria se desperdicia por fragmentación INTERNA en la última página?`,
+      num4(waste, [0, pg, proc % pg]), 0,
+      `Necesita ⌈${proc}/${pg}⌉ = ${n} marcos = ${n * pg} KB asignados; el proceso usa ${proc} KB ⇒ se desperdician ${n * pg} − ${proc} = ${waste} KB en la última página.`));
+  }
+  const fifoWait: Q[] = [], sjfWait: Q[] = [];
+  let si = 0;
+  for (const a of [2, 3, 4, 5, 6]) for (const b of [3, 4, 6, 8]) for (const c of [2, 5, 7]) {
+    si++;
+    // FIFO en el orden dado: esperas 0, a, a+b.
+    const fAvg = Math.round(((0 + a + (a + b)) / 3) * 100) / 100;
+    // SJF: ordenar ascendente y acumular.
+    const [s1, s2] = [a, b, c].slice().sort((x, y) => x - y);
+    const sAvg = Math.round(((0 + s1 + (s1 + s2)) / 3) * 100) / 100;
+    fifoWait.push(mc(`gen-so-fifo-${si}`, 'Planificación', 3,
       `Con FIFO llegan en t=0 tres procesos con ráfagas ${a}, ${b} y ${c} ms (en ese orden). ¿Tiempo de espera PROMEDIO?`,
-      num4(avgWait, [avgTurn, avgWait + 1, avgWait - 1]).map((o) => `${o} ms`), 0,
-      `Espera: P1=0, P2=${a}, P3=${a + b}. Promedio = (0+${a}+${a + b})/3 = ${avgWait} ms.`));
-    fifoTurn.push(mc(`gen-so-fifo-t-${fi}`, 'Planificación', 3,
-      `Con FIFO llegan en t=0 tres procesos con ráfagas ${a}, ${b} y ${c} ms (en ese orden). ¿Tiempo de RETORNO (turnaround) PROMEDIO?`,
-      num4(avgTurn, [avgWait, avgTurn + 1, avgTurn - 1]).map((o) => `${o} ms`), 0,
-      `Retorno: P1=${a}, P2=${a + b}, P3=${a + b + c}. Promedio = (${a}+${a + b}+${a + b + c})/3 = ${avgTurn} ms.`));
+      num4(fAvg, [sAvg, fAvg + 1, fAvg - 1]).map((o) => `${o} ms`), 0,
+      `FIFO respeta el orden de llegada: esperas 0, ${a}, ${a + b}. Promedio = (0+${a}+${a + b})/3 = ${fAvg} ms.`));
+    sjfWait.push(mc(`gen-so-sjf-${si}`, 'Planificación', 3,
+      `Con SJF (no apropiativo, los tres en t=0) y ráfagas ${a}, ${b} y ${c} ms, ¿tiempo de espera PROMEDIO?`,
+      num4(sAvg, [fAvg, sAvg + 1, sAvg - 1]).map((o) => `${o} ms`), 0,
+      `SJF ejecuta de menor a mayor ráfaga (${[a, b, c].slice().sort((x, y) => x - y).join(', ')}): esperas 0, ${s1}, ${s1 + s2}. Promedio = (0+${s1}+${s1 + s2})/3 = ${sAvg} ms. (La trampa es usar el orden de llegada como en FIFO.)`));
   }
-  const offset: Q[] = [];
-  for (const kb of [1, 2, 4, 8, 16, 32, 64]) {
-    const bits = Math.log2(kb * 1024);
-    offset.push(mc(`gen-so-off-${kb}`, 'Paginación', 3,
-      `Si el tamaño de página es ${kb} KB, ¿cuántos bits del desplazamiento (offset) se necesitan dentro de la página?`,
-      num4(bits, [bits + 1, bits - 1, bits + 2]), 0,
-      `${kb} KB = ${kb * 1024} bytes = 2^${bits} ⇒ ${bits} bits de offset.`));
-  }
-  const frames: Q[] = [];
-  let fr = 0;
-  for (const memMB of [4, 8, 16, 32, 64, 128]) for (const pgKB of [4, 8, 16, 32]) {
-    fr++;
-    const n = (memMB * 1024) / pgKB;
-    frames.push(mc(`gen-so-fr-${fr}`, 'Memoria', 3,
-      `Una memoria física de ${memMB} MB con marcos de ${pgKB} KB, ¿en cuántos marcos se divide?`,
-      num4(n, [n / 2, n * 2, n - 1]), 0,
-      `Marcos = memoria / tamaño de marco = ${memMB} MB / ${pgKB} KB = ${memMB * 1024} KB / ${pgKB} KB = ${n}.`));
-  }
-  return withTopic('sistemas_operativos', interleave(pages, fifoWait, fifoTurn, frames, offset));
+  return withTopic('sistemas_operativos', interleave(pages, frag, fifoWait, sjfWait));
 }
 
 // ──────────────────── PARADIGMAS / JAVA ────────────────────
+// Trampas clásicas de Java: precedencia + división entera, orden de
+// concatenación con String, post-incremento y 'char' + int (da int, no char).
 
 function genParadigmas(): Question[] {
-  const div: Q[] = [], mod: Q[] = [];
-  let di = 0;
-  for (let a = 11; a <= 99; a += 1) {
-    const b = (a % 8) + 2;
-    di++;
-    div.push(mc(`gen-par-div-${di}`, 'Tipos y operadores', 2,
-      `En Java, ¿cuál es el resultado de \`${a} / ${b}\` si ambos son int?`,
-      num4(Math.floor(a / b), [Math.floor(a / b) + 1, Math.ceil(a / b), Math.round(a / b) + 1]), 0,
-      `La división entre int es entera (trunca): ${a} / ${b} = ${Math.floor(a / b)}. Para decimales habría que castear a double.`));
-    mod.push(mc(`gen-par-mod-${di}`, 'Tipos y operadores', 2,
-      `En Java, ¿cuál es el resultado de \`${a} % ${b}\`?`,
-      num4(a % b, [(a % b) + 1, Math.floor(a / b), b - (a % b)]), 0,
-      `El operador % devuelve el resto: ${a} % ${b} = ${a % b}.`));
+  // Precedencia: a + b / c evalúa b/c (entero) primero. Trampa: (a+b)/c o real.
+  const prec: Q[] = [];
+  let pi = 0;
+  for (let a = 5; a <= 15; a++) for (let b = 7; b <= 19; b++) for (const c of [2, 3, 4]) {
+    if (b % c === 0) continue; // que la división tenga decimal para que la trampa exista
+    pi++;
+    const res = a + Math.floor(b / c);
+    prec.push(mc(`gen-par-prec-${pi}`, 'Operadores', 3,
+      `En Java, ¿qué imprime System.out.println(${a} + ${b} / ${c})?`,
+      num4(res, [Math.floor((a + b) / c), a + Math.round(b / c) + 1, res + 1]), 0,
+      `Por precedencia se evalúa ${b} / ${c} primero, y como son int la división trunca: ${Math.floor(b / c)}. Luego ${a} + ${Math.floor(b / c)} = ${res}. Hacer (${a}+${b})/${c} = ${Math.floor((a + b) / c)} ignora la precedencia.`));
   }
-  const shift: Q[] = [];
-  let si = 0;
-  for (let x = 1; x <= 12; x++) for (const n of [1, 2, 3]) {
-    si++;
-    const r = x << n;
-    shift.push(mc(`gen-par-shift-${si}`, 'Operadores de bits', 3,
-      `En Java, ¿cuál es el resultado de \`${x} << ${n}\` (desplazamiento a la izquierda)?`,
-      num4(r, [x << (n + 1), x << (n - 1 || 1), r + x]), 0,
-      `\`x << n\` equivale a x × 2^n: ${x} × 2^${n} = ${r}.`));
+  // Orden de concatenación: a + b + "x" suma primero; "x" + a + b concatena.
+  const concat: Q[] = [];
+  let ci = 0;
+  for (let a = 1; a <= 9; a++) for (let b = 1; b <= 9; b++) {
+    ci++;
+    concat.push(mc(`gen-par-cat-a-${ci}`, 'String', 3,
+      `En Java, ¿qué imprime System.out.println(${a} + ${b} + "x")?`,
+      opts4(`${a + b}x`, [`${a}${b}x`, `x${a + b}`, `${a}${b}`]), 0,
+      `Se evalúa de izquierda a derecha: ${a} + ${b} (ambos int) = ${a + b}, y recién ahí se concatena la "x" ⇒ "${a + b}x". La trampa "${a}${b}x" sería si concatenara los dígitos.`));
+    concat.push(mc(`gen-par-cat-b-${ci}`, 'String', 3,
+      `En Java, ¿qué imprime System.out.println("x" + ${a} + ${b})?`,
+      opts4(`x${a}${b}`, [`x${a + b}`, `${a + b}x`, `${a}${b}x`]), 0,
+      `Al empezar con el String "x", todo lo que sigue se CONCATENA: "x" + ${a} = "x${a}", + ${b} = "x${a}${b}". No se suman: dar "x${a + b}" sería el error.`));
   }
+  // Post-incremento en una expresión: x++ + x con x = a ⇒ a + (a+1) = 2a+1.
+  const inc: Q[] = [];
+  for (let a = 3; a <= 52; a++) {
+    const res = a + (a + 1);
+    inc.push(mc(`gen-par-inc-${a}`, 'Operadores', 3,
+      `En Java: int x = ${a}; System.out.println(x++ + x); ¿Qué imprime?`,
+      num4(res, [2 * a, 2 * a + 2, a], ), 0,
+      `x++ usa el valor actual (${a}) y luego incrementa x a ${a + 1}; el segundo x ya vale ${a + 1}. Resultado: ${a} + ${a + 1} = ${res}. Olvidar el incremento daría ${2 * a}.`));
+  }
+  // 'char' + int da un int (su código), NO el carácter siguiente.
   const chr: Q[] = [];
-  for (let n = 1; n <= 20; n++) {
-    const ch = String.fromCharCode(65 + n);
+  for (let n = 1; n <= 25; n++) {
+    const code = 65 + n;
     chr.push(mc(`gen-par-char-${n}`, 'Tipos y operadores', 3,
-      `En Java, ¿qué carácter resulta de \`(char)('A' + ${n})\`?`,
-      [ch, String.fromCharCode(65 + n + 1), String.fromCharCode(65 + n - 1), String.fromCharCode(97 + n)], 0,
-      `'A' es 65 en ASCII. 65 + ${n} = ${65 + n} ⇒ '${ch}'.`));
+      `En Java, ¿qué imprime System.out.println('A' + ${n})?`,
+      opts4(`${code}`, [`'${String.fromCharCode(code)}'`, `${n}`, `A${n}`]), 0,
+      `'A' + ${n} hace aritmética de ENTEROS: 'A' vale 65, así que da ${code} (un int), NO el carácter '${String.fromCharCode(code)}'. Para obtener la letra habría que castear a char.`));
   }
-  return withTopic('paradigmas_lenguajes', interleave(div, mod, shift, chr));
+  return withTopic('paradigmas_lenguajes', interleave(prec, concat, inc, chr));
 }
 
 // ──────────────────── BASES DE DATOS ────────────────────
