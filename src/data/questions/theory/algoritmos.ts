@@ -837,4 +837,282 @@ export const algoritmosTheory = withTopic('algoritmos_estructuras', [
       'O(n²)',
     ], 0,
     'Las copias por redimensionar (O(n)) ocurren rara vez y, repartidas entre las muchas inserciones O(1), dan un costo amortizado constante: O(1) por inserción.'),
+
+  mc('alg-t-091', 'Ordenamiento', 3,
+    'El SelectionSort (ordenamiento por selección) funciona…',
+    [
+      'Buscando el mínimo del resto y colocándolo en su posición en cada pasada; es O(n²)',
+      'Dividiendo el arreglo en mitades y combinándolas',
+      'Usando una tabla hash auxiliar',
+      'En O(n log n) garantizado',
+    ], 0,
+    'SelectionSort selecciona en cada pasada el menor de los elementos restantes y lo ubica; siempre hace ~n² comparaciones ⇒ O(n²), incluso si ya está ordenado.'),
+
+  mc('alg-t-092', 'Ordenamiento', 3,
+    'El InsertionSort (ordenamiento por inserción)…',
+    [
+      'Inserta cada elemento en su lugar dentro de la parte ya ordenada; es eficiente para arreglos casi ordenados',
+      'Es O(n log n) en todos los casos',
+      'Requiere O(n) de memoria adicional',
+      'Nunca es estable',
+    ], 0,
+    'InsertionSort construye el orden insertando de a uno; si el arreglo está casi ordenado, hace pocos desplazamientos (mejor caso O(n)). Es estable e in-place.'),
+
+  mc('alg-t-093', 'Ordenamiento', 3,
+    'El MEJOR caso del InsertionSort (arreglo ya ordenado) es…',
+    [
+      'O(n)',
+      'O(n²)',
+      'O(n log n)',
+      'O(log n)',
+    ], 0,
+    'Si ya está ordenado, cada elemento queda en su lugar con una sola comparación: recorre el arreglo una vez ⇒ O(n).'),
+
+  mc('alg-t-094', 'Ordenamiento', 3,
+    'El CountingSort logra ordenar en O(n + k)…',
+    [
+      'Contando las ocurrencias de cada valor, sin comparar elementos; sirve para enteros en un rango acotado k',
+      'Comparando todos los pares de elementos',
+      'Únicamente para cadenas de texto',
+      'En O(n²) por comparaciones',
+    ], 0,
+    'CountingSort cuenta cuántas veces aparece cada valor (en un rango k) y reconstruye el orden; al no comparar, supera el límite O(n log n), logrando O(n + k).'),
+
+  mc('alg-t-095', 'Ordenamiento', 3,
+    '¿Cuál afirmación sobre el límite O(n log n) de los ordenamientos es correcta?',
+    [
+      'Aplica solo a los ordenamientos por COMPARACIÓN; CountingSort/RadixSort (que no comparan) pueden lograr O(n + k)',
+      'Todo algoritmo de ordenamiento está limitado a O(n log n) como mínimo',
+      'CountingSort es O(n²) por comparaciones',
+      'Ningún algoritmo puede ordenar en menos de O(n²)',
+    ], 0,
+    'El límite inferior Ω(n log n) rige para los algoritmos basados en comparaciones. CountingSort y RadixSort no comparan elementos, por eso pueden bajar de ese límite.'),
+
+  mc('alg-t-096', 'Ordenamiento', 3,
+    'El RadixSort ordena…',
+    [
+      'Procesando los dígitos/caracteres por posición (de menos a más significativo), usando un orden estable en cada pasada',
+      'Comparando todos los pares de elementos',
+      'Dividiendo el arreglo en mitades',
+      'En O(n²) en el caso promedio',
+    ], 0,
+    'RadixSort distribuye los elementos según cada dígito/posición (usando un sub-ordenamiento estable como CountingSort); logra O(n·d) sin comparar valores completos.'),
+
+  ms('alg-t-097', 'Ordenamiento', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre algoritmos de ordenamiento:',
+    [
+      'SelectionSort e InsertionSort son O(n²) en el peor caso',
+      'InsertionSort es O(n) en el mejor caso (arreglo casi ordenado)',
+      'CountingSort ordena en O(n + k) sin comparar elementos',
+      'RadixSort no se basa en comparaciones entre elementos',
+      'SelectionSort es O(n log n) en el peor caso',
+      'Los ordenamientos por comparación pueden bajar de O(n log n)',
+    ], [0, 1, 2, 3],
+    'Selection/Insertion O(n²), Insertion mejor caso O(n), Counting O(n+k) y Radix sin comparar son correctas. SelectionSort es O(n²) y los ordenamientos por comparación NO bajan de O(n log n).'),
+
+  mc('alg-t-098', 'Grafos', 3,
+    'El algoritmo de Dijkstra calcula…',
+    [
+      'El camino más corto desde un nodo origen hacia los demás, en grafos con pesos no negativos',
+      'El árbol de expansión mínima del grafo',
+      'Un ordenamiento topológico de los nodos',
+      'Todos los ciclos del grafo',
+    ], 0,
+    'Dijkstra encuentra las distancias mínimas desde un origen usando una estrategia voraz con cola de prioridad; requiere que los pesos sean no negativos.'),
+
+  tf('alg-t-099', 'Grafos', 3,
+    'El algoritmo de Dijkstra funciona correctamente con aristas de peso negativo.',
+    false,
+    'Falso. Dijkstra NO admite pesos negativos: su decisión voraz puede dar caminos incorrectos. Para grafos con pesos negativos se usa Bellman-Ford.'),
+
+  mc('alg-t-100', 'Grafos', 3,
+    'Los algoritmos de Kruskal y Prim calculan…',
+    [
+      'El árbol de expansión mínima (MST): conectar todos los nodos con el menor peso total',
+      'El camino más corto entre dos nodos específicos',
+      'El recorrido en anchura del grafo',
+      'Los componentes fuertemente conexos',
+    ], 0,
+    'El MST conecta todos los vértices sin ciclos y con el costo total mínimo. Kruskal agrega aristas mínimas evitando ciclos; Prim crece desde un nodo.'),
+
+  mc('alg-t-101', 'Grafos', 3,
+    'Kruskal y Prim son ejemplos de algoritmos…',
+    [
+      'Voraces (greedy): en cada paso agregan la arista de menor peso que no forma ciclo',
+      'De programación dinámica',
+      'De backtracking',
+      'De fuerza bruta',
+    ], 0,
+    'Ambos construyen el MST tomando decisiones localmente óptimas (la arista mínima válida); en este problema la estrategia voraz sí garantiza el óptimo global.'),
+
+  mc('alg-t-102', 'Grafos', 3,
+    'El ordenamiento topológico se aplica a…',
+    [
+      'Un grafo dirigido acíclico (DAG): ordena los nodos respetando las dependencias',
+      'Cualquier grafo que tenga ciclos',
+      'Un árbol binario de búsqueda',
+      'Una tabla hash',
+    ], 0,
+    'El orden topológico lista los nodos de modo que toda arista u→v aparezca con u antes que v; solo existe si no hay ciclos (DAG), p. ej. para planificar tareas con dependencias.'),
+
+  tf('alg-t-103', 'Grafos', 3,
+    'El ordenamiento topológico se puede aplicar a cualquier grafo dirigido, tenga o no ciclos.',
+    false,
+    'Falso. El ordenamiento topológico SOLO existe en grafos dirigidos ACÍCLICOS (DAG). Si hay un ciclo, no hay un orden lineal que respete todas las dependencias.'),
+
+  mc('alg-t-104', 'Grafos', 3,
+    'Para detectar un ciclo en un grafo se puede usar…',
+    [
+      'DFS, marcando los nodos "en proceso": si se vuelve a llegar a uno en proceso, hay un ciclo',
+      'Una tabla hash sin recorrer el grafo',
+      'Solo BFS por niveles, sin marcar nodos',
+      'El teorema maestro',
+    ], 0,
+    'Durante el DFS, encontrar una arista hacia un nodo que aún está en la pila de recursión (en proceso) revela un ciclo (back edge).'),
+
+  ms('alg-t-105', 'Grafos', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre grafos avanzados:',
+    [
+      'Dijkstra calcula caminos más cortos con pesos no negativos',
+      'Kruskal y Prim calculan el árbol de expansión mínima (MST)',
+      'El ordenamiento topológico se aplica a grafos dirigidos acíclicos (DAG)',
+      'DFS puede usarse para detectar ciclos en un grafo',
+      'Dijkstra funciona correctamente con aristas de peso negativo',
+      'El ordenamiento topológico se aplica a grafos con ciclos',
+    ], [0, 1, 2, 3],
+    'Dijkstra (pesos no negativos), Kruskal/Prim (MST), topológico (DAG) y DFS (ciclos) son correctas. Las falsas: Dijkstra no admite negativos y el topológico no existe con ciclos.'),
+
+  mc('alg-t-106', 'Recursividad', 3,
+    '¿Cuándo conviene preferir una solución ITERATIVA sobre una recursiva?',
+    [
+      'Cuando la profundidad de recursión sería muy grande y podría desbordar la pila (stack overflow)',
+      'Cuando se busca el código más corto, sin importar nada más',
+      'Cuando el problema es naturalmente recursivo y la claridad es prioritaria',
+      'Nunca: la iteración siempre es peor opción',
+    ], 0,
+    'Si la recursión puede ir muy profundo (ej. recorrer millones de elementos), conviene iterar para no agotar la pila de llamadas. La recursión brilla cuando aporta claridad.'),
+
+  mc('alg-t-107', 'Recursividad', 3,
+    'La recursión de cola (tail recursion)…',
+    [
+      'Es aquella cuya llamada recursiva es la última operación; algunos compiladores la optimizan a iteración (sin crecer la pila)',
+      'Usa siempre más memoria que la recursión normal',
+      'No necesita un caso base',
+      'Es imposible de optimizar',
+    ], 0,
+    'En la recursión de cola no queda trabajo pendiente tras la llamada recursiva, así que puede reemplazarse por un bucle (tail-call optimization), evitando crecer la pila.'),
+
+  tf('alg-t-108', 'Recursividad', 2,
+    'La recursión suele dar soluciones más claras para problemas definidos recursivamente (ej. recorridos de árboles), aunque la iteración sea más eficiente en memoria.',
+    true,
+    'Verdadero. Para árboles, fractales o "divide y vencerás", la recursión refleja la estructura del problema; la iteración equivalente suele ser más eficiente en memoria pero menos legible.'),
+
+  mc('alg-t-109', 'Ordenamiento', 3,
+    '¿Cuál de estos algoritmos de ordenamiento es ESTABLE?',
+    [
+      'MergeSort',
+      'QuickSort (en su forma típica)',
+      'SelectionSort',
+      'HeapSort',
+    ], 0,
+    'MergeSort mantiene el orden relativo de los elementos con clave igual (estable). QuickSort, SelectionSort y HeapSort, en sus formas típicas, no son estables.'),
+
+  tf('alg-t-110', 'Ordenamiento', 3,
+    'El SelectionSort es un algoritmo de ordenamiento estable.',
+    false,
+    'Falso. SelectionSort NO es estable en su forma típica: al intercambiar el mínimo a su posición puede alterar el orden relativo de elementos con clave igual. MergeSort e InsertionSort sí son estables.'),
+
+  mc('alg-t-111', 'Ordenamiento', 3,
+    'Para ordenar un arreglo MUY PEQUEÑO o casi ordenado, suele convenir…',
+    [
+      'InsertionSort (bajo overhead y O(n) si está casi ordenado)',
+      'MergeSort (con su overhead de memoria)',
+      'Siempre QuickSort',
+      'Siempre CountingSort',
+    ], 0,
+    'Para pocos elementos o datos casi ordenados, InsertionSort es simple, in-place y muy rápido (cercano a O(n)); por eso muchos algoritmos lo usan para subarreglos chicos.'),
+
+  mc('alg-t-112', 'Ordenamiento', 3,
+    'Necesitás ordenar registros por una clave manteniendo el orden previo de los empates. Conviene un algoritmo…',
+    [
+      'Estable (por ejemplo, MergeSort)',
+      'In-place pero no estable',
+      'Cualquiera, el resultado es idéntico',
+      'Una tabla hash',
+    ], 0,
+    'La estabilidad garantiza que los elementos con la misma clave conserven su orden relativo previo; MergeSort (estable) es una buena opción para eso.'),
+
+  ms('alg-t-113', 'Ordenamiento', 3,
+    'Seleccioná TODAS las afirmaciones correctas al comparar algoritmos de ordenamiento:',
+    [
+      'MergeSort es estable y O(n log n) garantizado',
+      'QuickSort es in-place y muy rápido en promedio',
+      'InsertionSort es eficiente para arreglos casi ordenados',
+      'HeapSort es O(n log n) e in-place, pero no estable',
+      'BubbleSort es el algoritmo más eficiente para n grande',
+      'SelectionSort es un algoritmo estable',
+    ], [0, 1, 2, 3],
+    'MergeSort (estable, n log n), QuickSort (in-place, rápido), Insertion (casi ordenados) y HeapSort (n log n, in-place, no estable) son correctas. BubbleSort no es eficiente y SelectionSort no es estable.'),
+
+  mc('alg-t-114', 'Paradigmas', 3,
+    '¿Cuál es la diferencia entre la programación dinámica y un algoritmo voraz?',
+    [
+      'La PD considera todas las subdecisiones (garantiza el óptimo si hay subestructura óptima); el greedy decide localmente sin reconsiderar',
+      'El greedy siempre da el óptimo global y la PD no',
+      'Son exactamente lo mismo',
+      'La programación dinámica no utiliza subproblemas',
+    ], 0,
+    'La PD explora y combina las soluciones de los subproblemas (más costosa pero segura cuando aplica); el greedy es más rápido pero solo acierta en problemas con la propiedad voraz.'),
+
+  tf('alg-t-115', 'Estructuras', 3,
+    'Una tabla hash, a diferencia de un BST, NO permite recuperar sus elementos en orden recorriéndola.',
+    true,
+    'Verdadero. El hash dispersa los elementos según la función hash, sin ningún orden. Para obtenerlos ordenados se usa un BST (recorrido inorden) o se mantiene una estructura ordenada.'),
+
+  mc('alg-t-116', 'Complejidad', 3,
+    'Para una entrada de n = 1.000.000, ¿qué complejidad es preferible?',
+    [
+      'O(n log n) antes que O(n²): a esa escala la diferencia es enorme',
+      'O(n²) antes que O(n log n)',
+      'O(2ⁿ) antes que O(n)',
+      'Da igual la complejidad para n grande',
+    ], 0,
+    'Para n grande, O(n²) (≈10¹²) es inviable frente a O(n log n) (≈2×10⁷). La complejidad asintótica domina el rendimiento a gran escala.'),
+
+  mc('alg-t-117', 'Complejidad', 3,
+    'En la memoización (programación dinámica), se gana tiempo a costa de…',
+    [
+      'Más memoria, para almacenar los resultados de los subproblemas ya calculados',
+      'Más comparaciones entre elementos',
+      'Más recursión sin ningún beneficio',
+      'Nada: no tiene ningún costo',
+    ], 0,
+    'La memoización es un claro trade-off tiempo/espacio: guarda resultados para no recalcularlos (menos tiempo), usando memoria adicional para la tabla/diccionario.'),
+
+  tf('alg-t-118', 'Paradigmas', 3,
+    'Muchos algoritmos de divide y vencerás se pueden paralelizar, porque sus subproblemas suelen ser independientes entre sí.',
+    true,
+    'Verdadero. Al ser independientes, los subproblemas (ej. ordenar cada mitad en MergeSort) pueden resolverse en paralelo en distintos núcleos, acelerando el cómputo.'),
+
+  ms('alg-t-119', 'Repaso', 3,
+    'Repaso integrador: marcá TODAS las afirmaciones correctas:',
+    [
+      'La búsqueda binaria es O(log n) sobre datos ordenados',
+      'Un BST balanceado ofrece operaciones O(log n)',
+      'La tabla hash ofrece O(1) en promedio',
+      'MergeSort es O(n log n) y estable',
+      'La búsqueda lineal es O(log n)',
+      'El BubbleSort es O(n log n)',
+    ], [0, 1, 2, 3],
+    'Binaria O(log n), BST balanceado O(log n), hash O(1) promedio y MergeSort O(n log n) estable son correctas. La búsqueda lineal es O(n) y el BubbleSort es O(n²).'),
+
+  mc('alg-t-120', 'Elección de estructura', 3,
+    'Tenés que encontrar repetidamente el elemento de mayor prioridad e ir extrayéndolo. ¿Qué estructura conviene?',
+    [
+      'Un heap (cola de prioridad): extrae el máximo/mínimo en O(log n)',
+      'Un arreglo desordenado (buscar el máximo sería O(n) cada vez)',
+      'Una pila (LIFO)',
+      'Una tabla hash',
+    ], 0,
+    'El heap mantiene el elemento de mayor prioridad en la raíz y se reordena en O(log n) tras cada extracción: es la estructura natural para una cola de prioridad.'),
 ]);
