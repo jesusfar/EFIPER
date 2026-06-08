@@ -559,4 +559,282 @@ export const algoritmosTheory = withTopic('algoritmos_estructuras', [
       'MergeSort ordena sin requerir memoria adicional',
     ], [0, 1, 2, 3],
     'QuickSort (promedio n log n, peor n², in-place) y MergeSort (n log n garantizado, estable) son correctas. QuickSort no garantiza n log n siempre y MergeSort sí necesita O(n) de memoria extra.'),
+
+  mc('alg-t-061', 'Paradigmas', 3,
+    'La estrategia "divide y vencerás" consiste en…',
+    [
+      'Dividir el problema en subproblemas más chicos, resolverlos y combinar las soluciones',
+      'Probar todas las combinaciones posibles hasta dar con la solución',
+      'Elegir en cada paso la opción que parece mejor localmente',
+      'Recordar y reutilizar resultados ya calculados',
+    ], 0,
+    'Divide y vencerás parte el problema, resuelve cada parte (a menudo de forma recursiva) y combina los resultados. Ejemplos: MergeSort, QuickSort y la búsqueda binaria.'),
+
+  mc('alg-t-062', 'Paradigmas', 3,
+    'Un algoritmo voraz (greedy)…',
+    [
+      'Toma en cada paso la opción que parece mejor localmente, sin reconsiderar decisiones',
+      'Explora todas las combinaciones posibles',
+      'Divide el problema en mitades y las combina',
+      'Garantiza siempre la solución óptima global',
+    ], 0,
+    'El greedy decide localmente y no vuelve atrás. Es rápido, pero solo da el óptimo global en problemas con la "propiedad voraz" (ej. Dijkstra, Kruskal, Prim).'),
+
+  tf('alg-t-063', 'Paradigmas', 3,
+    'Un algoritmo voraz (greedy) siempre encuentra la solución óptima global del problema.',
+    false,
+    'Falso. El greedy elige el óptimo LOCAL en cada paso, lo que NO garantiza el óptimo global. Solo funciona en problemas con la propiedad voraz; en otros (ej. el problema de la mochila 0/1) falla.'),
+
+  mc('alg-t-064', 'Paradigmas', 3,
+    'La programación dinámica se basa en…',
+    [
+      'Resolver subproblemas superpuestos una sola vez y reutilizar sus resultados (memoización o tabulación)',
+      'Probar todas las combinaciones sin guardar resultados',
+      'Elegir siempre la opción localmente óptima',
+      'Dividir en mitades sin combinar las soluciones',
+    ], 0,
+    'La PD evita recalcular subproblemas que se repiten: guarda sus resultados (memoización top-down o tabulación bottom-up) para reutilizarlos.'),
+
+  mc('alg-t-065', 'Paradigmas', 3,
+    'Un ejemplo clásico de programación dinámica es…',
+    [
+      'Calcular Fibonacci con memoización, evitando recalcular los mismos valores',
+      'Recorrer un arreglo una sola vez',
+      'Realizar una búsqueda lineal',
+      'Apilar y desapilar elementos de una pila',
+    ], 0,
+    'Fibonacci recursivo puro repite muchísimos cálculos; con memoización cada valor se computa una sola vez, bajando de exponencial a O(n).'),
+
+  mc('alg-t-066', 'Paradigmas', 3,
+    'El backtracking (vuelta atrás) consiste en…',
+    [
+      'Construir la solución incrementalmente y retroceder cuando una opción no lleva a una solución válida',
+      'Elegir siempre la opción localmente óptima',
+      'Dividir el problema en mitades',
+      'Reutilizar resultados de subproblemas superpuestos',
+    ], 0,
+    'El backtracking explora opciones paso a paso y, al detectar un callejón sin salida, deshace la última decisión y prueba otra. Ej.: N reinas, sudoku, laberintos.'),
+
+  ms('alg-t-067', 'Paradigmas', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre los paradigmas algorítmicos:',
+    [
+      'Divide y vencerás: dividir, resolver y combinar subproblemas',
+      'Greedy: elegir en cada paso la opción localmente óptima',
+      'Programación dinámica: reutilizar resultados de subproblemas superpuestos',
+      'Backtracking: construir la solución y retroceder ante opciones inválidas',
+      'El greedy siempre encuentra el óptimo global',
+      'La programación dinámica no guarda resultados intermedios',
+    ], [0, 1, 2, 3],
+    'Las cuatro primeras describen bien cada paradigma. El greedy NO siempre da el óptimo global y la PD justamente SÍ guarda resultados intermedios (esa es su esencia).'),
+
+  mc('alg-t-068', 'Recurrencias', 3,
+    'La recurrencia T(n) = 2·T(n/2) + O(n) (como en MergeSort) resuelve a…',
+    [
+      'O(n log n)',
+      'O(n²)',
+      'O(n)',
+      'O(log n)',
+    ], 0,
+    'Hay log n niveles (dividir a la mitad) y en cada nivel se hace O(n) de trabajo (la combinación) ⇒ O(n log n).'),
+
+  mc('alg-t-069', 'Recurrencias', 3,
+    'El teorema maestro sirve para…',
+    [
+      'Resolver recurrencias de la forma T(n) = a·T(n/b) + f(n), típicas de divide y vencerás',
+      'Ordenar un arreglo de números',
+      'Recorrer un grafo en anchura',
+      'Calcular el factorial de un número',
+    ], 0,
+    'El teorema maestro da directamente la complejidad de las recurrencias divide-y-vencerás comparando f(n) con n^(log_b a), sin resolverlas a mano.'),
+
+  tf('alg-t-070', 'Recurrencias', 3,
+    'La recurrencia T(n) = T(n−1) + O(1) corresponde a una complejidad O(log n).',
+    false,
+    'Falso. T(n) = T(n−1) + O(1) realiza n pasos de costo constante ⇒ O(n) (lineal). El O(log n) surge de DIVIDIR el problema a la mitad (T(n/2)), no de restar 1.'),
+
+  mc('alg-t-071', 'Notaciones', 3,
+    'La notación Ω (omega) representa…',
+    [
+      'Una cota INFERIOR del costo del algoritmo',
+      'Una cota superior del costo',
+      'El caso promedio exacto',
+      'El uso de memoria del algoritmo',
+    ], 0,
+    'Ω acota el costo por abajo (el algoritmo tarda al menos ese orden). O acota por arriba y Θ es la cota ajustada (ambas a la vez).'),
+
+  mc('alg-t-072', 'Notaciones', 3,
+    'La notación Θ (theta) representa…',
+    [
+      'Una cota ajustada: el algoritmo crece exactamente a ese orden (cota inferior y superior a la vez)',
+      'Únicamente una cota superior',
+      'Únicamente una cota inferior',
+      'El tiempo de ejecución en segundos',
+    ], 0,
+    'Θ(g(n)) significa que el costo está acotado por arriba Y por abajo por g(n) (salvo constantes): describe el crecimiento exacto del algoritmo.'),
+
+  ms('alg-t-073', 'Notaciones', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre las notaciones asintóticas:',
+    [
+      'O (Big-O) describe una cota superior',
+      'Ω (omega) describe una cota inferior',
+      'Θ (theta) describe una cota ajustada (superior e inferior)',
+      'Las tres notaciones ignoran las constantes y los términos menores',
+      'O (Big-O) describe una cota inferior',
+      'Θ (theta) describe únicamente la cota superior',
+    ], [0, 1, 2, 3],
+    'O = superior, Ω = inferior, Θ = ajustada, y las tres ignoran constantes. Las falsas confunden O con una cota inferior y Θ con solo la superior.'),
+
+  tf('alg-t-074', 'Complejidad espacial', 3,
+    'La complejidad espacial mide la cantidad de memoria adicional que usa un algoritmo en función del tamaño de la entrada.',
+    true,
+    'Verdadero. Además del tiempo, importa el espacio: un algoritmo in-place usa O(1) extra, mientras que MergeSort necesita O(n) de memoria adicional.'),
+
+  mc('alg-t-075', 'Complejidad espacial', 3,
+    '¿Cuál de estos algoritmos de ordenamiento usa O(n) de memoria adicional (no es in-place)?',
+    [
+      'MergeSort',
+      'QuickSort',
+      'BubbleSort',
+      'InsertionSort',
+    ], 0,
+    'MergeSort necesita un arreglo auxiliar para combinar (O(n) extra). QuickSort, BubbleSort e InsertionSort ordenan dentro del propio arreglo (in-place).'),
+
+  tf('alg-t-076', 'Complejidad espacial', 3,
+    'A menudo existe un compromiso entre tiempo y espacio: usar más memoria (por ejemplo, una caché o una tabla de memoización) puede reducir el tiempo de cómputo.',
+    true,
+    'Verdadero. Es el clásico "trade-off" tiempo/espacio: guardar resultados (memoización, índices, cachés) evita recalcular, acelerando a costa de más memoria.'),
+
+  mc('alg-t-077', 'Recursividad', 3,
+    'La recursión consume memoria adicional porque…',
+    [
+      'Cada llamada apila un marco en la pila de llamadas (usa O(profundidad) de espacio)',
+      'Siempre crea una copia completa del arreglo',
+      'Utiliza el disco como memoria',
+      'No consume memoria adicional en absoluto',
+    ], 0,
+    'Cada invocación recursiva guarda su estado (parámetros, variables, retorno) en la pila; la profundidad de la recursión determina el espacio usado.'),
+
+  mc('alg-t-078', 'Estructuras', 3,
+    'Una "deque" (double-ended queue) permite…',
+    [
+      'Insertar y eliminar elementos por ambos extremos (frente y final)',
+      'Insertar y eliminar solo por un extremo',
+      'Acceder únicamente al elemento del medio',
+      'Insertar pero no eliminar elementos',
+    ], 0,
+    'La deque generaliza a la pila y la cola: se puede agregar/quitar tanto por el frente como por el final, en O(1).'),
+
+  mc('alg-t-079', 'Estructuras', 3,
+    'Un árbol B (B-tree) se utiliza típicamente en…',
+    [
+      'Índices de bases de datos y sistemas de archivos (nodos con muchas claves, optimizado para acceso a disco)',
+      'Ordenar pequeñas cantidades de datos en memoria',
+      'Implementar una pila',
+      'Reemplazar a una tabla hash',
+    ], 0,
+    'El árbol B agrupa muchas claves por nodo para minimizar accesos a disco (cada nodo ≈ un bloque), por eso es la base de los índices de BD y sistemas de archivos.'),
+
+  mc('alg-t-080', 'Estructuras', 3,
+    'Un trie (árbol de prefijos) es eficiente para…',
+    [
+      'Almacenar y buscar cadenas por prefijo (ej. autocompletado de palabras)',
+      'Ordenar números enteros',
+      'Implementar una cola de prioridad',
+      'Representar un grafo denso',
+    ], 0,
+    'El trie organiza las cadenas por sus caracteres (un nivel por carácter), compartiendo prefijos comunes; permite búsquedas y autocompletado por prefijo muy eficientes.'),
+
+  tf('alg-t-081', 'Estructuras', 3,
+    'Un trie almacena cada palabra completa en un único nodo, sin compartir los prefijos comunes entre palabras.',
+    false,
+    'Falso. El trie justamente COMPARTE los prefijos comunes: cada carácter es un nivel/arista, y las palabras con el mismo comienzo comparten ese camino, lo que ahorra espacio y acelera la búsqueda por prefijo.'),
+
+  ms('alg-t-082', 'Estructuras', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre estructuras especiales:',
+    [
+      'La deque permite insertar/eliminar por ambos extremos',
+      'El árbol B es habitual en índices de bases de datos y sistemas de archivos',
+      'El trie indexa cadenas aprovechando los prefijos comunes',
+      'El heap se usa para implementar colas de prioridad',
+      'La deque solo permite operar por un extremo',
+      'El trie almacena cada palabra sin compartir prefijos',
+    ], [0, 1, 2, 3],
+    'Deque (ambos extremos), árbol B (índices/disco), trie (prefijos) y heap (cola de prioridad) son correctas. Las dos falsas contradicen la deque y el trie.'),
+
+  mc('alg-t-083', 'Estructuras', 3,
+    'Una lista doblemente enlazada, frente a la lista simplemente enlazada,…',
+    [
+      'Permite recorrer en ambas direcciones (cada nodo apunta al anterior y al siguiente), a costa de más memoria',
+      'Usa menos memoria por nodo',
+      'No permite recorrer hacia atrás',
+      'No utiliza punteros',
+    ], 0,
+    'La lista doble guarda dos punteros por nodo (anterior y siguiente), lo que permite recorrer en ambos sentidos y eliminar un nodo dado en O(1), usando algo más de memoria.'),
+
+  mc('alg-t-084', 'Estructuras', 3,
+    'Una cola circular (buffer circular) sirve para…',
+    [
+      'Reutilizar el espacio de un arreglo de tamaño fijo, evitando desperdiciar posiciones al desencolar',
+      'Ordenar elementos de mayor a menor',
+      'Buscar cadenas por prefijo',
+      'Implementar la recursión',
+    ], 0,
+    'La cola circular trata el arreglo como un anillo: cuando el final llega al tope, vuelve al inicio reutilizando las posiciones liberadas, sin tener que desplazar elementos.'),
+
+  tf('alg-t-085', 'Paradigmas', 3,
+    'La diferencia entre la programación dinámica y el divide y vencerás puro es que la PD aprovecha subproblemas SUPERPUESTOS, evitando recalcularlos.',
+    true,
+    'Verdadero. En divide y vencerás los subproblemas suelen ser independientes; en PD se repiten (superpuestos), por eso se guardan sus resultados (memoización/tabulación).'),
+
+  mc('alg-t-086', 'Elección de estructura', 3,
+    'Para buscar por una clave exacta lo más rápido posible (sin necesidad de mantener orden), conviene…',
+    [
+      'Una tabla hash (O(1) en promedio)',
+      'Un arreglo desordenado recorrido linealmente',
+      'Una lista enlazada simple',
+      'Recorrer toda la estructura en cada búsqueda',
+    ], 0,
+    'Si solo se necesita búsqueda exacta y no orden, la tabla hash da acceso promedio O(1), superando a las estructuras que requieren recorrer los elementos.'),
+
+  mc('alg-t-087', 'Elección de estructura', 3,
+    'Necesitás una estructura que mantenga los elementos ORDENADOS y permita insertar y buscar en O(log n). ¿Cuál conviene?',
+    [
+      'Un árbol binario de búsqueda balanceado (AVL o rojo-negro)',
+      'Una tabla hash',
+      'Una pila',
+      'Una lista enlazada simple',
+    ], 0,
+    'El BST balanceado mantiene el orden y da O(log n) en inserción/búsqueda. La tabla hash es O(1) pero NO mantiene orden, por eso no sirve aquí.'),
+
+  ms('alg-t-088', 'Elección de estructura', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre la elección de estructuras de datos:',
+    [
+      'La tabla hash es ideal para búsqueda exacta en O(1) promedio',
+      'Un BST balanceado mantiene el orden con operaciones O(log n)',
+      'La pila (LIFO) es ideal para deshacer acciones (undo)',
+      'La cola (FIFO) es ideal para procesar en orden de llegada',
+      'La tabla hash mantiene sus elementos siempre ordenados',
+      'La pila es ideal para procesar elementos en orden de llegada',
+    ], [0, 1, 2, 3],
+    'Hash (búsqueda exacta), BST balanceado (orden + O(log n)), pila (undo) y cola (orden de llegada) son correctas. El hash NO mantiene orden y procesar por llegada es la COLA, no la pila.'),
+
+  mc('alg-t-089', 'Complejidad', 3,
+    'El análisis AMORTIZADO se usa para…',
+    [
+      'Promediar el costo de una operación sobre una secuencia de operaciones (ej. agregar a un arreglo dinámico que a veces se redimensiona)',
+      'Medir el peor caso de una única operación aislada',
+      'Calcular el uso de memoria del algoritmo',
+      'Ordenar un arreglo de elementos',
+    ], 0,
+    'El análisis amortizado reparte el costo de las operaciones caras (poco frecuentes) entre las baratas, dando un costo promedio por operación más representativo.'),
+
+  mc('alg-t-090', 'Complejidad', 3,
+    'Agregar un elemento al final de un arreglo dinámico (que duplica su capacidad al llenarse) tiene un costo AMORTIZADO de…',
+    [
+      'O(1), aunque algunas inserciones individuales sean O(n) por el redimensionamiento',
+      'O(n) en todas las inserciones',
+      'O(log n)',
+      'O(n²)',
+    ], 0,
+    'Las copias por redimensionar (O(n)) ocurren rara vez y, repartidas entre las muchas inserciones O(1), dan un costo amortizado constante: O(1) por inserción.'),
 ]);

@@ -6,7 +6,7 @@ import { Button } from '../../components/Button';
 import { TopicChip } from '../../components/TopicChip';
 import { BuddyAvatar, AVATAR_PALETTE, AVATAR_SLOTS } from '../../components/BuddyAvatar';
 import { TOPIC_THEME } from '../../lib/theme/topicTheme';
-import { playSfx } from '../../lib/audio/soundManager';
+import { playPingPongStart, playSfx } from '../../lib/audio/soundManager';
 import { RichAnswer, DIFFICULTY_LABELS, shuffled } from './RichAnswer';
 import type { Topic } from '../../types';
 
@@ -61,6 +61,7 @@ export function PingPongMode({ onBack }: { onBack: () => void }) {
   }
 
   function begin() {
+    playPingPongStart();
     const seed = Math.random();
     const idxs = shuffled(ORAL_QUESTIONS.map((_, i) => i), seed);
     setOrder(idxs);
@@ -157,7 +158,7 @@ export function PingPongMode({ onBack }: { onBack: () => void }) {
           <p className="text-xs text-muted">Si dejás un nombre vacío, se usa “Participante N”.</p>
         </Card>
 
-        <Button variant="primary" disabled={count < MIN_P} onClick={begin}>Comenzar</Button>
+        <Button variant="primary" className="sfx-mute" disabled={count < MIN_P} onClick={begin}>Comenzar</Button>
       </div>
     );
   }

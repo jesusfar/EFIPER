@@ -29,6 +29,7 @@ import hoverSfx from '../../assets/audio/HoverDDLC.mp3';
 import confirmSfx from '../../assets/audio/ps2-select-sound.mp3';
 import streakSfx from '../../assets/audio/duolingo-end-of-lesson.mp3';
 import levelUpSfx from '../../assets/audio/skyrim_level_up_sound_effect_free_downloadx1.mp3';
+import pingPongStartSfx from '../../assets/audio/mr-tenna-says-its-tv-time.mp3';
 import sapeeeLogoSfx from '../../assets/audio/sapeee-el-bananero.mp3';
 import spiderman2099LogoSfx from '../../assets/audio/spiderman-2099-theme.mp3';
 import uwuLogoSfx from '../../assets/audio/uwu_isolated_3db_boosted.mp3';
@@ -113,6 +114,11 @@ export function playLogoHover(): void {
 export function playBackButton(): void {
   if (!enabled) return;
   playMp3(backButtonSfx);
+}
+
+export function playPingPongStart(): void {
+  if (!enabled) return;
+  playMp3(pingPongStartSfx, 2.4);
 }
 
 // Sonido de fin de test: se guarda la referencia para poder cortarlo si el
