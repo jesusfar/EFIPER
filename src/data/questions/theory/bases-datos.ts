@@ -569,4 +569,282 @@ export const basesDatosTheory = withTopic('base_de_datos', [
       'NoSQL significa que no almacenan ningún dato',
     ], 0,
     'Las relacionales (SQL) priorizan esquema y ACID; las NoSQL ofrecen flexibilidad de esquema y escalado horizontal, a menudo relajando la consistencia (eventual) para ganar disponibilidad.'),
+
+  mc('bd-t-061', 'Diseño', 3,
+    '¿Cuál es la diferencia entre el modelo lógico y el modelo físico de datos?',
+    [
+      'El lógico define entidades, atributos y relaciones independiente del SGBD; el físico define tablas, tipos, índices y almacenamiento para un motor concreto',
+      'El físico es independiente del motor de base de datos',
+      'Son exactamente lo mismo',
+      'El lógico es el que define índices y particiones',
+    ], 0,
+    'El modelo lógico es conceptual/independiente del motor; el físico baja al detalle de implementación de un SGBD específico (tipos, índices, particiones, almacenamiento).'),
+
+  tf('bd-t-062', 'Diseño', 2,
+    'El dominio de un atributo es el conjunto de valores válidos que puede tomar (su tipo, rango y formato).',
+    true,
+    'Verdadero. El dominio define qué valores son admisibles para el atributo; restringirlo (tipo, CHECK, NOT NULL) protege la integridad de los datos.'),
+
+  mc('bd-t-063', 'Diseño', 3,
+    'Para almacenar montos de dinero con exactitud conviene usar…',
+    [
+      'Un tipo decimal/numeric de precisión fija (evitando FLOAT, que tiene errores de redondeo)',
+      'FLOAT en todos los casos',
+      'VARCHAR para guardarlo como texto',
+      'BOOLEAN',
+    ], 0,
+    'Los tipos de punto flotante (FLOAT/DOUBLE) introducen errores de redondeo; para dinero se usa DECIMAL/NUMERIC con precisión y escala fijas.'),
+
+  mc('bd-t-064', 'Claves', 3,
+    '¿Cuál es la diferencia entre una clave natural y una clave subrogada (surrogate)?',
+    [
+      'La natural tiene significado de negocio (ej. DNI); la subrogada es un identificador artificial sin significado (ej. id autoincremental)',
+      'La subrogada tiene significado de negocio y la natural no',
+      'Son exactamente lo mismo',
+      'La clave natural siempre es autoincremental',
+    ], 0,
+    'La clave natural surge del dominio (DNI, ISBN); la subrogada es un id generado por el sistema, estable y sin semántica, usado como PK para evitar problemas.'),
+
+  ms('bd-t-065', 'Claves', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre claves naturales y subrogadas:',
+    [
+      'Una clave subrogada es estable: no cambia aunque cambien los datos del negocio',
+      'Una clave natural puede cambiar con el tiempo (ej. un email)',
+      'Usar subrogada evita claves primarias compuestas y extensas',
+      'La clave natural conviene mantenerla como clave única/alternativa',
+      'Una clave natural nunca cambia a lo largo del tiempo',
+      'Una clave subrogada tiene significado de negocio',
+    ], [0, 1, 2, 3],
+    'La subrogada es estable y simple (sin semántica); la natural puede cambiar y conviene conservarla como UNIQUE. Las dos falsas contradicen justamente esas propiedades.'),
+
+  mc('bd-t-066', 'Normalización', 3,
+    'Una dependencia funcional A → B significa que…',
+    [
+      'El valor de A determina unívocamente el valor de B',
+      'A y B no tienen ninguna relación',
+      'B determina el valor de A',
+      'A y B son ambas claves foráneas',
+    ], 0,
+    'A → B: para cada valor de A hay un único valor de B. Las dependencias funcionales son la base teórica de la normalización (2FN, 3FN, BCNF).'),
+
+  mc('bd-t-067', 'Normalización', 3,
+    'La Forma Normal de Boyce-Codd (BCNF)…',
+    [
+      'Es una versión más estricta de la 3FN: exige que todo determinante sea una clave candidata',
+      'Es más débil que la 1FN',
+      'Elimina la atomicidad de los atributos',
+      'No tiene relación con las dependencias funcionales',
+    ], 0,
+    'BCNF refuerza la 3FN: en toda dependencia funcional X → Y, X debe ser clave candidata. Resuelve ciertas anomalías que la 3FN aún permite.'),
+
+  tf('bd-t-068', 'Normalización', 3,
+    'Normalizar reduce la redundancia y las anomalías de inserción/actualización/borrado, pero puede requerir más JOINs en las consultas.',
+    true,
+    'Verdadero. Al separar los datos en más tablas se evita la redundancia, pero recomponer la información exige unir tablas (JOINs), con su costo.'),
+
+  mc('bd-t-069', 'Normalización', 3,
+    'Una anomalía de actualización ocurre cuando…',
+    [
+      'Un dato redundante (repetido en muchas filas) se actualiza en unas filas y no en otras, generando inconsistencia',
+      'Se pierde un índice de la tabla',
+      'Falta una clave foránea',
+      'El resultado queda mal ordenado',
+    ], 0,
+    'Si un mismo dato está duplicado y se cambia solo en algunas filas, la base queda inconsistente. La normalización elimina esa redundancia y previene la anomalía.'),
+
+  ms('bd-t-070', 'Normalización', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre las formas normales:',
+    [
+      '1FN: atributos atómicos',
+      '2FN: sin dependencias parciales de la clave',
+      '3FN: sin dependencias transitivas entre atributos no clave',
+      'BCNF: todo determinante es una clave candidata',
+      'La 2FN elimina las dependencias transitivas',
+      'La BCNF es más débil que la 3FN',
+    ], [0, 1, 2, 3],
+    '1FN=atómico, 2FN=parciales, 3FN=transitivas, BCNF=determinante es clave candidata. Eliminar transitivas es 3FN (no 2FN), y BCNF es MÁS estricta que la 3FN.'),
+
+  mc('bd-t-071', 'Rendimiento', 3,
+    'La desnormalización mejora el rendimiento de lectura, pero…',
+    [
+      'Introduce redundancia y riesgo de inconsistencia, y complica las operaciones de escritura',
+      'Siempre mejora todos los aspectos sin contrapartidas',
+      'Elimina todos los índices de la base',
+      'Reduce el espacio de almacenamiento ocupado',
+    ], 0,
+    'Al duplicar datos para evitar JOINs, se acelera la lectura pero hay que mantener la redundancia consistente en cada escritura, con más espacio usado.'),
+
+  mc('bd-t-072', 'Índices', 3,
+    'Un índice agrupado (clustered)…',
+    [
+      'Define el orden físico de las filas en la tabla; por eso solo puede haber uno por tabla',
+      'No afecta el orden físico de las filas',
+      'Puede haber muchos por tabla',
+      'Es lo mismo que una vista',
+    ], 0,
+    'El índice clustered ordena físicamente las filas según su clave; como los datos solo pueden tener un orden físico, hay un único clustered por tabla.'),
+
+  mc('bd-t-073', 'Índices', 3,
+    'Un índice no agrupado (non-clustered)…',
+    [
+      'Es una estructura separada que apunta a las filas; puede haber varios por tabla',
+      'Ordena físicamente las filas de la tabla',
+      'Solo puede existir uno por tabla',
+      'Reemplaza a la clave primaria',
+    ], 0,
+    'El non-clustered guarda la clave y un puntero a la fila; al ser independiente del orden físico, una tabla puede tener varios.'),
+
+  mc('bd-t-074', 'Índices', 3,
+    'En un índice compuesto sobre (apellido, nombre), una búsqueda que filtra solo por "nombre"…',
+    [
+      'No aprovecha eficientemente el índice: el orden de las columnas importa y se usa de izquierda a derecha (prefijo más a la izquierda)',
+      'Lo aprovecha igual de bien que filtrar por apellido',
+      'Vuelve el índice inútil también para apellido',
+      'Ordena el resultado por nombre primero',
+    ], 0,
+    'Los índices compuestos se usan por su prefijo izquierdo: filtrar por apellido (o apellido+nombre) sí lo aprovecha; filtrar solo por nombre, no.'),
+
+  tf('bd-t-075', 'Índices', 3,
+    'Un índice es más útil en columnas de alta selectividad (muchos valores distintos) que en columnas con pocos valores repetidos (como un booleano).',
+    true,
+    'Verdadero. Si casi todos los valores son distintos, el índice descarta muchas filas rápido; en una columna con 2 valores apenas filtra, aportando poco.'),
+
+  mc('bd-t-076', 'Rendimiento', 3,
+    'El plan de ejecución de una consulta…',
+    [
+      'Muestra cómo el motor ejecutará la consulta (uso de índices, tipo de join, escaneos) y ayuda a optimizarla',
+      'Es el código fuente de la consulta',
+      'Es una copia de seguridad de la base',
+      'Es un trigger asociado a la tabla',
+    ], 0,
+    'El plan de ejecución revela la estrategia del optimizador: si usa índices o hace full scan, el orden de los joins, etc. Es clave para diagnosticar consultas lentas.'),
+
+  mc('bd-t-077', 'Rendimiento', 3,
+    'Un "escaneo completo de tabla" (full table scan)…',
+    [
+      'Recorre todas las filas; suele indicar que no se usó un índice y puede ser lento en tablas grandes',
+      'Siempre es la opción más rápida',
+      'Significa que se usó un índice eficientemente',
+      'Es un tipo de JOIN',
+    ], 0,
+    'El full scan lee toda la tabla. En tablas grandes suele ser síntoma de falta de índice adecuado (aunque para tablas chicas puede ser lo más eficiente).'),
+
+  mc('bd-t-078', 'Recuperación', 3,
+    'El registro de transacciones (transaction log / WAL)…',
+    [
+      'Registra los cambios antes de aplicarlos, permitiendo recuperar la base ante una falla (redo/undo)',
+      'Almacena los índices de la base',
+      'Es un backup completo de la base',
+      'Cifra los datos de las tablas',
+    ], 0,
+    'El log (write-ahead logging) anota los cambios antes de escribirlos en los datos; tras una caída permite rehacer (redo) los confirmados y deshacer (undo) los no confirmados.'),
+
+  mc('bd-t-079', 'Recuperación', 3,
+    'Un checkpoint en una base de datos…',
+    [
+      'Vuelca a disco los cambios que están en memoria hasta ese punto, acortando el tiempo de recuperación tras una falla',
+      'Borra el registro de transacciones',
+      'Crea un índice automáticamente',
+      'Bloquea por completo la base de datos',
+    ], 0,
+    'El checkpoint sincroniza memoria y disco hasta un punto; ante una caída, la recuperación solo debe procesar el log posterior al checkpoint, no todo.'),
+
+  ms('bd-t-080', 'Recuperación', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre recuperación y backups:',
+    [
+      'El log de transacciones permite rehacer/deshacer cambios tras una falla',
+      'Un backup completo copia toda la base de datos',
+      'Un backup incremental copia solo lo cambiado desde el último respaldo',
+      'El checkpoint reduce el tiempo de recuperación tras una caída',
+      'Un backup incremental copia toda la base cada vez',
+      'El log de transacciones no sirve para la recuperación',
+    ], [0, 1, 2, 3],
+    'Log (redo/undo), backup completo (todo), incremental (solo cambios) y checkpoint (acelera recuperación) son correctas. Las dos falsas contradicen el incremental y el rol del log.'),
+
+  tf('bd-t-081', 'Recuperación', 2,
+    'Las copias de seguridad (backups) periódicas son esenciales para poder recuperar los datos ante fallos, errores humanos o ataques.',
+    true,
+    'Verdadero. Sin backups, una falla de disco, un borrado accidental o un ransomware pueden provocar la pérdida definitiva de los datos.'),
+
+  mc('bd-t-082', 'OLTP/OLAP', 3,
+    '¿Cuál es la diferencia entre OLTP y OLAP?',
+    [
+      'OLTP procesa transacciones operativas (muchas escrituras cortas, normalizado); OLAP analiza grandes volúmenes para reportes (consultas complejas de lectura, a menudo desnormalizado)',
+      'OLTP es analítico y OLAP es transaccional',
+      'Son exactamente lo mismo',
+      'OLAP solo realiza operaciones INSERT',
+    ], 0,
+    'OLTP = operación diaria (ventas, altas), optimizado para escrituras y normalizado. OLAP = análisis/BI, optimizado para consultas complejas de lectura sobre grandes volúmenes.'),
+
+  mc('bd-t-083', 'Data Warehouse', 3,
+    'Un data warehouse es…',
+    [
+      'Un repositorio analítico que integra datos históricos de varias fuentes para el soporte a la toma de decisiones',
+      'La base de datos operativa de uso diario',
+      'Un tipo de índice',
+      'Un disparador (trigger)',
+    ], 0,
+    'El data warehouse consolida e historiza datos de múltiples sistemas para análisis y reportes (BI), separado de las bases operativas (OLTP).'),
+
+  tf('bd-t-084', 'Data Warehouse', 3,
+    'Un proceso ETL extrae, transforma y carga datos desde las fuentes hacia el data warehouse.',
+    true,
+    'Verdadero. ETL (Extract, Transform, Load) obtiene los datos de las fuentes, los limpia/transforma y los carga en el DW con un formato apto para el análisis.'),
+
+  ms('bd-t-085', 'Data Warehouse', 3,
+    'Seleccioná TODAS las afirmaciones correctas sobre OLTP, OLAP y data warehouse:',
+    [
+      'OLTP maneja transacciones operativas (muchas escrituras cortas)',
+      'OLAP soporta análisis con consultas complejas de lectura',
+      'El data warehouse integra datos históricos de varias fuentes',
+      'El proceso ETL extrae, transforma y carga datos hacia el DW',
+      'OLAP está optimizado para inserciones masivas en tiempo real',
+      'El data warehouse reemplaza a la base de datos operativa',
+    ], [0, 1, 2, 3],
+    'OLTP=operacional, OLAP=analítico, DW=histórico integrado, ETL=lo alimenta. OLAP no se optimiza para inserciones en tiempo real y el DW complementa (no reemplaza) al OLTP.'),
+
+  mc('bd-t-086', 'Data Warehouse', 3,
+    'En un data warehouse, el esquema en estrella se caracteriza por…',
+    [
+      'Tener una tabla de hechos central rodeada de tablas de dimensiones',
+      'No tener ninguna tabla de hechos',
+      'Estar completamente normalizado en 3FN',
+      'Ser en realidad un índice',
+    ], 0,
+    'El esquema en estrella ubica los hechos (medidas) en el centro y las dimensiones (contexto: tiempo, producto, cliente) alrededor, optimizando las consultas analíticas.'),
+
+  tf('bd-t-087', 'Data Warehouse', 3,
+    'Los data warehouses suelen estar desnormalizados para acelerar las consultas analíticas, a diferencia de las bases OLTP, que se mantienen normalizadas.',
+    true,
+    'Verdadero. En análisis priman las lecturas: la desnormalización reduce JOINs y acelera reportes; en OLTP, la normalización evita anomalías en las escrituras.'),
+
+  mc('bd-t-088', 'Integridad', 3,
+    'La integridad de dominio se asegura mediante…',
+    [
+      'Restricciones sobre los valores válidos de una columna (tipo de dato, CHECK, NOT NULL)',
+      'Únicamente la clave primaria',
+      'Solamente los índices',
+      'Solo los triggers',
+    ], 0,
+    'La integridad de dominio limita los valores de cada columna a su dominio válido usando tipos, CHECK, NOT NULL, DEFAULT, etc.'),
+
+  mc('bd-t-089', 'Modelado', 3,
+    'En un sistema de biblioteca, un libro puede tener varios autores y un autor escribió varios libros (N:M). ¿Cómo conviene modelarlo?',
+    [
+      'Con una tabla intermedia Libro_Autor que contenga las FK a Libro y a Autor',
+      'Poniendo el autor como una columna repetida en la tabla Libro',
+      'Fusionando Libro y Autor en una sola tabla',
+      'Usando un único campo con todos los autores separados por comas',
+    ], 0,
+    'Una relación N:M se resuelve con una tabla asociativa (Libro_Autor) que combina las PK de ambas entidades como FK, evitando redundancia y grupos repetitivos.'),
+
+  mc('bd-t-090', 'Integridad', 3,
+    'Para un campo "estado del préstamo" que solo puede valer \'pendiente\', \'activo\' o \'devuelto\', la mejor opción de integridad es…',
+    [
+      'Una restricción CHECK (o un tipo enumerado / tabla de referencia) que limite los valores válidos',
+      'Un campo numérico de texto libre',
+      'Un VARCHAR sin ninguna restricción',
+      'Un índice agrupado (clustered)',
+    ], 0,
+    'Restringir el dominio del campo con un CHECK, un ENUM o una tabla de referencia (con FK) impide que se carguen estados inválidos, protegiendo la integridad.'),
 ]);
