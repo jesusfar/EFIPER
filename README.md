@@ -1,6 +1,6 @@
 # EFIPER
 
-**EFIPER** es un entrenador offline-first para preparar el **EFIP I de Licenciatura en Informatica**. Centraliza practica teorica, defensa oral, casos, repaso espaciado, progreso por XP y una version portable en un unico archivo HTML.
+**EFIPER** es un entrenador offline-first para preparar el **EFIP I de Licenciatura en Informatica de la Universidad Siglo 21**. Centraliza practica teorica, defensa oral, casos, repaso espaciado, progreso por XP y una version portable en un unico archivo HTML.
 
 El proyecto esta pensado para estudiar sin backend, sin cuentas y sin depender de internet. El progreso se guarda localmente en el navegador y puede exportarse/importarse como respaldo JSON.
 
