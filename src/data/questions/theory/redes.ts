@@ -47,9 +47,9 @@ export const redesTheory = withTopic('redes_comunicaciones', [
     'El router opera en capa 3: enruta por IP, separa dominios de broadcast y suele hacer NAT. Conmutar por MAC es tarea del switch (capa 2); repetir a todos los puertos es el hub (capa 1).'),
 
   tf('red-t-005', 'Direccionamiento', 3,
-    'Dos hosts que están en la misma subred IP pueden comunicarse directamente por la LAN, sin que su tráfico tenga que pasar por el gateway predeterminado.',
-    true,
-    'Verdadero. El gateway (router) solo se usa para salir hacia otras redes. Dentro de la misma subred, los hosts se comunican directamente (resolviendo la MAC por ARP).'),
+    'Dos hosts que están en la misma subred IP deben enviar su tráfico al gateway predeterminado para poder comunicarse entre sí.',
+    false,
+    'Falso. En la misma subred los hosts se comunican directamente por la LAN (resolviendo la MAC por ARP). El gateway solo se usa para salir hacia OTRAS redes.'),
 
   mc('red-t-006', 'Direccionamiento', 3,
     'El host 192.168.1.70 usa la máscara 255.255.255.192 (/26). ¿A qué dirección de red pertenece y cuál es su broadcast?',
@@ -131,9 +131,9 @@ export const redesTheory = withTopic('redes_comunicaciones', [
     'HTTP, DNS, DHCP y FTP son protocolos de aplicación. ARP trabaja en la capa de enlace/red (resuelve direcciones) e IP es el protocolo de la capa de red.'),
 
   tf('red-t-014', 'Dispositivos', 3,
-    'Un switch de capa 2 separa dominios de colisión (uno por puerto) pero NO separa dominios de broadcast: un broadcast llega a todos los puertos de la misma VLAN.',
-    true,
-    'Verdadero. El switch crea un dominio de colisión por puerto, pero todos comparten el mismo dominio de broadcast (salvo que se definan VLANs). Para separar broadcast se necesita un router o VLANs.'),
+    'Un switch de capa 2 separa tanto los dominios de colisión como los de broadcast, por lo que un broadcast no llega a los demás puertos.',
+    false,
+    'Falso. El switch separa dominios de COLISIÓN (uno por puerto), pero NO los de broadcast: un broadcast llega a todos los puertos de la misma VLAN. Para separar broadcast hace falta un router o VLANs.'),
 
   mc('red-t-015', 'Servicios', 2,
     'Un servidor publica un sitio por HTTPS. ¿Qué combinación capa de transporte–puerto es la correcta?',
@@ -205,9 +205,9 @@ export const redesTheory = withTopic('redes_comunicaciones', [
     'El firewall filtra por reglas, se ubica en el perímetro y puede ser stateful. No cifra el tráfico (eso es VPN/TLS), no reemplaza al antivirus y trabaja en varias capas, no solo en la física.'),
 
   tf('red-t-022', 'Direccionamiento', 3,
-    'Una máscara /30 deja solo 2 direcciones utilizables, por eso es ideal para enlaces punto a punto entre dos routers.',
-    true,
-    'Verdadero. /30 tiene 4 direcciones: red, broadcast y 2 utilizables. Justo alcanzan para los dos extremos de un enlace punto a punto, sin desperdiciar IPs.'),
+    'Una máscara /30 deja 4 direcciones utilizables para hosts, por eso es ideal para enlaces punto a punto entre dos routers.',
+    false,
+    'Falso. /30 tiene 4 direcciones TOTALES, pero solo 2 UTILIZABLES (las otras son la de red y la de broadcast). Esas 2 alcanzan justo para los dos extremos de un enlace punto a punto.'),
 
   mc('red-t-023', 'Servicios', 3,
     '¿Cuál es la función de ARP y en qué ámbito opera?',
@@ -301,9 +301,9 @@ export const redesTheory = withTopic('redes_comunicaciones', [
     'Las VLANs dividen lógicamente la red, cada una es su propio dominio de broadcast, y para comunicarlas hace falta enrutamiento (capa 3). Por eso las tres últimas son falsas.'),
 
   tf('red-t-032', 'Dispositivos', 3,
-    'Para comunicar dispositivos de dos VLANs diferentes hace falta enrutamiento (router-on-a-stick o switch de capa 3), aunque ambos estén conectados al mismo switch físico.',
-    true,
-    'Verdadero. Distintas VLANs son distintas subredes/dominios de broadcast; el tráfico entre ellas es inter-red y requiere un dispositivo de capa 3.'),
+    'Dos dispositivos en VLANs diferentes conectados al mismo switch físico pueden comunicarse directamente, sin necesidad de ningún enrutamiento.',
+    false,
+    'Falso. Distintas VLANs son distintas subredes/dominios de broadcast; comunicarlas requiere un dispositivo de capa 3 (router-on-a-stick o switch L3), aunque compartan el switch físico.'),
 
   mc('red-t-033', 'Direccionamiento', 3,
     'Un host envía un paquete a una IP de OTRA red. ¿A qué dirección MAC arma la trama?',
@@ -395,9 +395,9 @@ export const redesTheory = withTopic('redes_comunicaciones', [
     'El router separa dominios de broadcast. El switch sin VLANs los mantiene en uno solo; hub y repetidor ni siquiera separan dominios de colisión.'),
 
   tf('red-t-042', 'Dispositivos', 3,
-    'Un enlace conmutado full-duplex entre un host y un switch elimina las colisiones en ese enlace, porque permite transmitir y recibir simultáneamente.',
-    true,
-    'Verdadero. En full-duplex no hay contención del medio: cada extremo puede enviar y recibir a la vez, por lo que no se producen colisiones.'),
+    'Un enlace conmutado full-duplex entre un host y un switch aumenta las colisiones en ese enlace, porque ambos extremos transmiten al mismo tiempo.',
+    false,
+    'Falso. El full-duplex ELIMINA las colisiones: hay caminos separados para transmitir y recibir, sin contención del medio. Las colisiones se dan en half-duplex (medio compartido).'),
 
   mc('red-t-043', 'Servicios', 2,
     'El comando ping, que comprueba conectividad y mide latencia, se apoya en el protocolo…',
@@ -469,9 +469,9 @@ export const redesTheory = withTopic('redes_comunicaciones', [
     'El cliente envía SYN, el servidor responde SYN-ACK y el cliente confirma con ACK. Recién entonces comienza la transferencia de datos.'),
 
   tf('red-t-050', 'TCP/UDP', 3,
-    'UDP suele preferirse a TCP en streaming de video, VoIP o DNS, donde la baja latencia importa más que retransmitir lo perdido.',
-    true,
-    'Verdadero. En esos casos conviene la velocidad y el bajo overhead de UDP; una retransmisión tardía (como haría TCP) llegaría fuera de tiempo y no serviría.'),
+    'En streaming de video, VoIP o DNS se prefiere TCP sobre UDP, porque retransmitir lo perdido importa más que la baja latencia.',
+    false,
+    'Falso. En esos casos se prefiere UDP: la baja latencia y el bajo overhead importan más; una retransmisión tardía (como haría TCP) llegaría fuera de tiempo y no serviría.'),
 
   mc('red-t-051', 'Modelo OSI', 3,
     'Al encapsular, ¿en qué capa se agregan las direcciones IP de origen y destino?',
@@ -553,9 +553,9 @@ export const redesTheory = withTopic('redes_comunicaciones', [
     'Los well-known son 0–1023 (HTTP 80, HTTPS 443, DNS 53…). Luego vienen los registrados (1024–49151) y los dinámicos/efímeros (49152–65535).'),
 
   tf('red-t-059', 'Dispositivos', 2,
-    'Un switch de capa 2 suele conmutar más rápido que un router porque trabaja con direcciones MAC y no necesita analizar la IP ni consultar tablas de enrutamiento.',
-    true,
-    'Verdadero. El switch reenvía por MAC con una operación simple, mientras que el router debe procesar la cabecera IP y decidir la ruta; por eso el switch "le saca peso" al router.'),
+    'Un router suele conmutar más rápido que un switch de capa 2, porque analizar la dirección IP es una operación más simple que reenviar por MAC.',
+    false,
+    'Falso. Es al revés: el switch (capa 2, por MAC) reenvía con una operación simple y rápida; el router debe procesar la cabecera IP y consultar tablas de enrutamiento, por eso es más lento.'),
 
   mc('red-t-060', 'Direccionamiento', 3,
     'Un host muestra la IP 169.254.10.5 y no puede navegar. ¿Qué ocurrió, muy probablemente?',
@@ -625,9 +625,9 @@ export const redesTheory = withTopic('redes_comunicaciones', [
     'traceroute manda paquetes con TTL = 1, 2, 3… Cada router que decrementa el TTL a cero devuelve un ICMP "tiempo excedido", lo que revela cada salto del camino.'),
 
   tf('red-t-067', 'Direccionamiento', 3,
-    'El campo TTL de un paquete IP se decrementa en cada router; si llega a 0, el paquete se descarta para evitar que circule indefinidamente.',
-    true,
-    'Verdadero. El TTL (Time To Live) limita la vida del paquete: evita bucles infinitos descartándolo cuando llega a cero (y genera un ICMP de aviso).'),
+    'El campo TTL de un paquete IP se INCREMENTA en cada router; cuando alcanza su valor máximo, el paquete se entrega al destino.',
+    false,
+    'Falso. El TTL se DECREMENTA en cada router; si llega a 0 el paquete se DESCARTA (y se genera un ICMP), para evitar que circule indefinidamente en un bucle.'),
 
   mc('red-t-068', 'Direccionamiento', 3,
     'Si un paquete IP es más grande que la MTU del enlace por el que debe salir…',
@@ -699,9 +699,9 @@ export const redesTheory = withTopic('redes_comunicaciones', [
     'El ARP spoofing envenena la caché ARP asociando la IP del gateway a la MAC del atacante; así el tráfico pasa por él y puede espiarlo o alterarlo (MITM).'),
 
   tf('red-t-075', 'Dispositivos', 2,
-    'En una red con hub, los dispositivos trabajan en half-duplex y comparten el medio, por lo que pueden producirse colisiones.',
-    true,
-    'Verdadero. El hub crea un único medio compartido (half-duplex): si dos equipos transmiten a la vez, colisionan. El switch full-duplex elimina ese problema.'),
+    'En una red con hub, los dispositivos trabajan en full-duplex y no se producen colisiones.',
+    false,
+    'Falso. El hub crea un único medio compartido en half-duplex: si dos equipos transmiten a la vez, COLISIONAN. Es el switch full-duplex el que elimina las colisiones.'),
 
   mc('red-t-076', 'Direccionamiento', 3,
     'En la subred 192.168.10.0/27, ¿cuál es el rango de direcciones de host válidas?',
@@ -773,9 +773,9 @@ export const redesTheory = withTopic('redes_comunicaciones', [
     '127.0.0.1 (localhost) apunta al propio equipo. Sirve para probar servicios locales sin que el tráfico salga a la red.'),
 
   tf('red-t-083', 'Topologías', 2,
-    'En una topología en malla completa, cada nodo se conecta con todos los demás, lo que da máxima redundancia pero implica un costo de cableado elevado.',
-    true,
-    'Verdadero. La malla completa tolera muchas fallas (hay rutas alternativas), pero la cantidad de enlaces crece muy rápido, encareciendo el despliegue.'),
+    'En una topología en malla completa, cada nodo se conecta a un único nodo central, lo que minimiza el costo de cableado.',
+    false,
+    'Falso. Eso describe la topología en ESTRELLA. En la malla completa cada nodo se conecta con TODOS los demás: da máxima redundancia, pero el cableado crece muy rápido y es costoso.'),
 
   mc('red-t-084', 'Dispositivos', 3,
     '¿Qué tabla consulta un switch para decidir por qué puerto reenviar una trama?',
@@ -857,9 +857,9 @@ export const redesTheory = withTopic('redes_comunicaciones', [
     'En conmutación de circuitos (telefonía tradicional) se reserva un canal dedicado toda la sesión. En conmutación de paquetes (Internet) se comparte el medio y cada paquete se enruta de forma independiente.'),
 
   tf('red-t-092', 'Conmutación', 2,
-    'En la conmutación de circuitos se reserva un canal dedicado de extremo a extremo durante toda la sesión, aunque por momentos no se transmita nada.',
-    true,
-    'Verdadero. El circuito queda reservado toda la llamada/sesión; ese ancho de banda no se libera para otros aunque haya silencios, lo que lo hace menos eficiente que paquetes.'),
+    'En la conmutación de PAQUETES se reserva un canal dedicado de extremo a extremo durante toda la sesión, aunque por momentos no se transmita nada.',
+    false,
+    'Falso. Eso describe la conmutación de CIRCUITOS (telefonía tradicional). En la conmutación de paquetes se comparte el medio y cada paquete se enruta de forma independiente.'),
 
   mc('red-t-093', 'Medios', 3,
     'Tradicionalmente, ¿cuándo se usaba un cable cruzado (crossover)?',
@@ -941,9 +941,9 @@ export const redesTheory = withTopic('redes_comunicaciones', [
     '/16 fija los dos primeros octetos como red y deja los dos últimos para host. El broadcast pone todos los bits de host en 1: 172.16.255.255.'),
 
   tf('red-t-101', 'Enrutamiento', 3,
-    'La agregación de rutas (CIDR/supernetting) permite resumir varias redes contiguas en una sola entrada de la tabla de enrutamiento, reduciendo su tamaño.',
-    true,
-    'Verdadero. Al resumir prefijos contiguos en uno más corto (p. ej. varias /24 en una /22), la tabla de enrutamiento se achica y el reenvío es más eficiente.'),
+    'La agregación de rutas (CIDR/supernetting) divide una red en varias entradas más específicas, aumentando el tamaño de la tabla de enrutamiento.',
+    false,
+    'Falso. Es al revés: la agregación RESUME varias redes contiguas en una sola entrada (un prefijo más corto, p. ej. varias /24 en una /22), REDUCIENDO el tamaño de la tabla.'),
 
   mc('red-t-102', 'Medios', 3,
     'Un enlace tiene un extremo en full-duplex y el otro en half-duplex. ¿Qué problema aparece?',
@@ -1025,9 +1025,9 @@ export const redesTheory = withTopic('redes_comunicaciones', [
     'El resolver recorre la jerarquía DNS (servidores raíz, de TLD y autoritativo) hasta obtener la IP, que luego guarda en caché para futuras consultas.'),
 
   tf('red-t-110', 'Dispositivos', 3,
-    'Un router, por defecto, NO reenvía los broadcast de una red a otra, lo que ayuda a contener el tráfico de broadcast.',
-    true,
-    'Verdadero. El router delimita dominios de broadcast: no propaga los broadcast entre sus interfaces, evitando que saturen otras redes.'),
+    'Un router, por defecto, reenvía los broadcast de una red hacia todas las demás, propagándolos por toda la internetwork.',
+    false,
+    'Falso. El router NO reenvía los broadcast entre sus interfaces: justamente delimita los dominios de broadcast para que no saturen otras redes.'),
 
   mc('red-t-111', 'Diagnóstico', 2,
     'Dos equipos de la LAN tienen configurada la misma dirección IP estática. ¿Qué ocurre?',

@@ -40,9 +40,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'Cada dígito hex son 4 bits: 2 = 0010 y F = 1111 ⇒ 0x2F = 00101111 (que es 47 en decimal).'),
 
   tf('arq-t-005', 'Representación', 2,
-    'El estándar IEEE 754 representa un número de punto flotante con tres campos: signo, exponente y mantisa.',
-    true,
-    'Verdadero. IEEE 754 codifica el flotante en signo (1 bit), exponente (con sesgo) y mantisa/fracción, permitiendo un rango amplio con precisión finita.'),
+    'El estándar IEEE 754 se utiliza para representar números enteros con signo mediante complemento a 2.',
+    false,
+    'Falso. IEEE 754 es para números de punto FLOTANTE (signo, exponente y mantisa). Los enteros con signo se representan con complemento a 2, que es otra técnica distinta.'),
 
   ms('arq-t-006', 'Representación', 3,
     'Seleccioná TODAS las afirmaciones correctas sobre representación de la información:',
@@ -184,9 +184,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'Con 16 líneas hay 2¹⁶ = 65.536 combinaciones, por lo tanto 65.536 direcciones distintas (64 KiB si cada posición es un byte).'),
 
   tf('arq-t-020', 'Buses', 2,
-    'El ancho del bus de datos determina cuántos bits puede transferir la CPU en una sola operación.',
-    true,
-    'Verdadero. Un bus de datos de 64 bits mueve 64 bits por transferencia; influye directamente en el rendimiento del acceso a memoria.'),
+    'El ancho del bus de DIRECCIONES determina cuántos bits de datos puede transferir la CPU en una sola operación.',
+    false,
+    'Falso. Eso lo determina el bus de DATOS. El ancho del bus de direcciones fija la cantidad máxima de memoria direccionable (2^líneas), no el tamaño de cada transferencia.'),
 
   ms('arq-t-021', 'Buses', 3,
     'Seleccioná TODAS las afirmaciones correctas sobre los buses:',
@@ -211,9 +211,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'La RAM pierde su contenido sin energía (volátil); la ROM lo conserva (no volátil), por eso aloja el firmware/BIOS-UEFI.'),
 
   tf('arq-t-023', 'CPU', 2,
-    'Los registros de la CPU son la memoria más rápida del sistema, pero de muy poca capacidad.',
-    true,
-    'Verdadero. Los registros están dentro de la CPU y son los más veloces; por eso son pocos y pequeños (almacenan los datos en uso inmediato).'),
+    'Los registros de la CPU son más lentos que la memoria RAM, pero tienen mayor capacidad de almacenamiento.',
+    false,
+    'Falso. Es al revés: los registros son la memoria MÁS RÁPIDA y de MENOR capacidad; están dentro de la CPU y guardan los datos en uso inmediato.'),
 
   mc('arq-t-024', 'Arquitecturas', 3,
     '¿Cuál es la diferencia central entre la arquitectura Von Neumann y la Harvard?',
@@ -343,9 +343,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'El overflow aparece al sumar dos operandos del mismo signo y obtener un resultado del signo contrario (fuera de rango). Sumar signos distintos nunca desborda.'),
 
   tf('arq-t-037', 'Aritmética binaria', 3,
-    'El acarreo (carry) y el desbordamiento (overflow) son distintos: el carry es el bit que sale del bit más significativo, mientras que el overflow indica que el resultado con signo quedó incorrecto.',
-    true,
-    'Verdadero. En aritmética sin signo importa el carry; en complemento a 2 importa el overflow. Pueden darse de forma independiente.'),
+    'El acarreo (carry) y el desbordamiento (overflow) son exactamente lo mismo: ambos indican que el resultado de una suma con signo quedó incorrecto.',
+    false,
+    'Falso. Son distintos: el carry es el bit que sale del bit más significativo (importa en aritmética SIN signo); el overflow indica un resultado con signo incorrecto (complemento a 2). Pueden darse de forma independiente.'),
 
   mc('arq-t-038', 'Códigos', 3,
     'El código BCD (Decimal Codificado en Binario) representa…',
@@ -415,9 +415,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'La SRAM (rápida, cara) se usa en la caché; la DRAM (densa, barata, con refresco) se usa como memoria principal. El refresco de la DRAM es por sus condensadores.'),
 
   tf('arq-t-045', 'Memoria', 3,
-    'La DRAM almacena cada bit en un condensador que pierde carga con el tiempo, por eso necesita refrescarse periódicamente.',
-    true,
-    'Verdadero. El condensador se descarga, así que la DRAM relee y reescribe sus celdas continuamente para no perder los datos; la SRAM (flip-flops) no lo necesita.'),
+    'La SRAM almacena cada bit en un condensador que pierde carga con el tiempo, por eso necesita refrescarse periódicamente.',
+    false,
+    'Falso. Eso describe a la DRAM (condensadores con refresco). La SRAM usa flip-flops, es más rápida y NO necesita refresco; por eso se usa en la caché.'),
 
   mc('arq-t-046', 'Caché', 3,
     'En un mapeo de caché DIRECTO…',
@@ -509,9 +509,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'Cada bandera refleja una condición del último resultado de la ALU; las instrucciones de salto condicional las consultan para decidir el flujo.'),
 
   tf('arq-t-055', 'CPU', 2,
-    'La bandera Z (cero) se activa cuando el resultado de una operación es cero.',
-    true,
-    'Verdadero. La flag Z se pone en 1 si el resultado fue cero; se usa, por ejemplo, en saltos del tipo "salta si es igual" (JZ/JE).'),
+    'La bandera Z (cero) se activa cuando el resultado de una operación es negativo.',
+    false,
+    'Falso. La flag Z se activa cuando el resultado es CERO. Que el resultado sea negativo lo indica la bandera de signo (N/S), no la Z.'),
 
   tf('arq-t-056', 'CPU', 3,
     'Las banderas de estado (zero, carry, sign, overflow) las usan las instrucciones de salto condicional para tomar decisiones.',
@@ -702,9 +702,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'El SMT presenta un núcleo como varios lógicos: cuando un hilo se detiene (ej. esperando memoria), otro usa las unidades libres, mejorando la utilización.'),
 
   tf('arq-t-075', 'Paralelismo', 3,
-    'El paralelismo real requiere varios núcleos o unidades de ejecución; un solo núcleo solo logra concurrencia intercalando tareas.',
-    true,
-    'Verdadero. Con un núcleo, las tareas se turnan (concurrencia); para ejecutarlas físicamente a la vez (paralelismo) hacen falta varios núcleos.'),
+    'Un solo núcleo puede lograr paralelismo físico real ejecutando varios hilos exactamente al mismo tiempo.',
+    false,
+    'Falso. Un solo núcleo logra CONCURRENCIA (intercala tareas turnándose), no paralelismo físico real; éste requiere varios núcleos o unidades de ejecución.'),
 
   mc('arq-t-076', 'Paralelismo', 3,
     '¿Cuál es la diferencia principal entre una GPU y una CPU?',
@@ -764,9 +764,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'Verdadero. El tiempo de CPU = instrucciones × CPI / frecuencia; una arquitectura con mejor CPI o caché puede superar a otra de más GHz.'),
 
   tf('arq-t-082', 'Periféricos', 2,
-    'Los pines GPIO (de propósito general) de un microcontrolador permiten entrada/salida digital configurable para interactuar con sensores, LEDs o botones.',
-    true,
-    'Verdadero. Cada GPIO se configura como entrada o salida digital, permitiendo leer sensores/botones o controlar LEDs, relés y otros actuadores.'),
+    'Los pines GPIO de un microcontrolador son exclusivamente de salida y solo sirven para encender LEDs.',
+    false,
+    'Falso. Los GPIO son de PROPÓSITO GENERAL y configurables como entrada o salida digital: además de LEDs/relés, leen sensores, botones y otras señales digitales.'),
 
   mc('arq-t-083', 'Sistemas embebidos', 3,
     '¿Cuál es la diferencia entre un microcontrolador y un microprocesador?',

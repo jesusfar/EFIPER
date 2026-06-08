@@ -15,9 +15,9 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
     'Los hilos comparten la memoria del proceso, por eso son más livianos y se comunican fácil (pero requieren sincronización). Cada proceso, en cambio, tiene su propio espacio de direcciones aislado.'),
 
   tf('so-t-002', 'Procesos e hilos', 2,
-    'Como los hilos de un proceso comparten memoria, comunicarse entre ellos es más liviano que entre procesos, pero requiere sincronización para evitar condiciones de carrera.',
-    true,
-    'Verdadero. Compartir memoria facilita la comunicación, pero el acceso concurrente al mismo dato exige sincronización (semáforos, mutex) para no corromperlo.'),
+    'Los hilos de un proceso tienen cada uno su propio espacio de memoria aislado, por eso comunicarse entre ellos es tan costoso como entre procesos distintos.',
+    false,
+    'Falso. Los hilos COMPARTEN la memoria del proceso, por eso comunicarse entre ellos es más liviano que entre procesos (aunque exige sincronización para evitar condiciones de carrera).'),
 
   mc('so-t-003', 'Planificación', 3,
     '¿Cuál afirmación sobre la planificación FIFO (First In First Out) es correcta?',
@@ -97,9 +97,9 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
     'HRN usa prioridad = (espera + servicio) / servicio. El servicio en el denominador favorece a los cortos; la espera en el numerador rescata a los largos que esperaron mucho.'),
 
   tf('so-t-011', 'Planificación', 3,
-    'HRN corrige el favoritismo de SJF: como el tiempo de espera está en el numerador, los procesos largos que esperaron mucho también ganan prioridad.',
-    true,
-    'Verdadero. HRN evita la inanición de SJF: a mayor espera, mayor prioridad, equilibrando el trato entre procesos cortos y largos.'),
+    'En HRN, como la prioridad depende únicamente del tiempo de servicio, los procesos largos sufren la misma inanición que en SJF.',
+    false,
+    'Falso. HRN corrige a SJF: prioridad = (espera + servicio) / servicio. Al estar la espera en el numerador, los procesos largos que esperaron mucho TAMBIÉN ganan prioridad, evitando la inanición.'),
 
   mc('so-t-012', 'Concurrencia', 3,
     'Un interbloqueo (deadlock) es una situación en la que…',
@@ -159,9 +159,9 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
     'Las páginas son de tamaño fijo e iguales; los segmentos, de tamaño variable según la parte lógica del proceso (código, datos, pila).'),
 
   tf('so-t-018', 'Memoria', 3,
-    'La paginación genera fragmentación INTERNA: la última página de un proceso suele quedar parcialmente usada, desperdiciando el resto del marco.',
-    true,
-    'Verdadero. Como las páginas son de tamaño fijo, lo que no llena la última página se pierde dentro del marco: eso es fragmentación interna.'),
+    'La paginación genera fragmentación EXTERNA: deja huecos libres no contiguos entre las páginas de los procesos.',
+    false,
+    'Falso. La paginación (bloques de tamaño FIJO) genera fragmentación INTERNA: la última página queda parcialmente usada. La externa (huecos no contiguos) es propia de la segmentación.'),
 
   mc('so-t-019', 'Memoria', 3,
     'Según las notas, la segmentación, frente a la paginación, …',
@@ -231,9 +231,9 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
     'El óptimo es una referencia teórica (necesita ver el futuro). FIFO incluso puede empeorar al darle más marcos (anomalía de Belady). LRU descarta la menos usada recientemente, no la recién cargada.'),
 
   tf('so-t-026', 'Memoria', 3,
-    'La hiperpaginación (thrashing) ocurre cuando el sistema pasa más tiempo intercambiando páginas (swap) que ejecutando procesos, y el rendimiento se desploma.',
-    true,
-    'Verdadero. Con demasiados fallos de página, el SO se la pasa haciendo swap-in/out y casi no avanza el trabajo útil: el rendimiento cae abruptamente.'),
+    'La hiperpaginación (thrashing) ocurre cuando el sistema tiene demasiada memoria libre y la CPU queda ociosa esperando trabajo.',
+    false,
+    'Falso. El thrashing es lo contrario: hay DEMASIADOS fallos de página, así que el SO pasa más tiempo haciendo swap-in/out que ejecutando, y el rendimiento se desploma.'),
 
   mc('so-t-027', 'Kernel', 2,
     'El kernel del sistema operativo…',
@@ -365,9 +365,9 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
     'El Banquero simula la asignación: solo otorga el recurso si queda una secuencia segura en la que todos los procesos pueden terminar. Si no, espera.'),
 
   tf('so-t-040', 'Concurrencia', 3,
-    'La evitación de deadlock (como el algoritmo del Banquero) decide en tiempo de ejecución si conceder un recurso para no caer en un estado inseguro, a diferencia de la prevención, que elimina alguna condición de antemano.',
-    true,
-    'Verdadero. Prevención = diseñar el sistema para que una condición nunca se cumpla; evitación = decidir dinámicamente según el estado; detección = permitirlo y luego resolverlo.'),
+    'La PREVENCIÓN de deadlock (como el algoritmo del Banquero) decide en tiempo de ejecución si conceder un recurso, mientras que la EVITACIÓN elimina alguna condición de antemano.',
+    false,
+    'Falso. Está invertido: la EVITACIÓN (Banquero) decide dinámicamente según el estado para no caer en uno inseguro; la PREVENCIÓN elimina de antemano alguna de las cuatro condiciones de Coffman.'),
 
   ms('so-t-041', 'Sistemas de archivos', 3,
     'Seleccioná TODAS las afirmaciones correctas sobre sistemas de archivos:',
@@ -429,9 +429,9 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
     'El monolítico integra drivers y servicios en el kernel (rápido pero más acoplado); el microkernel mantiene un núcleo mínimo y mueve servicios a procesos de usuario (modular).'),
 
   tf('so-t-047', 'Kernel', 3,
-    'Un microkernel es más modular y robusto (si un servicio falla no se cae todo el sistema), pero puede tener más overhead por la comunicación entre procesos.',
-    true,
-    'Verdadero. Aislar servicios en espacio de usuario mejora la robustez, pero cada interacción con el núcleo implica mensajes/IPC, lo que agrega sobrecarga.'),
+    'Un microkernel ejecuta casi todos los servicios (drivers, sistema de archivos) dentro del espacio del kernel, por eso es más monolítico y rápido que un kernel tradicional.',
+    false,
+    'Falso. El microkernel deja muchos servicios en espacio de USUARIO (más modular y robusto, con algo más de overhead por IPC). Ejecutar casi todo dentro del kernel es justamente el enfoque MONOLÍTICO.'),
 
   mc('so-t-048', 'Multiprogramación', 3,
     '¿Cuál afirmación es correcta?',
@@ -506,9 +506,9 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
     'El spooling desacopla al proceso del dispositivo lento: los trabajos se acumulan en una cola y se procesan cuando el dispositivo puede, sin bloquear al proceso.'),
 
   tf('so-t-056', 'Memoria', 3,
-    'En la paginación por demanda, una página se carga en memoria solo cuando el proceso la referencia, no toda al inicio.',
-    true,
-    'Verdadero. Se cargan páginas a medida que se necesitan (provocando page faults la primera vez), lo que ahorra memoria al no traer lo que no se usa.'),
+    'En la paginación por demanda, todas las páginas del proceso se cargan en memoria al inicio, antes de comenzar la ejecución.',
+    false,
+    'Falso. En la paginación por DEMANDA cada página se carga solo cuando el proceso la referencia (provocando un page fault la primera vez), no toda al inicio: así se ahorra memoria.'),
 
   mc('so-t-057', 'Memoria', 3,
     'La TLB (Translation Lookaside Buffer) sirve para…',
@@ -618,9 +618,9 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
     'La prioridad estática se asigna y no varía; la dinámica se recalcula (aging, uso de CPU) para adaptarse y evitar problemas como la inanición.'),
 
   tf('so-t-068', 'Planificación', 3,
-    'El "envejecimiento" (aging) aumenta gradualmente la prioridad de los procesos que esperan mucho, para evitar la inanición.',
-    true,
-    'Verdadero. El aging combate la inanición: cuanto más espera un proceso, más sube su prioridad, hasta que eventualmente es atendido.'),
+    'El "envejecimiento" (aging) reduce gradualmente la prioridad de los procesos que esperan mucho, lo que termina provocando inanición.',
+    false,
+    'Falso. El aging AUMENTA la prioridad de los procesos que esperan, justamente para EVITAR la inanición: cuanto más espera uno, más prioridad gana hasta ser atendido.'),
 
   mc('so-t-069', 'Planificación', 3,
     'Tres procesos llegan en t=0 con ráfagas P1=6, P2=2 y P3=4 ms y se atienden con FIFO en ese orden. ¿Cuál es el tiempo de espera PROMEDIO?',
@@ -737,9 +737,9 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
     'El buffer absorbe el desajuste de velocidades (por ejemplo, CPU rápida y disco lento), permitiendo que ambos trabajen sin esperarse continuamente.'),
 
   tf('so-t-081', 'E/S', 3,
-    'La caché de disco mantiene en RAM los bloques de uso frecuente para acelerar los accesos, aprovechando la localidad de referencia.',
-    true,
-    'Verdadero. Como los programas tienden a reutilizar datos recientes y cercanos, cachear bloques en RAM evita ir al disco (mucho más lento) repetidamente.'),
+    'La caché de disco guarda en el propio disco los bloques de uso frecuente para no ocupar RAM, y aun así acelera los accesos.',
+    false,
+    'Falso. La caché de disco mantiene los bloques frecuentes en la RAM (mucho más rápida que el disco), aprovechando la localidad de referencia; guardarlos en el disco no aceleraría nada.'),
 
   mc('so-t-082', 'Memoria', 3,
     'El principio de localidad de referencia indica que…',
@@ -861,9 +861,9 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
     '8 KB = 8 × 1024 = 8192 = 2¹³ bytes ⇒ se requieren 13 bits para direccionar cualquier byte dentro de la página.'),
 
   tf('so-t-094', 'Memoria', 2,
-    'Cada proceso tiene su propia tabla de páginas, que traduce sus direcciones virtuales a los marcos físicos que le fueron asignados.',
-    true,
-    'Verdadero. La tabla de páginas es por proceso: así cada uno tiene su propio espacio virtual aislado, mapeado a distintos marcos de la memoria física.'),
+    'Todos los procesos comparten una única tabla de páginas global que traduce las direcciones virtuales a físicas para el sistema entero.',
+    false,
+    'Falso. Cada proceso tiene su PROPIA tabla de páginas, lo que le da un espacio virtual aislado mapeado a sus marcos físicos; no hay una única tabla global compartida.'),
 
   mc('so-t-095', 'Memoria', 3,
     'En memoria paginada, una dirección virtual se divide en…',
@@ -985,9 +985,9 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
     'P1 corre [0-1]; en t=1 llega P2 (2 < 4 restante) y expropia: P2 [1-3] (fin), luego P1 [3-7] (fin). Retornos: P1=7, P2=2. Espera = retorno − ráfaga: P1=2, P2=0. Promedio = 1 ms.'),
 
   tf('so-t-107', 'Planificación', 2,
-    'En un algoritmo no apropiativo, una vez que un proceso obtiene la CPU la conserva hasta que termina o se bloquea voluntariamente.',
-    true,
-    'Verdadero. Los no apropiativos (FIFO, SJF, HRN) no interrumpen al proceso en ejecución: solo cambian de proceso cuando éste termina o se bloquea.'),
+    'En un algoritmo NO apropiativo, el sistema operativo puede expulsar al proceso en ejecución en cualquier momento para darle la CPU a otro.',
+    false,
+    'Falso. Un algoritmo NO apropiativo NO expulsa: el proceso conserva la CPU hasta que termina o se bloquea. Expulsar al que se ejecuta es propio de los apropiativos (RR, SRTF).'),
 
   mc('so-t-108', 'Planificación', 2,
     'El "throughput" (rendimiento) de la planificación se define como…',
@@ -1067,9 +1067,9 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
     'SJF es óptimo para minimizar la espera promedio cuando se conocen las ráfagas, situación típica del procesamiento por lotes (batch).'),
 
   tf('so-t-116', 'Planificación', 2,
-    'Round Robin no produce inanición, porque cada proceso recibe su turno de CPU de forma periódica.',
-    true,
-    'Verdadero. Al rotar por todos con un quantum, RR garantiza que ningún proceso quede postergado indefinidamente: tarde o temprano le toca.'),
+    'Round Robin produce inanición, porque los procesos largos nunca llegan a recibir su turno de CPU.',
+    false,
+    'Falso. RR NO produce inanición: rota dando un quantum a cada proceso, así todos reciben CPU periódicamente. La inanición es un problema de SJF/SRTF y de las prioridades.'),
 
   mc('so-t-117', 'Multiprogramación', 2,
     'La multiprogramación mejora el uso de la CPU porque…',

@@ -1,9 +1,11 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useStore, TOPIC_LABELS } from '../../store/useStore';
 import { isDue, sortQueue, BOX_INTERVAL_DAYS } from '../../lib/spaced-repetition/leitner';
 import { Card, Stat } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { TOPIC_THEME } from '../../lib/theme/topicTheme';
+import jevilReviewSfx from '../../assets/audio/jevil.mp3';
 import type { LeitnerBox, ReviewItem, Topic } from '../../types';
 
 const TOPICS = Object.keys(TOPIC_LABELS) as Topic[];
@@ -28,7 +30,85 @@ function reviewModeLabel(item: ReviewItem): string {
   return item.refType === 'oral' ? 'Defensa oral' : 'Teoria';
 }
 
+function loopRegion(buffer: AudioBuffer): { start: number; end: number } {
+  const threshold = 0.012;
+  let first = 0;
+  let last = buffer.length - 1;
+
+  outerStart:
+  for (let i = 0; i < buffer.length; i++) {
+    for (let c = 0; c < buffer.numberOfChannels; c++) {
+      if (Math.abs(buffer.getChannelData(c)[i]) > threshold) {
+        first = i;
+        break outerStart;
+      }
+    }
+  }
+
+  outerEnd:
+  for (let i = buffer.length - 1; i >= first; i--) {
+    for (let c = 0; c < buffer.numberOfChannels; c++) {
+      if (Math.abs(buffer.getChannelData(c)[i]) > threshold) {
+        last = i;
+        break outerEnd;
+      }
+    }
+  }
+
+  return {
+    start: first / buffer.sampleRate,
+    end: Math.max((last + 1) / buffer.sampleRate, first / buffer.sampleRate + 0.2),
+  };
+}
+
 export function ReviewsPage() {
+  useEffect(() => {
+    let cancelled = false;
+    let ctx: AudioContext | null = null;
+    let source: AudioBufferSourceNode | null = null;
+
+    const startLoop = async () => {
+      if (cancelled || source) return;
+      const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      if (!AC) return;
+      ctx = ctx ?? new AC();
+      if (ctx.state !== 'running') await ctx.resume().catch(() => undefined);
+      if (ctx.state !== 'running') return;
+
+      const bytes = await fetch(jevilReviewSfx).then((r) => r.arrayBuffer());
+      if (cancelled) return;
+      const buffer = await ctx.decodeAudioData(bytes);
+      if (cancelled) return;
+
+      const region = loopRegion(buffer);
+      const gain = ctx.createGain();
+      gain.gain.value = 0.55;
+      gain.connect(ctx.destination);
+
+      source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.loop = true;
+      source.loopStart = region.start;
+      source.loopEnd = region.end;
+      source.connect(gain);
+      source.start(0, region.start);
+    };
+
+    void startLoop();
+
+    window.addEventListener('pointerdown', startLoop, { once: true });
+    window.addEventListener('keydown', startLoop, { once: true });
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener('pointerdown', startLoop);
+      window.removeEventListener('keydown', startLoop);
+      try { source?.stop(); } catch { /* ya estaba detenido */ }
+      source?.disconnect();
+      void ctx?.close();
+    };
+  }, []);
+
   const reviews = useStore((s) => s.reviews);
   const due = sortQueue(reviews.filter((r) => isDue(r)));
   const mastered = reviews.filter((r) => r.status === 'mastered').length;

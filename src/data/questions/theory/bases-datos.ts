@@ -129,9 +129,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'Atomicidad = todo o nada: si una parte falla, se deshace (rollback) toda la transacción. Es la A de ACID.'),
 
   tf('bd-t-013', 'Transacciones', 3,
-    'La propiedad de Consistencia (ACID) garantiza que una transacción lleve la base de datos de un estado válido a otro estado válido, respetando todas las reglas e integridades.',
-    true,
-    'Verdadero. La Consistencia asegura que, al confirmar, no se violen las restricciones (claves, checks, integridad referencial): de estado válido a estado válido.'),
+    'La propiedad de Durabilidad (ACID) garantiza que una transacción lleve la base de datos de un estado válido a otro estado válido, respetando todas las reglas e integridades.',
+    false,
+    'Falso. Eso describe la CONSISTENCIA. La Durabilidad garantiza que los cambios confirmados (commit) persistan de forma permanente, incluso ante un fallo del sistema.'),
 
   mc('bd-t-014', 'Transacciones', 3,
     'La propiedad de Aislamiento (Isolation) garantiza que…',
@@ -171,9 +171,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'Verdadero. El rollback revierte la transacción incompleta, dejando la base como si nunca hubiera empezado: así se cumple el "todo o nada".'),
 
   tf('bd-t-018', 'Integridad', 3,
-    'La integridad referencial impide insertar en una tabla hija un valor de clave foránea que no exista como clave primaria en la tabla padre.',
-    true,
-    'Verdadero. No se puede referenciar algo inexistente: la FK debe apuntar a una PK existente (o ser NULL, si la columna lo permite).'),
+    'La integridad referencial permite insertar en una tabla hija un valor de clave foránea aunque no exista como clave primaria en la tabla padre.',
+    false,
+    'Falso. La integridad referencial lo IMPIDE: la FK debe apuntar a una PK existente (o ser NULL si la columna lo permite). No se puede referenciar algo que no existe.'),
 
   mc('bd-t-019', 'Normalización', 3,
     'Una tabla Pedido con columnas (id, cliente, producto1, producto2, producto3) viola…',
@@ -253,9 +253,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'El índice acelera SELECT/WHERE/JOIN, pero ocupa espacio y agrega trabajo a INSERT/UPDATE/DELETE, que deben mantenerlo actualizado.'),
 
   tf('bd-t-027', 'Índices', 3,
-    'Un índice acelera las lecturas, pero ralentiza los INSERT/UPDATE/DELETE porque debe mantenerse actualizado en cada cambio.',
-    true,
-    'Verdadero. Cada escritura debe actualizar también el índice; por eso indexar de más perjudica el rendimiento de las operaciones de modificación.'),
+    'Un índice acelera tanto las lecturas como las escrituras (INSERT/UPDATE/DELETE), porque mantiene los datos siempre ordenados.',
+    false,
+    'Falso. El índice acelera las LECTURAS, pero RALENTIZA las escrituras: cada INSERT/UPDATE/DELETE debe actualizar también el índice (y ocupa espacio extra).'),
 
   mc('bd-t-028', 'Vistas', 2,
     'Una vista (VIEW) en SQL es…',
@@ -335,9 +335,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'TRUNCATE vacía la tabla de forma masiva (se comporta como DDL); DELETE borra filas seleccionables con WHERE y puede deshacerse en una transacción. Ninguno borra la estructura (eso es DROP).'),
 
   tf('bd-t-036', 'Lenguajes SQL', 2,
-    'GRANT otorga permisos y REVOKE los quita a los usuarios sobre los objetos de la base de datos.',
-    true,
-    'Verdadero. GRANT y REVOKE son sentencias DCL: administran qué puede hacer cada usuario (SELECT, INSERT, etc.) sobre tablas, vistas y demás objetos.'),
+    'GRANT quita permisos y REVOKE los otorga a los usuarios sobre los objetos de la base de datos.',
+    false,
+    'Falso. Está invertido: GRANT OTORGA permisos y REVOKE los QUITA. Ambas son sentencias DCL que administran qué puede hacer cada usuario sobre los objetos.'),
 
   mc('bd-t-037', 'Concurrencia', 3,
     'Un bloqueo (lock) en una base de datos sirve para…',
@@ -427,9 +427,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'Serializable hace que las transacciones se comporten como si se ejecutaran en serie: máxima consistencia, pero más bloqueos y menor rendimiento concurrente.'),
 
   tf('bd-t-046', 'Concurrencia', 3,
-    'A mayor nivel de aislamiento se obtiene mayor consistencia, pero menor concurrencia y rendimiento.',
-    true,
-    'Verdadero. Es un compromiso: más aislamiento evita anomalías pero exige más bloqueos, reduciendo cuántas transacciones avanzan en paralelo.'),
+    'A mayor nivel de aislamiento se obtiene mayor concurrencia y rendimiento, sin perder consistencia.',
+    false,
+    'Falso. Es un compromiso: a mayor aislamiento hay mayor consistencia pero MENOR concurrencia/rendimiento (más bloqueos reducen las transacciones que avanzan en paralelo).'),
 
   mc('bd-t-047', 'SQL', 3,
     'El operador UNION en SQL…',
@@ -581,9 +581,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'El modelo lógico es conceptual/independiente del motor; el físico baja al detalle de implementación de un SGBD específico (tipos, índices, particiones, almacenamiento).'),
 
   tf('bd-t-062', 'Diseño', 2,
-    'El dominio de un atributo es el conjunto de valores válidos que puede tomar (su tipo, rango y formato).',
-    true,
-    'Verdadero. El dominio define qué valores son admisibles para el atributo; restringirlo (tipo, CHECK, NOT NULL) protege la integridad de los datos.'),
+    'El dominio de un atributo es la clave primaria que identifica unívocamente cada fila de la tabla.',
+    false,
+    'Falso. El dominio es el conjunto de valores VÁLIDOS que puede tomar el atributo (tipo, rango, formato). Identificar unívocamente cada fila es tarea de la clave primaria.'),
 
   mc('bd-t-063', 'Diseño', 3,
     'Para almacenar montos de dinero con exactitud conviene usar…',
@@ -705,9 +705,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'Los índices compuestos se usan por su prefijo izquierdo: filtrar por apellido (o apellido+nombre) sí lo aprovecha; filtrar solo por nombre, no.'),
 
   tf('bd-t-075', 'Índices', 3,
-    'Un índice es más útil en columnas de alta selectividad (muchos valores distintos) que en columnas con pocos valores repetidos (como un booleano).',
-    true,
-    'Verdadero. Si casi todos los valores son distintos, el índice descarta muchas filas rápido; en una columna con 2 valores apenas filtra, aportando poco.'),
+    'Un índice es más útil en columnas de baja selectividad (pocos valores repetidos, como un booleano) que en columnas con muchos valores distintos.',
+    false,
+    'Falso. Es al revés: el índice rinde más en ALTA selectividad (muchos valores distintos), donde descarta muchas filas rápido. En una columna con 2 valores apenas filtra y aporta poco.'),
 
   mc('bd-t-076', 'Rendimiento', 3,
     'El plan de ejecución de una consulta…',
@@ -787,9 +787,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'El data warehouse consolida e historiza datos de múltiples sistemas para análisis y reportes (BI), separado de las bases operativas (OLTP).'),
 
   tf('bd-t-084', 'Data Warehouse', 3,
-    'Un proceso ETL extrae, transforma y carga datos desde las fuentes hacia el data warehouse.',
-    true,
-    'Verdadero. ETL (Extract, Transform, Load) obtiene los datos de las fuentes, los limpia/transforma y los carga en el DW con un formato apto para el análisis.'),
+    'Un proceso ETL extrae datos del data warehouse y los carga en tiempo real en los sistemas operativos (OLTP).',
+    false,
+    'Falso. ETL (Extract, Transform, Load) va al revés: extrae de las FUENTES, transforma y carga los datos HACIA el data warehouse, no del DW hacia los sistemas operativos.'),
 
   ms('bd-t-085', 'Data Warehouse', 3,
     'Seleccioná TODAS las afirmaciones correctas sobre OLTP, OLAP y data warehouse:',
@@ -869,9 +869,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'Las consultas parametrizadas separan el código SQL de los datos: la entrada se trata como valor, nunca como código ejecutable, neutralizando la inyección.'),
 
   tf('bd-t-093', 'Seguridad', 2,
-    'Aplicar el principio de menor privilegio (dar a cada usuario solo los permisos que necesita) reduce el impacto de una cuenta comprometida.',
-    true,
-    'Verdadero. Si una cuenta con permisos mínimos es comprometida, el daño posible es acotado; una cuenta con todos los privilegios sería catastrófica.'),
+    'Por comodidad, conviene otorgar a cada usuario privilegios de administrador, así nunca le faltan permisos para trabajar.',
+    false,
+    'Falso. Eso viola el principio de MENOR privilegio: dar permisos de más amplía el daño si la cuenta se compromete. Cada usuario debe tener solo los permisos que necesita.'),
 
   ms('bd-t-094', 'Seguridad', 3,
     'Seleccioná TODAS las buenas prácticas de seguridad en bases de datos:',
@@ -1025,9 +1025,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'COUNT(columna) ignora los NULL; COUNT(*) cuenta todas las filas sin importar nulos. Para únicos se usa COUNT(DISTINCT columna).'),
 
   tf('bd-t-109', 'SQL', 3,
-    'Las funciones de agregado como SUM o AVG ignoran los valores NULL en sus cálculos.',
-    true,
-    'Verdadero. Los NULL se excluyen del cálculo: AVG promedia solo los valores presentes (no los cuenta como cero), y SUM los omite.'),
+    'Las funciones de agregado como SUM o AVG tratan los valores NULL como cero en sus cálculos.',
+    false,
+    'Falso. SUM y AVG IGNORAN los NULL (no los cuentan como cero): AVG promedia solo los valores presentes. Si los tratara como cero, alteraría el resultado del promedio.'),
 
   mc('bd-t-110', 'SQL', 3,
     '¿Cuál es la diferencia entre COUNT(*) y COUNT(email) en una tabla Cliente?',

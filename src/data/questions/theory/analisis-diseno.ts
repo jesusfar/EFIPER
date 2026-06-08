@@ -37,9 +37,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'Plataforma (web), motor de base de datos, SO y tiempo de respuesta son RNF (restricciones/calidad). "Registrar" y "anular la venta" son acciones del sistema: RF.'),
 
   tf('ad-t-004', 'Requerimientos', 2,
-    'Un requerimiento no funcional suele expresar una restricción o atributo de calidad (rendimiento, seguridad, plataforma), frecuentemente con una métrica.',
-    true,
-    'Verdadero. Los RNF definen cómo debe comportarse el sistema (rápido, seguro, disponible, sobre tal tecnología), a menudo medible, no qué función realiza.'),
+    'Un requerimiento no funcional describe una función concreta que el sistema debe realizar (registrar, calcular, emitir).',
+    false,
+    'Falso. Eso describe un requerimiento FUNCIONAL. Los RNF expresan restricciones o atributos de calidad (rendimiento, seguridad, plataforma), normalmente con una métrica.'),
 
   mc('ad-t-005', 'Requerimientos', 3,
     '¿En qué se diferencia una regla de negocio de un requerimiento funcional?',
@@ -149,9 +149,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'El rombo hueco = agregación. La parte tiene vida propia (ej. un Equipo y sus Jugadores: el jugador existe aunque se disuelva el equipo).'),
 
   tf('ad-t-016', 'Diagrama de clases', 3,
-    'En la composición, si se destruye el todo se destruyen las partes; en la agregación, las partes pueden seguir existiendo por su cuenta.',
-    true,
-    'Verdadero. Esa dependencia del ciclo de vida es lo que distingue la composición (fuerte) de la agregación (débil).'),
+    'En la agregación, si se destruye el todo se destruyen las partes; en la composición, las partes pueden seguir existiendo por su cuenta.',
+    false,
+    'Falso. Está invertido: en la COMPOSICIÓN (todo-parte fuerte) las partes mueren con el todo; en la AGREGACIÓN (débil) las partes pueden seguir existiendo.'),
 
   ms('ad-t-017', 'Diagrama de clases', 3,
     'Marcá TODAS las afirmaciones correctas sobre las relaciones entre clases:',
@@ -320,9 +320,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'Una N:M se resuelve con una tabla intermedia (ej. Inscripción) que combina las PK de Alumno y Materia, normalmente formando una PK compuesta.'),
 
   tf('ad-t-034', 'Modelo de datos', 3,
-    'En una relación 1:N, la clave foránea se coloca en el lado "N" (el lado de los muchos).',
-    true,
-    'Verdadero. El lado "muchos" guarda la FK que apunta al lado "uno" (ej. cada Pedido guarda el id del Cliente al que pertenece).'),
+    'En una relación 1:N, la clave foránea se coloca en el lado "1" (el lado de uno).',
+    false,
+    'Falso. La FK va en el lado "N" (muchos): cada fila de ese lado guarda la referencia al lado "uno" (ej. cada Pedido guarda el id del Cliente al que pertenece).'),
 
   ms('ad-t-035', 'Modelo de datos', 3,
     'Seleccioná TODAS las afirmaciones correctas sobre el paso del DER al modelo relacional:',
@@ -424,9 +424,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'Ágil = iterativo, incremental, con feedback frecuente y backlog priorizado, adaptándose al cambio. Las dos falsas describen justamente lo contrario (modelo cascada / sin cliente).'),
 
   tf('ad-t-045', 'Proceso', 2,
-    'Las metodologías ágiles favorecen entregas incrementales e iterativas y adaptarse al cambio, frente a la entrega única y secuencial del modelo cascada.',
-    true,
-    'Verdadero. Ágil prioriza individuos, software funcionando, colaboración con el cliente y respuesta al cambio, en contraste con la rigidez del cascada.'),
+    'Las metodologías ágiles favorecen una única entrega final secuencial y evitar los cambios durante el desarrollo, igual que el modelo en cascada.',
+    false,
+    'Falso. Eso describe el modelo CASCADA. Ágil favorece entregas incrementales e iterativas y adaptarse al cambio, no una entrega única secuencial.'),
 
   mc('ad-t-046', 'Proceso', 3,
     'En Scrum, el rol responsable de priorizar el backlog y representar la voz del cliente es…',
@@ -657,9 +657,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'Con bajo acoplamiento, un cambio en un módulo impacta poco en los demás; los módulos se pueden entender, probar y reutilizar de forma más independiente.'),
 
   tf('ad-t-069', 'Calidad de diseño', 2,
-    'Un buen diseño orientado a objetos busca ALTA cohesión y BAJO acoplamiento.',
-    true,
-    'Verdadero. Alta cohesión (responsabilidades relacionadas) y bajo acoplamiento (pocas dependencias) son dos metas centrales de un diseño mantenible y flexible.'),
+    'Un buen diseño orientado a objetos busca BAJA cohesión y ALTO acoplamiento.',
+    false,
+    'Falso. Es justo al revés: se busca ALTA cohesión (responsabilidades relacionadas) y BAJO acoplamiento (pocas dependencias), para lograr un diseño mantenible y flexible.'),
 
   mc('ad-t-070', 'Calidad de diseño', 3,
     '"Preferir composición sobre herencia" significa…',
@@ -771,9 +771,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'El diagrama de comunicación modela la misma interacción que el de secuencia, pero destacando la estructura de enlaces; el orden se indica numerando los mensajes.'),
 
   tf('ad-t-081', 'Diagramas', 3,
-    'El diagrama de secuencia enfatiza el orden temporal de los mensajes y el de comunicación enfatiza la estructura/enlaces entre objetos, pero ambos modelan la misma interacción.',
-    true,
-    'Verdadero. Son dos vistas equivalentes de una interacción: una resalta el tiempo (líneas de vida) y la otra la topología de objetos (con mensajes numerados).'),
+    'El diagrama de secuencia y el diagrama de clases modelan ambos la misma interacción entre objetos a lo largo del tiempo.',
+    false,
+    'Falso. El de secuencia (y el de comunicación) modelan la interacción en el tiempo; el diagrama de CLASES es estructural/estático y no representa interacciones temporales.'),
 
   mc('ad-t-082', 'Modelado', 3,
     'En el paso del análisis al diseño…',
@@ -893,9 +893,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'Se factorizan atributos/comportamientos comunes en una superclase; las subclases especializan agregando o redefiniendo lo propio (relación "es-un").'),
 
   tf('ad-t-094', 'Diagrama de clases', 2,
-    'La especialización produce subclases que mantienen una relación "es-un" con la superclase.',
-    true,
-    'Verdadero. Una subclase ES UNA versión especializada de la superclase (ej. un Gato ES UN Animal), heredando y especializando su definición.'),
+    'La especialización produce subclases que mantienen una relación "tiene-un" (parte-todo) con la superclase.',
+    false,
+    'Falso. La especialización (herencia) modela una relación "ES-UN" (un Gato ES UN Animal). La relación "tiene-un" es la composición/agregación, no la herencia.'),
 
   ms('ad-t-095', 'Diagrama de clases', 3,
     'Seleccioná TODAS las correspondencias correctas de notación de relaciones en UML:',
@@ -1009,9 +1009,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'La separación en capas (presentación, negocio, datos) organiza responsabilidades y reduce el acoplamiento, facilitando el mantenimiento y la sustitución de capas.'),
 
   tf('ad-t-106', 'Arquitectura', 3,
-    'En una arquitectura en capas, cada capa se comunica generalmente con la capa inmediatamente inferior, lo que ayuda a reducir el acoplamiento.',
-    true,
-    'Verdadero. Limitar las dependencias a la capa adyacente inferior mantiene el sistema ordenado y permite cambiar una capa con bajo impacto en las demás.'),
+    'En una arquitectura en capas, cada capa se comunica directamente con todas las demás capas, lo que aumenta la flexibilidad del sistema.',
+    false,
+    'Falso. Cada capa se comunica generalmente con la inmediatamente inferior; eso REDUCE el acoplamiento. Comunicarse con todas aumentaría el acoplamiento y desordenaría el diseño.'),
 
   mc('ad-t-107', 'Proceso', 3,
     'El modelo de prototipos se utiliza cuando…',
@@ -1113,9 +1113,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'Del lado del ejemplar hay "1..*" (un préstamo incluye uno o más ejemplares) y del lado del préstamo "1" (cada ejemplar pertenece a un único préstamo activo).'),
 
   tf('ad-t-117', 'Requerimientos', 2,
-    '"El sistema debe soportar 100 usuarios concurrentes" y "debe cifrar las contraseñas" son requerimientos no funcionales.',
-    true,
-    'Verdadero. Concurrencia (rendimiento/escalabilidad) y cifrado (seguridad) son atributos de calidad: requerimientos no funcionales.'),
+    '"El sistema debe permitir registrar un cliente" y "debe emitir una factura" son requerimientos no funcionales.',
+    false,
+    'Falso. Esos son requerimientos FUNCIONALES (acciones que el sistema realiza). Los RNF son atributos de calidad como el rendimiento, la seguridad o la disponibilidad.'),
 
   mc('ad-t-118', 'Diagrama de clases', 3,
     '¿Cuál es la diferencia entre dependencia y asociación en UML?',
