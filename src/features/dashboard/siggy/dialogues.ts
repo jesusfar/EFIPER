@@ -462,7 +462,7 @@ export const SIGGY_DIALOGUES: SiggyDialogue[] = [
   { id: 458, text: "Tu app tiene una race condition que aparece en producción cada martes al mediodía. Reproducible, al menos." },
   { id: 459, text: "La plomería no tiene race conditions. El agua fluye en orden. Filosofía envidiable.", sprites: ["Plomero.png"] },
   { id: 460, text: "Blockchain como solución. Hmmm. ¿A qué problema, exactamente?" },
-  { id: 461, text: "NFTs, blockchain, metaverso, Web3. Tecnologías que aprendiste justo antes de que dejaran de importar." },
+  { id: 461, text: "NFTs, blockchain, metaverso, Web3. Tecnologías que aprendiste justo cuando dejaron de importar." },
   { id: 462, text: "Tu tesis propone blockchain para la gestión académica. La universidad sigue con PDFs por correo." },
   { id: 463, text: "La plomería no sigue tendencias tecnológicas. El agua funciona igual desde Roma.", sprites: ["Plomero.png"] },
   { id: 464, text: "Machine learning no es poner scikit-learn en un proyecto y llamarlo IA." },
@@ -503,4 +503,5 @@ export const SIGGY_DIALOGUES: SiggyDialogue[] = [
   { id: 499, text: "La plomería tiene su EFIP: el primer caño que arreglás solo, sin tutorial, sin IA, con las manos.", sprites: ["Plomero.png"] },
   { id: 500, text: "Ánimo. Siggy puede ser sarcástico, pero sabe que llegaste hasta acá. Y eso, contra todo pronóstico, no es poco." },
   { id: 501, text: "Los disléxicos también somo persianas", sprites: ["Furry.png"] },
+  { id: 502, text: "Bombardeen Perú" },
 ];
