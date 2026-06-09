@@ -89,7 +89,7 @@ function playMp3(url: string, volumeBoost = 1): void {
 }
 
 // Reproduce uno de los sonidos del logo al azar evitando repetir los ultimos hovers.
-const LOGO_HOVER_RECENT_LIMIT = 30;
+const LOGO_HOVER_RECENT_LIMIT = 100;
 const recentLogoHoverIdxs: number[] = [];
 
 function rememberLogoHover(idx: number): void {
