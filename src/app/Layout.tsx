@@ -12,6 +12,7 @@ const NAV = [
   { to: '/caso/case-001', label: 'Caso' },
   { to: '/repaso', label: 'Repaso' },
   { to: '/simulacro', label: 'Simulacro' },
+  { to: '/cuenta', label: 'Cuenta' },
 ];
 
 export function Layout({ children }: { children: ReactNode }) {
@@ -84,7 +85,7 @@ export function Layout({ children }: { children: ReactNode }) {
 
       {!isTheoryReader && (
         <footer className="text-center text-xs text-white/75 py-6 border-t border-accent/30 bg-stud-dim">
-          EFIPER · herramienta personal de estudio · sin costo, offline, tu progreso queda en este dispositivo
+          EFIPER · herramienta personal de estudio · online, offline y con progreso sincronizable
         </footer>
       )}
     </div>

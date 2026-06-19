@@ -160,6 +160,77 @@ Para publicar como PWA:
 
 La app usa `HashRouter`, por lo que funciona bien en GitHub Pages sin reglas de rewrite adicionales.
 
+## EFIPER online con cuentas
+
+La version online usa Cloudflare Pages + Pages Functions + D1. La app sigue funcionando offline con IndexedDB, pero la ruta **Cuenta** permite iniciar sesion y sincronizar el progreso con la nube.
+
+### Cloudflare
+
+1. Crear una cuenta en Cloudflare.
+2. Crear una base D1 llamada `efiper`.
+3. Reemplazar `database_id` en `wrangler.toml` por el ID real de la base.
+4. Aplicar migraciones:
+
+```bash
+npm run db:migrate:remote
+```
+
+5. En Cloudflare Pages, crear un proyecto conectado al repo.
+6. Configurar:
+
+```text
+Build command: npm run build
+Build output directory: dist
+```
+
+7. Agregar el binding D1:
+
+```text
+Variable name: DB
+D1 database: efiper
+```
+
+8. Agregar variables/secretos:
+
+```text
+SESSION_SECRET=valor-largo-aleatorio
+APP_ORIGIN=https://tu-dominio.pages.dev
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+FACEBOOK_CLIENT_ID=...
+FACEBOOK_CLIENT_SECRET=...
+```
+
+### Google OAuth
+
+En Google Cloud Console crear un OAuth Client Web y agregar:
+
+```text
+Authorized redirect URI:
+https://tu-dominio.pages.dev/api/auth/oauth/google/callback
+```
+
+### Facebook OAuth
+
+En Meta for Developers crear una app con Facebook Login y agregar:
+
+```text
+Valid OAuth Redirect URI:
+https://tu-dominio.pages.dev/api/auth/oauth/facebook/callback
+```
+
+### Sincronizacion
+
+El usuario puede usar EFIPER sin cuenta. Si inicia sesion, desde **Cuenta** puede sincronizar:
+
+- progreso general
+- XP y nivel
+- intentos
+- cola de repaso
+- entregas de casos
+
+La nube guarda un snapshot completo por usuario en D1. Si el snapshot remoto es mas nuevo que el local, se restaura; si no, se sube el progreso local.
+
 ## Nota
 
-EFIPER es una herramienta local de estudio. No envia datos a servidores propios y no requiere autenticacion. Los sonidos y recursos multimedia incluidos forman parte de la experiencia personalizada del proyecto.
+EFIPER puede usarse como herramienta local de estudio sin autenticacion. Si el usuario decide iniciar sesion, el progreso se envia a la base D1 configurada para poder sincronizar entre dispositivos. Los sonidos y recursos multimedia incluidos forman parte de la experiencia personalizada del proyecto.

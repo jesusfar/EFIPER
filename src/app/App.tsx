@@ -9,6 +9,7 @@ import { CasePage } from '../features/cases/CasePage';
 import { ReviewsPage } from '../features/reviews/ReviewsPage';
 import { SimulationPage } from '../features/simulation/SimulationPage';
 import { TeoriaPage, TheoryReaderPage } from '../features/teoria/TeoriaPage';
+import { AccountPage } from '../features/account/AccountPage';
 
 export function App() {
   const init = useStore((s) => s.init);
@@ -36,6 +37,7 @@ export function App() {
         <Route path="/repaso" element={<ReviewsPage />} />
         <Route path="/repaso/teoria" element={<TestPage />} />
         <Route path="/simulacro" element={<SimulationPage />} />
+        <Route path="/cuenta" element={<AccountPage />} />
       </Routes>
     </Layout>
   );

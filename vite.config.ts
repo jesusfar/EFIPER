@@ -2,9 +2,9 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
-// Para GitHub Pages de proyecto, base = '/<nombre-del-repo>/'.
-// Para dominio propio o user-page, usar '/'.
-const BASE = process.env.EFIPER_BASE ?? '/efiper/';
+// Para Cloudflare Pages/dominio propio, usar '/'.
+// Para GitHub Pages de proyecto, setear EFIPER_BASE='/(nombre-del-repo)/'.
+const BASE = process.env.EFIPER_BASE ?? '/';
 
 export default defineConfig({
   base: BASE,

@@ -93,6 +93,9 @@
       linear-gradient(135deg, rgba(0,94,80,0.97), rgba(0,159,146,0.92) 58%, rgba(0,132,0,0.9));
   }
   .label { @apply text-xs uppercase tracking-[0.16em] text-stud font-display font-bold; }
+  .input {
+    @apply w-full rounded-xl border border-accent/40 bg-white px-4 py-2.5 text-sm text-ink outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20;
+  }
   .level-up-toast {
     @apply fixed right-4 top-24 z-50 flex w-[min(360px,calc(100vw-2rem))] items-center gap-3 overflow-hidden rounded-xl border border-accent/50 bg-white/95 px-4 py-3 text-ink shadow-panel backdrop-blur;
     animation: level-up-toast-in 420ms cubic-bezier(.2,.9,.2,1) both;
