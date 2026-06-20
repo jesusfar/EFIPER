@@ -11,7 +11,11 @@ import gaspiImage from '../../assets/memorial/gaspi.png';
 import oliverTreeImage from '../../assets/memorial/oliver-tree.png';
 import gaspiBuenasSfx from '../../assets/memorial/audio/gaspi-buenas.mp3';
 import gaspiFiumbaSfx from '../../assets/memorial/audio/gaspi-fiumba.mp3';
+import gaspiCorteCoscuSfx from '../../assets/memorial/audio/gaspi-corte-coscu.mp3';
+import gaspiZumbiHolaaaSfx from '../../assets/memorial/audio/gaspi-zumbi-holaaa.mp3';
 import oliverTreeSfx from '../../assets/memorial/audio/oliver-tree-rip.mp3';
+import oliverMissYouSfx from '../../assets/memorial/audio/oliver-miss-you.mp3';
+import oliverHurtSfx from '../../assets/memorial/audio/oliver-hurt.mp3';
 
 function daysUntil(iso: string | null): number | null {
   if (!iso) return null;
@@ -34,17 +38,35 @@ function saberForLevel(level: number) {
   return RANK_SABERS[Math.min(Math.max(level, 1), RANK_SABERS.length) - 1];
 }
 
+type MemorialAudio = {
+  url: string;
+  startAt?: number;
+};
+
+const GASPI_MEMORIAL_AUDIOS: MemorialAudio[] = [
+  { url: gaspiBuenasSfx },
+  { url: gaspiFiumbaSfx },
+  { url: gaspiCorteCoscuSfx },
+  { url: gaspiZumbiHolaaaSfx },
+];
+
+const OLIVER_MEMORIAL_AUDIOS: MemorialAudio[] = [
+  { url: oliverTreeSfx, startAt: 0.35 },
+  { url: oliverMissYouSfx },
+  { url: oliverHurtSfx },
+];
+
 export function DashboardPage() {
   const { progress, reviews, setExamDate } = useStore();
   const memorialAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  function playMemorialAudio(urls: string[], startAt = 0) {
-    const url = urls[Math.floor(Math.random() * urls.length)];
+  function playMemorialAudio(audios: MemorialAudio[]) {
+    const selected = audios[Math.floor(Math.random() * audios.length)];
     try {
       memorialAudioRef.current?.pause();
-      const audio = new Audio(url);
+      const audio = new Audio(selected.url);
       audio.volume = 0.85;
-      audio.currentTime = startAt;
+      audio.currentTime = selected.startAt ?? 0;
       memorialAudioRef.current = audio;
       void audio.play();
     } catch {
@@ -146,8 +168,8 @@ export function DashboardPage() {
         <div className="grid md:grid-cols-[0.8fr_1fr_0.8fr]">
           <div
             className="relative min-h-56 md:min-h-72 cursor-pointer overflow-hidden"
-            onMouseEnter={() => playMemorialAudio([gaspiBuenasSfx, gaspiFiumbaSfx])}
-            onFocus={() => playMemorialAudio([gaspiBuenasSfx, gaspiFiumbaSfx])}
+            onMouseEnter={() => playMemorialAudio(GASPI_MEMORIAL_AUDIOS)}
+            onFocus={() => playMemorialAudio(GASPI_MEMORIAL_AUDIOS)}
             tabIndex={0}
             aria-label="Reproducir audio de Gaspar Gaspi Prim Diaz"
           >
@@ -168,8 +190,8 @@ export function DashboardPage() {
 
           <div
             className="relative min-h-56 md:min-h-72 cursor-pointer overflow-hidden"
-            onMouseEnter={() => playMemorialAudio([oliverTreeSfx], 0.35)}
-            onFocus={() => playMemorialAudio([oliverTreeSfx], 0.35)}
+            onMouseEnter={() => playMemorialAudio(OLIVER_MEMORIAL_AUDIOS)}
+            onFocus={() => playMemorialAudio(OLIVER_MEMORIAL_AUDIOS)}
             tabIndex={0}
             aria-label="Reproducir audio de Oliver Tree"
           >
