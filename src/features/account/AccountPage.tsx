@@ -11,6 +11,8 @@ import {
 } from '../../lib/api/cloud';
 import { syncWithCloud } from '../../lib/sync/cloudSync';
 import { useStore } from '../../store/useStore';
+import gaspiImage from '../../assets/memorial/gaspi.png';
+import oliverTreeImage from '../../assets/memorial/oliver-tree.png';
 
 type Mode = 'login' | 'register';
 
@@ -164,6 +166,36 @@ export function AccountPage() {
           </Card>
         </div>
       )}
+
+      <section className="overflow-hidden rounded-2xl border border-accent/25 bg-white/90 shadow-soft">
+        <div className="grid md:grid-cols-[0.8fr_1fr_0.8fr]">
+          <div className="relative min-h-56 md:min-h-72">
+            <img
+              src={gaspiImage}
+              alt="Gaspar Gaspi Prim Diaz"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/35" />
+          </div>
+
+          <div className="flex flex-col items-center justify-center px-6 py-8 text-center">
+            <p className="label">Homenaje</p>
+            <h2 className="mt-3 font-display text-2xl md:text-3xl text-ink leading-tight">
+              En memoria de Gaspar &quot;Gaspi&quot; Prim Díaz y Oliver Tree, que en paz descansen.
+            </h2>
+            <div className="mt-5 h-1 w-24 rounded-full bg-accent" />
+          </div>
+
+          <div className="relative min-h-56 md:min-h-72">
+            <img
+              src={oliverTreeImage}
+              alt="Oliver Tree"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-l from-transparent to-white/35" />
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
