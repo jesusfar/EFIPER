@@ -59,15 +59,20 @@ const OLIVER_MEMORIAL_AUDIOS: MemorialAudio[] = [
 export function DashboardPage() {
   const { progress, reviews, setExamDate } = useStore();
   const memorialAudioRef = useRef<HTMLAudioElement | null>(null);
+  const lastMemorialAudioUrlRef = useRef<string | null>(null);
 
   function playMemorialAudio(audios: MemorialAudio[]) {
-    const selected = audios[Math.floor(Math.random() * audios.length)];
+    const pool = audios.length > 1
+      ? audios.filter((audio) => audio.url !== lastMemorialAudioUrlRef.current)
+      : audios;
+    const selected = pool[Math.floor(Math.random() * pool.length)];
     try {
       memorialAudioRef.current?.pause();
       const audio = new Audio(selected.url);
       audio.volume = 0.85;
       audio.currentTime = selected.startAt ?? 0;
       memorialAudioRef.current = audio;
+      lastMemorialAudioUrlRef.current = selected.url;
       void audio.play();
     } catch {
       // El navegador puede bloquear audio hasta que exista una interaccion del usuario.
