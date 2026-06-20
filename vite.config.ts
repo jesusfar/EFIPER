@@ -31,6 +31,14 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2,json,mp3}'],
         maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
+        navigateFallbackDenylist: [/^\/api\//],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/efiper\.alola\.workers\.dev\/api\//,
+            handler: 'NetworkOnly',
+            method: 'GET',
+          },
+        ],
       },
     }),
   ],
