@@ -1,12 +1,17 @@
 import { Link } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
 import { useStore, TOPIC_LABELS, rankForLevel, levelProgressForXp } from '../../store/useStore';
 import { Card, Stat } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { ProgressBar } from '../../components/ProgressBar';
-import { downloadBackup, importBackup } from '../../lib/import-export/backup';
 import { TOPIC_THEME } from '../../lib/theme/topicTheme';
 import { Siggy } from './siggy/Siggy';
 import type { Topic } from '../../types';
+import gaspiImage from '../../assets/memorial/gaspi.png';
+import oliverTreeImage from '../../assets/memorial/oliver-tree.png';
+import gaspiBuenasSfx from '../../assets/memorial/audio/gaspi-buenas.mp3';
+import gaspiFiumbaSfx from '../../assets/memorial/audio/gaspi-fiumba.mp3';
+import oliverTreeSfx from '../../assets/memorial/audio/oliver-tree-rip.mp3';
 
 function daysUntil(iso: string | null): number | null {
   if (!iso) return null;
@@ -31,6 +36,28 @@ function saberForLevel(level: number) {
 
 export function DashboardPage() {
   const { progress, reviews, setExamDate } = useStore();
+  const memorialAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  function playMemorialAudio(urls: string[]) {
+    const url = urls[Math.floor(Math.random() * urls.length)];
+    try {
+      memorialAudioRef.current?.pause();
+      const audio = new Audio(url);
+      audio.volume = 0.85;
+      memorialAudioRef.current = audio;
+      void audio.play();
+    } catch {
+      // El navegador puede bloquear audio hasta que exista una interaccion del usuario.
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      memorialAudioRef.current?.pause();
+      memorialAudioRef.current = null;
+    };
+  }, []);
+
   if (!progress) return null;
 
   const days = daysUntil(progress.examDate);
@@ -114,17 +141,45 @@ export function DashboardPage() {
         <Link to="/repaso"><Button variant="missionReview" className="w-full">Repasar errores ({dueCount})</Button></Link>
       </div>
 
-      <Card className="flex items-center justify-between flex-wrap gap-3">
-        <span className="text-sm text-muted">Respalda tu progreso (queda solo en este dispositivo).</span>
-        <div className="flex gap-2">
-          <Button onClick={() => downloadBackup()}>Exportar</Button>
-          <label className="px-4 py-2.5 rounded-xl font-semibold text-sm bg-panel-2 border border-line hover:border-stud/50 cursor-pointer transition">
-            Importar
-            <input type="file" accept="application/json" className="hidden"
-              onChange={async (e) => { const f = e.target.files?.[0]; if (f) { await importBackup(f); location.reload(); } }} />
-          </label>
+      <section className="overflow-hidden rounded-2xl border border-accent/25 bg-white/90 shadow-soft">
+        <div className="grid md:grid-cols-[0.8fr_1fr_0.8fr]">
+          <div
+            className="relative min-h-56 md:min-h-72 cursor-pointer overflow-hidden"
+            onMouseEnter={() => playMemorialAudio([gaspiBuenasSfx, gaspiFiumbaSfx])}
+            onFocus={() => playMemorialAudio([gaspiBuenasSfx, gaspiFiumbaSfx])}
+            tabIndex={0}
+            aria-label="Reproducir audio de Gaspar Gaspi Prim Diaz"
+          >
+            <img
+              src={gaspiImage}
+              alt="Gaspar Gaspi Prim Diaz"
+              className="absolute inset-0 h-full w-full object-cover transition duration-300 hover:scale-105"
+            />
+          </div>
+
+          <div className="flex flex-col items-center justify-center px-6 py-8 text-center">
+            <p className="label">Homenaje</p>
+            <h2 className="mt-3 font-display text-2xl md:text-3xl text-ink leading-tight">
+              En memoria de Gaspar &quot;Gaspi&quot; Prim Díaz y Oliver Tree, que en paz descansen.
+            </h2>
+            <div className="mt-5 h-1 w-24 rounded-full bg-accent" />
+          </div>
+
+          <div
+            className="relative min-h-56 md:min-h-72 cursor-pointer overflow-hidden"
+            onMouseEnter={() => playMemorialAudio([oliverTreeSfx])}
+            onFocus={() => playMemorialAudio([oliverTreeSfx])}
+            tabIndex={0}
+            aria-label="Reproducir audio de Oliver Tree"
+          >
+            <img
+              src={oliverTreeImage}
+              alt="Oliver Tree"
+              className="absolute inset-0 h-full w-full object-cover transition duration-300 hover:scale-105"
+            />
+          </div>
         </div>
-      </Card>
+      </section>
     </div>
   );
 }
