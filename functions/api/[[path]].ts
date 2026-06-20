@@ -188,37 +188,45 @@ async function oauthCallback(request: Request, env: Env, provider: Provider): Pr
     return redirectToAccount(origin, 'oauth_error');
   }
 
-  const profile = provider === 'google'
-    ? await googleProfile(env, code, `${origin}/api/auth/oauth/google/callback`)
-    : await facebookProfile(env, code, `${origin}/api/auth/oauth/facebook/callback`);
+  try {
+    const profile = provider === 'google'
+      ? await googleProfile(env, code, `${origin}/api/auth/oauth/google/callback`)
+      : await facebookProfile(env, code, `${origin}/api/auth/oauth/facebook/callback`);
 
-  const now = Date.now();
-  let user = await env.DB.prepare(
-    'SELECT id, email, display_name, avatar_url FROM users WHERE auth_provider = ? AND provider_user_id = ?'
-  ).bind(provider, profile.providerUserId).first<any>();
+    if (!profile.email) throw new Error(`OAuth profile from ${provider} did not include an email.`);
 
-  if (!user) {
-    user = await env.DB.prepare('SELECT id, email, display_name, avatar_url FROM users WHERE email = ?')
-      .bind(profile.email).first<any>();
+    const now = Date.now();
+    let user = await env.DB.prepare(
+      'SELECT id, email, display_name, avatar_url FROM users WHERE auth_provider = ? AND provider_user_id = ?'
+    ).bind(provider, profile.providerUserId).first<any>();
+
+    if (!user) {
+      user = await env.DB.prepare('SELECT id, email, display_name, avatar_url FROM users WHERE email = ?')
+        .bind(profile.email).first<any>();
+    }
+
+    if (user) {
+      await env.DB.prepare(
+        `UPDATE users SET display_name = COALESCE(?, display_name), avatar_url = COALESCE(?, avatar_url),
+         auth_provider = ?, provider_user_id = ?, last_login_at = ?, updated_at = ? WHERE id = ?`
+      ).bind(nullable(profile.displayName), nullable(profile.avatarUrl), provider, profile.providerUserId, now, now, user.id).run();
+    } else {
+      const userId = crypto.randomUUID();
+      await env.DB.prepare(
+        `INSERT INTO users (id, email, display_name, avatar_url, auth_provider, provider_user_id, created_at, updated_at, last_login_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      ).bind(userId, profile.email, nullable(profile.displayName), nullable(profile.avatarUrl), provider, profile.providerUserId, now, now, now).run();
+      user = { id: userId, email: profile.email, display_name: profile.displayName, avatar_url: profile.avatarUrl };
+    }
+
+    const response = await createSessionRedirect(env, user.id, `${origin}/#/cuenta?cloud=connected`);
+    response.headers.append('Set-Cookie', cookie(OAUTH_STATE_COOKIE, '', env, { maxAge: 0, path: '/api/auth/oauth' }));
+    return response;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'OAuth callback failed';
+    console.error('EFIPER OAuth callback failed', { provider, message });
+    return redirectToAccount(origin, 'oauth_error');
   }
-
-  if (user) {
-    await env.DB.prepare(
-      `UPDATE users SET display_name = COALESCE(?, display_name), avatar_url = COALESCE(?, avatar_url),
-       auth_provider = ?, provider_user_id = ?, last_login_at = ?, updated_at = ? WHERE id = ?`
-    ).bind(profile.displayName, profile.avatarUrl, provider, profile.providerUserId, now, now, user.id).run();
-  } else {
-    const userId = crypto.randomUUID();
-    await env.DB.prepare(
-      `INSERT INTO users (id, email, display_name, avatar_url, auth_provider, provider_user_id, created_at, updated_at, last_login_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
-    ).bind(userId, profile.email, profile.displayName, profile.avatarUrl, provider, profile.providerUserId, now, now, now).run();
-    user = { id: userId, email: profile.email, display_name: profile.displayName, avatar_url: profile.avatarUrl };
-  }
-
-  const response = await createSessionRedirect(env, user.id, `${origin}/#/cuenta?cloud=connected`);
-  response.headers.append('Set-Cookie', cookie(OAUTH_STATE_COOKIE, '', env, { maxAge: 0, path: '/api/auth/oauth' }));
-  return response;
 }
 
 async function googleProfile(env: Env, code: string, redirectUri: string) {
@@ -342,6 +350,11 @@ function normalizeEmail(value: unknown): string {
 
 function cleanText(value: unknown, max: number): string {
   return String(value ?? '').trim().slice(0, max);
+}
+
+function nullable(value: unknown): string | null {
+  const text = String(value ?? '').trim();
+  return text ? text : null;
 }
 
 async function hashPassword(password: string, salt: string): Promise<string> {
