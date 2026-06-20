@@ -379,7 +379,10 @@ async function postForm(url: string, fields: Record<string, string>) {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams(fields),
   });
-  if (!res.ok) throw new Error('No se pudo completar OAuth.');
+  if (!res.ok) {
+    const detail = await res.text().catch(() => '');
+    throw new Error(`No se pudo completar OAuth. Status ${res.status}: ${detail.slice(0, 500)}`);
+  }
   return res.json();
 }
 
