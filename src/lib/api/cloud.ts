@@ -22,6 +22,10 @@ async function api<T>(path: string, init: RequestInit = {}): Promise<ApiResult<T
         ...(init.headers ?? {}),
       },
     });
+    const contentType = res.headers.get('Content-Type') || '';
+    if (!contentType.includes('application/json')) {
+      return { data: null, error: 'EFIPER Cloud no respondio como API. Revisa el deploy de Cloudflare.' };
+    }
     const data = await res.json().catch(() => ({}));
     if (!res.ok) return { data: null, error: data.error || 'No se pudo completar la operacion.' };
     return { data: data as T, error: null };

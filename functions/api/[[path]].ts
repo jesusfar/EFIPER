@@ -20,6 +20,7 @@ export async function onRequest(context: any): Promise<Response> {
   const path = url.pathname.replace(/^\/api\/?/, '');
 
   try {
+    if (request.method === 'GET' && path === 'health') return health(env);
     if (request.method === 'POST' && path === 'auth/register') return register(request, env);
     if (request.method === 'POST' && path === 'auth/login') return login(request, env);
     if (request.method === 'POST' && path === 'auth/logout') return logout(env);
@@ -36,6 +37,25 @@ export async function onRequest(context: any): Promise<Response> {
     if (error instanceof HttpError) return json({ error: error.message }, error.status);
     const message = error instanceof Error ? error.message : 'Unexpected error';
     return json({ error: message }, 500);
+  }
+}
+
+async function health(env: Env): Promise<Response> {
+  try {
+    const result = await env.DB.prepare(
+      "SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('users', 'sessions', 'user_snapshots') ORDER BY name"
+    ).all();
+    return json({
+      ok: true,
+      tables: result.results?.map((row: any) => row.name) ?? [],
+      hasSessionSecret: Boolean(env.SESSION_SECRET),
+      hasGoogleClientId: Boolean(env.GOOGLE_CLIENT_ID),
+      hasGoogleClientSecret: Boolean(env.GOOGLE_CLIENT_SECRET),
+      hasFacebookClientId: Boolean(env.FACEBOOK_CLIENT_ID),
+      hasFacebookClientSecret: Boolean(env.FACEBOOK_CLIENT_SECRET),
+    });
+  } catch (error) {
+    return json({ ok: false, error: error instanceof Error ? error.message : 'Health check failed' }, 500);
   }
 }
 

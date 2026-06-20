@@ -25,6 +25,7 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 export function Button({ variant = 'ghost', className = '', onClick, onMouseEnter, ...rest }: Props) {
   return (
     <button
+      type={rest.type ?? 'button'}
       {...rest}
       onMouseEnter={(e) => { playSfx('hover'); onMouseEnter?.(e); }}
       onClick={(e) => { onClick?.(e); }}

@@ -58,7 +58,11 @@ export function AccountPage() {
       setMessage(res.error);
       return;
     }
-    setUser(res.data!.user);
+    if (!res.data?.user) {
+      setMessage('EFIPER Cloud respondio sin datos de usuario. Revisa el deploy de Cloudflare.');
+      return;
+    }
+    setUser(res.data.user);
     setPassword('');
     setMessage('Sesion iniciada. Tu progreso local se puede subir a la nube.');
   }
