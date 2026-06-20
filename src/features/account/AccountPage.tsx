@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
@@ -13,6 +13,9 @@ import { syncWithCloud } from '../../lib/sync/cloudSync';
 import { useStore } from '../../store/useStore';
 import gaspiImage from '../../assets/memorial/gaspi.png';
 import oliverTreeImage from '../../assets/memorial/oliver-tree.png';
+import gaspiBuenasSfx from '../../assets/memorial/audio/gaspi-buenas.mp3';
+import gaspiFiumbaSfx from '../../assets/memorial/audio/gaspi-fiumba.mp3';
+import oliverTreeSfx from '../../assets/memorial/audio/oliver-tree-rip.mp3';
 
 type Mode = 'login' | 'register';
 
@@ -27,6 +30,20 @@ export function AccountPage() {
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const [checkingUser, setCheckingUser] = useState(true);
+  const memorialAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  function playMemorialAudio(urls: string[]) {
+    const url = urls[Math.floor(Math.random() * urls.length)];
+    try {
+      memorialAudioRef.current?.pause();
+      const audio = new Audio(url);
+      audio.volume = 0.85;
+      memorialAudioRef.current = audio;
+      void audio.play();
+    } catch {
+      // El navegador puede bloquear audio hasta que exista una interaccion del usuario.
+    }
+  }
 
   async function refreshUser() {
     const res = await getCloudUser();
@@ -37,6 +54,13 @@ export function AccountPage() {
 
   useEffect(() => {
     void refreshUser();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      memorialAudioRef.current?.pause();
+      memorialAudioRef.current = null;
+    };
   }, []);
 
   useEffect(() => {
@@ -169,11 +193,17 @@ export function AccountPage() {
 
       <section className="overflow-hidden rounded-2xl border border-accent/25 bg-white/90 shadow-soft">
         <div className="grid md:grid-cols-[0.8fr_1fr_0.8fr]">
-          <div className="relative min-h-56 md:min-h-72">
+          <div
+            className="relative min-h-56 md:min-h-72 cursor-pointer overflow-hidden"
+            onMouseEnter={() => playMemorialAudio([gaspiBuenasSfx, gaspiFiumbaSfx])}
+            onFocus={() => playMemorialAudio([gaspiBuenasSfx, gaspiFiumbaSfx])}
+            tabIndex={0}
+            aria-label="Reproducir audio de Gaspar Gaspi Prim Diaz"
+          >
             <img
               src={gaspiImage}
               alt="Gaspar Gaspi Prim Diaz"
-              className="absolute inset-0 h-full w-full object-cover"
+              className="absolute inset-0 h-full w-full object-cover transition duration-300 hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/35" />
           </div>
@@ -186,11 +216,17 @@ export function AccountPage() {
             <div className="mt-5 h-1 w-24 rounded-full bg-accent" />
           </div>
 
-          <div className="relative min-h-56 md:min-h-72">
+          <div
+            className="relative min-h-56 md:min-h-72 cursor-pointer overflow-hidden"
+            onMouseEnter={() => playMemorialAudio([oliverTreeSfx])}
+            onFocus={() => playMemorialAudio([oliverTreeSfx])}
+            tabIndex={0}
+            aria-label="Reproducir audio de Oliver Tree"
+          >
             <img
               src={oliverTreeImage}
               alt="Oliver Tree"
-              className="absolute inset-0 h-full w-full object-cover"
+              className="absolute inset-0 h-full w-full object-cover transition duration-300 hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-l from-transparent to-white/35" />
           </div>
