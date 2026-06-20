@@ -24,10 +24,12 @@ export function AccountPage() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
+  const [checkingUser, setCheckingUser] = useState(true);
 
   async function refreshUser() {
     const res = await getCloudUser();
     setUser(res.data?.user ?? null);
+    setCheckingUser(false);
     return res.data?.user ?? null;
   }
 
@@ -94,7 +96,14 @@ export function AccountPage() {
         </p>
       </section>
 
-      {user ? (
+      {checkingUser ? (
+        <Card>
+          <p className="label">Verificando sesion</p>
+          <div className="mt-4 h-3 w-48 rounded-full bg-accent/15 overflow-hidden">
+            <div className="h-full w-1/2 rounded-full bg-accent animate-pulse" />
+          </div>
+        </Card>
+      ) : user ? (
         <Card className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3">
