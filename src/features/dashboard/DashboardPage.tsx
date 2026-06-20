@@ -38,12 +38,13 @@ export function DashboardPage() {
   const { progress, reviews, setExamDate } = useStore();
   const memorialAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  function playMemorialAudio(urls: string[]) {
+  function playMemorialAudio(urls: string[], startAt = 0) {
     const url = urls[Math.floor(Math.random() * urls.length)];
     try {
       memorialAudioRef.current?.pause();
       const audio = new Audio(url);
       audio.volume = 0.85;
+      audio.currentTime = startAt;
       memorialAudioRef.current = audio;
       void audio.play();
     } catch {
@@ -167,8 +168,8 @@ export function DashboardPage() {
 
           <div
             className="relative min-h-56 md:min-h-72 cursor-pointer overflow-hidden"
-            onMouseEnter={() => playMemorialAudio([oliverTreeSfx])}
-            onFocus={() => playMemorialAudio([oliverTreeSfx])}
+            onMouseEnter={() => playMemorialAudio([oliverTreeSfx], 0.35)}
+            onFocus={() => playMemorialAudio([oliverTreeSfx], 0.35)}
             tabIndex={0}
             aria-label="Reproducir audio de Oliver Tree"
           >
