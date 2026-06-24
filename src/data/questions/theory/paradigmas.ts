@@ -492,10 +492,10 @@ export const paradigmasTheory = withTopic('paradigmas_lenguajes', [
   mc('par-t-053', 'Excepciones', 3,
     'El bloque finally en un try-catch…',
     [
-      'Se ejecuta siempre, ocurra o no una excepción (ideal para liberar recursos)',
-      'Solo se ejecuta si ocurre una excepción',
-      'Solo se ejecuta si NO ocurre ninguna excepción',
-      'Nunca se ejecuta',
+      'Se ejecuta haya o no excepción, por eso sirve para liberar recursos',
+      'Se ejecuta solo cuando el bloque try lanza una excepción capturada',
+      'Se ejecuta solo cuando el try termina sin lanzar ninguna excepción',
+      'No se ejecuta si existe catch, porque catch reemplaza su comportamiento',
     ], 0,
     'El finally corre pase lo que pase (haya excepción o no, e incluso con un return en el try), por eso es ideal para cerrar archivos, conexiones u otros recursos.'),
 
@@ -680,10 +680,10 @@ export const paradigmasTheory = withTopic('paradigmas_lenguajes', [
   mc('par-t-073', 'Genéricos', 3,
     'Una ventaja de los genéricos es…',
     [
-      'Detectar errores de tipo en COMPILACIÓN y evitar casts manuales',
-      'Hacer que el código se ejecute más lento',
-      'Permitir cualquier tipo sin ningún control',
-      'Eliminar la necesidad de usar clases',
+      'Detectar errores de tipo en compilación y evitar casts manuales',
+      'Quitar verificaciones de tipos para aceptar cualquier objeto en ejecución',
+      'Convertir colecciones en estructuras sin tipo y sin restricciones',
+      'Eliminar clases de dominio porque el tipo se decide dinámicamente',
     ], 0,
     'Con genéricos, un error de tipo se detecta al compilar (no en ejecución) y no hace falta castear al extraer elementos: el código es más seguro y legible.'),
 
@@ -784,10 +784,10 @@ export const paradigmasTheory = withTopic('paradigmas_lenguajes', [
   mc('par-t-084', 'Encapsulamiento', 2,
     'El encapsulamiento se logra en Java típicamente…',
     [
-      'Declarando los atributos como private y exponiéndolos con getters/setters public',
-      'Declarando todos los atributos como public',
-      'Usando solo variables globales',
-      'Evitando el uso de clases',
+      'Declarando atributos private y exponiendo acceso controlado con métodos públicos',
+      'Declarando atributos public para que cualquier clase los modifique directamente',
+      'Usando variables globales compartidas para evitar métodos de acceso',
+      'Evitando clases y guardando el estado en funciones sueltas',
     ], 0,
     'El patrón habitual: atributos private (ocultos) + métodos public controlados (getters/setters) que pueden validar, protegiendo la integridad del objeto.'),
 
@@ -988,10 +988,10 @@ export const paradigmasTheory = withTopic('paradigmas_lenguajes', [
   mc('par-t-107', 'Polimorfismo', 3,
     'Si Animal es superclase de Perro, ¿es válida la sentencia "Animal a = new Perro();"?',
     [
-      'Sí: una referencia de la superclase puede apuntar a un objeto de la subclase (upcasting)',
-      'No: produce un error de compilación',
-      'Solo si Animal es una clase final',
-      'Solo usando siempre un cast explícito',
+      'Sí: una referencia de superclase puede apuntar a un objeto subclase',
+      'No: asignar una subclase a una referencia de superclase da error',
+      'Solo si Animal es final, porque así habilita el upcasting',
+      'Solo con un cast explícito desde Perro hacia Animal',
     ], 0,
     'El upcasting (referencia del supertipo apuntando a un objeto del subtipo) es válido y automático; es la base del polimorfismo: con esa referencia se llama al método sobrescrito del Perro.'),
 

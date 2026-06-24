@@ -63,7 +63,12 @@ export const analisisDiseno = withTopic('analisis_diseno', [
     1, 'El diagrama de estados modela el ciclo de vida de un objeto: sus estados posibles y los eventos que provocan transiciones (ej.: Pedido: pendiente→pagado→enviado).'),
   mc('ad-c-016', 'Requerimientos', 3,
     'Una regla de negocio se diferencia de un requerimiento funcional en que…',
-    ['Son lo mismo', 'La regla de negocio es una política/restricción del dominio que existe independientemente del sistema', 'La regla de negocio siempre es un RNF de rendimiento', 'La regla de negocio describe el hardware'],
+    [
+      'Ambas describen acciones del sistema y se escriben con el mismo formato',
+      'La regla de negocio es una política/restricción del dominio que existe independientemente del sistema',
+      'La regla de negocio expresa rendimiento, disponibilidad o seguridad técnica',
+      'La regla de negocio describe servidores, redes y dispositivos físicos',
+    ],
     1, 'La regla de negocio es una política del dominio (ej.: "un socio moroso no puede retirar libros") que existe con o sin sistema; el RF es cómo el sistema la implementa.'),
   tf('ad-c-017', 'Casos de uso', 3,
     'En un caso de uso, el flujo alternativo describe lo que ocurre cuando algo se desvía del camino normal (errores o excepciones).',

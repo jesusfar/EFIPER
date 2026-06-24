@@ -17,10 +17,10 @@ export const basesDatosTheory = withTopic('base_de_datos', [
   mc('bd-t-002', 'Claves', 2,
     'Una clave foránea (FK)…',
     [
-      'Es un atributo que referencia la PK de otra tabla y garantiza la integridad referencial',
-      'Identifica unívocamente cada fila de su propia tabla',
-      'Nunca puede tomar el valor nulo',
-      'Siempre coincide con la PK de su propia tabla',
+      'Referencia la PK de otra tabla y ayuda a mantener integridad referencial',
+      'Identifica cada fila de su propia tabla sin depender de otras relaciones',
+      'Debe ser no nula en todos los diseños, incluso si la relación es opcional',
+      'Coincide siempre con la clave primaria de la misma tabla donde aparece',
     ], 0,
     'La FK apunta a la PK de otra tabla, manteniendo la integridad referencial. Puede ser nula (si se permite) y no es la que identifica su propia tabla.'),
 
@@ -99,10 +99,10 @@ export const basesDatosTheory = withTopic('base_de_datos', [
   mc('bd-t-010', 'JOIN', 3,
     'Un LEFT JOIN entre A y B devuelve…',
     [
-      'Todas las filas de A y las coincidentes de B (con NULL donde no hay coincidencia)',
-      'Solo las filas con coincidencia en ambas',
-      'Todas las filas de B y las coincidentes de A',
-      'El producto cartesiano de A y B',
+      'Todas las filas de A y coincidencias de B, usando NULL si falta match',
+      'Solo las filas donde ambas tablas cumplen la condición de unión',
+      'Todas las filas de B y coincidencias de A, usando NULL si falta match',
+      'Todas las combinaciones posibles entre filas de A y filas de B',
     ], 0,
     'El LEFT JOIN conserva TODAS las filas de la tabla izquierda (A); donde no hay match en B, las columnas de B quedan en NULL.'),
 
@@ -178,10 +178,10 @@ export const basesDatosTheory = withTopic('base_de_datos', [
   mc('bd-t-019', 'Normalización', 3,
     'Una tabla Pedido con columnas (id, cliente, producto1, producto2, producto3) viola…',
     [
-      'La 1FN, por tener grupos repetitivos (los productos repartidos en columnas)',
-      'Únicamente la 3FN',
-      'Ninguna forma normal',
-      'La integridad referencial',
+      'La 1FN, por tener grupos repetitivos en columnas producto1, producto2, producto3',
+      'Únicamente la 3FN, porque el problema sería una dependencia transitiva',
+      'Ninguna forma normal, porque separar productos en columnas es válido',
+      'La integridad referencial, porque faltan claves foráneas obligatorias',
     ], 0,
     'Repetir un mismo concepto en columnas (producto1, producto2…) es un grupo repetitivo: viola la 1FN. Se corrige con una tabla de detalle (un producto por fila).'),
 
@@ -367,10 +367,10 @@ export const basesDatosTheory = withTopic('base_de_datos', [
   mc('bd-t-040', 'Concurrencia', 3,
     'Una "lectura sucia" (dirty read) ocurre cuando…',
     [
-      'Una transacción lee datos modificados por otra que todavía no confirmó (y que podría hacer rollback)',
-      'Una transacción lee solo datos ya confirmados',
-      'Se elimina una tabla durante la lectura',
-      'Dos transacciones leen exactamente el mismo dato a la vez',
+      "Una transaccion lee cambios de otra que aun no confirmo y podria revertirlos",
+      "Una transaccion relee una fila confirmada y detecta que cambio su contenido",
+      "Una consulta repetida encuentra nuevas filas confirmadas que cumplen el filtro",
+      "Dos transacciones consultan datos confirmados bajo un mismo nivel de aislamiento",
     ], 0,
     'En la lectura sucia se lee un cambio aún no confirmado; si la otra transacción hace rollback, se habrá leído un dato que "nunca existió".'),
 
@@ -474,10 +474,10 @@ export const basesDatosTheory = withTopic('base_de_datos', [
   mc('bd-t-051', 'SQL', 3,
     'El operador LIKE con el patrón \'A%\' coincide con…',
     [
-      'Los valores que empiezan con "A" (el % representa cualquier secuencia de caracteres)',
-      'Solo el valor exacto "A%"',
-      'Los valores que terminan en "A"',
-      'Los valores de un solo carácter',
+      "Los valores que empiezan con A; el porcentaje representa cualquier secuencia posterior",
+      "Los valores que terminan con A; el porcentaje representa texto previo variable",
+      "Los valores que contienen A en cualquier posicion, aunque no sea inicial",
+      "Los valores que coinciden literalmente con los caracteres A y porcentaje",
     ], 0,
     'LIKE busca por patrón: % = cualquier cantidad de caracteres, _ = un solo carácter. \'A%\' = empieza con A; \'%A\' = termina en A.'),
 
@@ -667,10 +667,10 @@ export const basesDatosTheory = withTopic('base_de_datos', [
   mc('bd-t-071', 'Rendimiento', 3,
     'La desnormalización mejora el rendimiento de lectura, pero…',
     [
-      'Introduce redundancia y riesgo de inconsistencia, y complica las operaciones de escritura',
-      'Siempre mejora todos los aspectos sin contrapartidas',
-      'Elimina todos los índices de la base',
-      'Reduce el espacio de almacenamiento ocupado',
+      "Introduce redundancia, riesgo de inconsistencia y mas trabajo al escribir datos",
+      "Reduce la cantidad de copias, pero exige mas uniones para leer informacion",
+      "Elimina restricciones del esquema, aunque mantiene intacto el costo de escritura",
+      "Mejora las escrituras, pero obliga a recalcular indices antes de cada lectura",
     ], 0,
     'Al duplicar datos para evitar JOINs, se acelera la lectura pero hay que mantener la redundancia consistente en cada escritura, con más espacio usado.'),
 

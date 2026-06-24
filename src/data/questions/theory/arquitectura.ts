@@ -432,10 +432,10 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
   mc('arq-t-047', 'Caché', 3,
     'En un mapeo de caché TOTALMENTE asociativo…',
     [
-      'Un bloque de memoria puede ubicarse en CUALQUIER línea de la caché',
-      'Un bloque va siempre a una única línea fija',
-      'No existe memoria caché',
-      'Solo cabe un bloque en toda la caché',
+      'Un bloque de memoria puede ubicarse en cualquier línea de la caché',
+      'Un bloque solo puede ir a una línea fija determinada por su dirección',
+      'Cada conjunto admite una cantidad limitada de vías para ubicar bloques',
+      'La caché guarda un único bloque total y reemplaza todo ante cada acceso',
     ], 0,
     'El totalmente asociativo da máxima flexibilidad (menos fallos por conflicto), pero buscar un bloque exige comparar todas las líneas, lo que es más caro y lento.'),
 
@@ -628,9 +628,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'Una instrucción de máquina típicamente se compone de…',
     [
       'Un código de operación (opcode) y uno o más operandos',
-      'Únicamente datos sin operación',
-      'Solo la dirección de la próxima instrucción',
-      'El programa completo',
+      'Datos almacenados sin indicar qué operación debe ejecutar la CPU',
+      'La dirección de la próxima instrucción, como si fuera el contador PC',
+      'El programa completo empaquetado dentro de una sola instrucción',
     ], 0,
     'El opcode indica QUÉ hacer (sumar, cargar, saltar) y los operandos indican SOBRE QUÉ (registros, direcciones o constantes).'),
 
@@ -838,10 +838,10 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
   mc('arq-t-090', 'Paralelismo', 3,
     'El paralelismo a nivel de instrucción (ILP) busca…',
     [
-      'Ejecutar varias instrucciones independientes simultáneamente (mediante pipeline y ejecución superescalar)',
-      'Ejecutar un solo programa a la vez, sin solapamiento',
-      'Eliminar instrucciones del programa',
-      'Reducir la cantidad de núcleos',
+      'Ejecutar instrucciones independientes en paralelo usando pipeline o ejecución superescalar',
+      'Ejecutar un programa sin solapar etapas ni emitir instrucciones simultáneas',
+      'Eliminar instrucciones del programa para reducir el tamaño del ejecutable',
+      'Reducir núcleos disponibles para concentrar toda la ejecución en uno solo',
     ], 0,
     'El ILP aprovecha que instrucciones sin dependencias pueden solaparse (pipeline) o lanzarse a la vez (superescalar: varias unidades de ejecución por ciclo).'),
 
@@ -1017,10 +1017,10 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
   mc('arq-t-110', 'Caché', 3,
     'Si una caché usa la política write-back y se corta la energía antes de desalojar una línea modificada…',
     [
-      'Se pueden perder los cambios que todavía no se escribieron en la memoria principal',
-      'No hay ningún riesgo: la memoria siempre está sincronizada',
-      'La memoria principal siempre tiene el dato más nuevo',
-      'Es imposible que ocurra esa situación',
+      'Pueden perderse cambios pendientes que aún no llegaron a memoria principal',
+      'No hay riesgo porque write-back sincroniza memoria en cada escritura',
+      'La memoria principal conserva siempre la copia más reciente del dato',
+      'La situación no puede ocurrir porque la caché no mantiene datos modificados',
     ], 0,
     'En write-back la escritura a memoria se posterga hasta desalojar la línea; si se corta la energía antes, los cambios pendientes en la caché se pierden (a diferencia de write-through).'),
 

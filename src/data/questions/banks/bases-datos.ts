@@ -26,7 +26,12 @@ export const basesDatos = withTopic('base_de_datos', [
     1, 'HAVING filtra los grupos resultantes de GROUP BY (puede usar agregados como COUNT). WHERE filtra filas ANTES de agrupar y no admite agregados.'),
   mc('bd-c-007', 'SQL', 3,
     'Un LEFT JOIN entre A y B devuelve…',
-    ['Solo las filas que coinciden en ambas tablas', 'Todas las filas de A, y las coincidentes de B (NULL si no hay coincidencia)', 'Todas las filas de B y las coincidentes de A', 'El producto cartesiano de A y B'],
+    [
+      'Solo las filas donde A y B cumplen la condición de unión',
+      'Todas las filas de A, y las coincidentes de B (NULL si no hay coincidencia)',
+      'Todas las filas de B, más las coincidencias de A cuando existan',
+      'Todas las combinaciones posibles entre filas de A y filas de B',
+    ],
     1, 'LEFT JOIN conserva TODAS las filas de la tabla izquierda (A); donde no hay match en B, las columnas de B quedan en NULL.'),
   tf('bd-c-008', 'Transacciones', 3,
     'La propiedad de "Atomicidad" (ACID) garantiza que una transacción se ejecute completamente o no se ejecute en absoluto.',

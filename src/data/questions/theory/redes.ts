@@ -1042,10 +1042,10 @@ export const redesTheory = withTopic('redes_comunicaciones', [
   mc('red-t-112', 'Direccionamiento', 3,
     'Tu navegador abre una conexión a un servidor web (puerto destino 443). ¿Qué puerto usa como ORIGEN?',
     [
-      'Un puerto efímero/dinámico alto (rango 49152–65535) que asigna el sistema',
-      'Siempre el puerto 443',
-      'Siempre el puerto 80',
-      'El puerto 0',
+      "Un puerto efimero alto asignado por el sistema para identificar esa conexion",
+      "El puerto 443, porque coincide con el servicio HTTPS del servidor destino",
+      "El puerto 80, porque el navegador reserva ese origen para trafico web",
+      "El puerto 0, porque los clientes no necesitan declarar puerto de origen",
     ], 0,
     'El cliente usa un puerto de origen efímero (alto) distinto por cada conexión; el destino es 443. Así el sistema distingue múltiples conexiones al mismo servidor.'),
 

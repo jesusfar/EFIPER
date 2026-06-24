@@ -910,10 +910,10 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
   mc('so-t-099', 'E/S', 3,
     'Una llamada de E/S BLOQUEANTE…',
     [
-      'Suspende al proceso hasta que la operación termina; la no bloqueante retorna de inmediato',
-      'Retorna de inmediato en todos los casos',
-      'No involucra al sistema operativo',
-      'Es siempre más rápida que la no bloqueante',
+      "Suspende al proceso hasta que la operacion termina; luego puede continuar",
+      "Devuelve el control de inmediato y deja la finalizacion para una consulta posterior",
+      "Traslada la operacion a memoria virtual y evita pasar por el sistema operativo",
+      "Ejecuta la transferencia en paralelo y mantiene al proceso usando CPU activa",
     ], 0,
     'La E/S bloqueante deja al proceso en espera hasta completar la operación; la no bloqueante devuelve el control enseguida y el proceso consulta o es notificado luego.'),
 
@@ -1049,10 +1049,10 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
   mc('so-t-114', 'Planificación', 3,
     'Para un sistema interactivo de tiempo compartido con muchos usuarios, ¿qué algoritmo conviene y por qué?',
     [
-      'Round Robin, porque reparte la CPU de forma equitativa y ofrece buen tiempo de respuesta',
-      'FIFO, porque su simplicidad garantiza buen tiempo de respuesta',
-      'SJF puro, porque nunca produce inanición',
-      'Planificación de plazo fijo, por ser la más simple',
+      "Round Robin, porque reparte la CPU por turnos y mejora el tiempo de respuesta",
+      "FIFO, porque respeta el orden de llegada y evita cambios frecuentes de contexto",
+      "SJF puro, porque prioriza rafagas cortas y reduce siempre la espera interactiva",
+      "Planificacion por plazo fijo, porque simplifica la interaccion de muchos usuarios",
     ], 0,
     'RR da turnos cortos a todos, logrando buena interactividad y respuesta. FIFO sufre efecto convoy, SJF puede causar inanición y el plazo fijo es complejo.'),
 

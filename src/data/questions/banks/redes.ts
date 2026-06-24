@@ -74,6 +74,11 @@ export const redes = withTopic('redes_comunicaciones', [
     true, 'Correcto. En conmutación de paquetes (Internet) cada paquete se enruta independientemente y puede seguir caminos distintos, reordenándose en destino.'),
   mc('red-c-020', 'Seguridad', 2,
     'La función principal de NAT (Network Address Translation) es…',
-    ['Cifrar el tráfico de la red', 'Permitir que varios dispositivos con IP privada compartan una IP pública para salir a Internet', 'Asignar nombres de dominio', 'Detectar intrusos en la red'],
+    [
+      'Cifrar paquetes para proteger el contenido entre origen y destino',
+      'Permitir que varios dispositivos con IP privada compartan una IP pública para salir a Internet',
+      'Traducir nombres de dominio legibles a direcciones IP públicas',
+      'Inspeccionar tráfico y detectar patrones de intrusión en la red',
+    ],
     1, 'NAT traduce las IP privadas internas a una (o pocas) IP pública, permitiendo que toda la LAN salga a Internet y ahorrando direcciones IPv4.'),
 ]);
