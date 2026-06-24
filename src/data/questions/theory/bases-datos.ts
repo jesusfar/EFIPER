@@ -327,10 +327,10 @@ export const basesDatosTheory = withTopic('base_de_datos', [
   mc('bd-t-035', 'Lenguajes SQL', 3,
     '¿Cuál es la diferencia entre TRUNCATE y DELETE?',
     [
-      'TRUNCATE borra todas las filas rápidamente y sin WHERE (no registra fila por fila); DELETE borra filas (admite WHERE y es transaccional)',
-      'TRUNCATE elimina la estructura de la tabla',
-      'DELETE elimina la estructura de la tabla',
-      'Son operaciones idénticas',
+      'TRUNCATE vacía la tabla masivamente; DELETE elimina filas y puede usar WHERE',
+      'TRUNCATE borra la definición de la tabla y conserva sus registros',
+      'DELETE elimina columnas de la estructura sin afectar las filas existentes',
+      'Ambas operaciones tienen el mismo alcance y registro fila por fila',
     ], 0,
     'TRUNCATE vacía la tabla de forma masiva (se comporta como DDL); DELETE borra filas seleccionables con WHERE y puede deshacerse en una transacción. Ninguno borra la estructura (eso es DROP).'),
 
@@ -563,10 +563,10 @@ export const basesDatosTheory = withTopic('base_de_datos', [
   mc('bd-t-060', 'SQL vs NoSQL', 3,
     '¿Cuál afirmación sobre bases SQL vs NoSQL es correcta?',
     [
-      'Las SQL son relacionales con esquema fijo y ACID fuerte; las NoSQL son flexibles (documentos, clave-valor, grafos), escalan horizontalmente y a veces usan consistencia eventual',
-      'Las bases NoSQL son siempre relacionales',
-      'Las bases SQL no soportan transacciones',
-      'NoSQL significa que no almacenan ningún dato',
+      'SQL usa modelo relacional y esquema definido; NoSQL ofrece modelos flexibles y escalado horizontal',
+      'NoSQL conserva tablas relacionales estrictas y obliga a usar claves foráneas',
+      'SQL no permite transacciones ni restricciones de integridad en sus tablas',
+      'NoSQL significa no almacenar datos persistentes, solo caché temporal',
     ], 0,
     'Las relacionales (SQL) priorizan esquema y ACID; las NoSQL ofrecen flexibilidad de esquema y escalado horizontal, a menudo relajando la consistencia (eventual) para ganar disponibilidad.'),
 
@@ -821,10 +821,10 @@ export const basesDatosTheory = withTopic('base_de_datos', [
   mc('bd-t-088', 'Integridad', 3,
     'La integridad de dominio se asegura mediante…',
     [
-      'Restricciones sobre los valores válidos de una columna (tipo de dato, CHECK, NOT NULL)',
-      'Únicamente la clave primaria',
-      'Solamente los índices',
-      'Solo los triggers',
+      'Restricciones sobre valores válidos de columnas: tipos, CHECK, NOT NULL',
+      'Relaciones entre tablas mediante claves foráneas y reglas de referencia',
+      'Unicidad de filas mediante claves primarias y claves candidatas',
+      'Optimización de consultas mediante índices secundarios y estadísticas',
     ], 0,
     'La integridad de dominio limita los valores de cada columna a su dominio válido usando tipos, CHECK, NOT NULL, DEFAULT, etc.'),
 
@@ -953,10 +953,10 @@ export const basesDatosTheory = withTopic('base_de_datos', [
   mc('bd-t-102', 'NoSQL', 3,
     'El teorema CAP afirma que un sistema distribuido…',
     [
-      'No puede garantizar simultáneamente Consistencia, Disponibilidad y Tolerancia a particiones; ante una partición debe elegir entre C y A',
-      'Garantiza siempre las tres propiedades a la vez',
-      'Solo aplica a las bases relacionales',
-      'No tiene relación con los sistemas distribuidos',
+      'Ante particiones, no puede garantizar a la vez consistencia y disponibilidad',
+      'Garantiza consistencia, disponibilidad y particiones sin compromisos',
+      'Solo describe bases relacionales instaladas en un único servidor',
+      'No se aplica a comunicación ni tolerancia a fallas distribuidas',
     ], 0,
     'CAP: con particiones de red inevitables, el sistema debe sacrificar consistencia o disponibilidad. No se pueden maximizar las tres a la vez.'),
 
@@ -1032,10 +1032,10 @@ export const basesDatosTheory = withTopic('base_de_datos', [
   mc('bd-t-110', 'SQL', 3,
     '¿Cuál es la diferencia entre COUNT(*) y COUNT(email) en una tabla Cliente?',
     [
-      'COUNT(*) cuenta todas las filas; COUNT(email) cuenta solo las filas cuyo email no es nulo',
-      'Siempre devuelven el mismo número',
-      'COUNT(*) ignora los valores nulos',
-      'COUNT(email) cuenta únicamente los nulos',
+      'COUNT(*) cuenta filas; COUNT(email) cuenta filas donde email no es NULL',
+      'COUNT(*) ignora filas con cualquier columna NULL de la tabla',
+      'COUNT(email) cuenta solo filas donde email tiene valor NULL',
+      'Ambas expresiones devuelven igual resultado aunque existan emails faltantes',
     ], 0,
     'Si algunos clientes no tienen email (NULL), COUNT(email) será menor que COUNT(*), porque COUNT de una columna omite los nulos.'),
 

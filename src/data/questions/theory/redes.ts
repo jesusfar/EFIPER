@@ -1017,10 +1017,10 @@ export const redesTheory = withTopic('redes_comunicaciones', [
   mc('red-t-109', 'Servicios', 3,
     'Tu PC consulta un nombre de dominio y el servidor DNS local no lo tiene en caché. ¿Qué hace?',
     [
-      'Realiza una resolución consultando la jerarquía DNS (raíz → TLD → autoritativo) hasta obtener la IP',
-      'Devuelve siempre un error de "no encontrado"',
-      'Pregunta por broadcast a todos los hosts de la LAN',
-      'Usa ARP para resolver el nombre',
+      'Consulta la jerarquía DNS: raíz, TLD y servidor autoritativo',
+      'Devuelve error inmediatamente aunque el dominio exista fuera de su caché',
+      'Envía broadcast a la LAN para que cualquier host responda con la IP',
+      'Usa ARP para traducir el nombre de dominio directamente a dirección MAC',
     ], 0,
     'El resolver recorre la jerarquía DNS (servidores raíz, de TLD y autoritativo) hasta obtener la IP, que luego guarda en caché para futuras consultas.'),
 

@@ -104,10 +104,10 @@ export const paradigmasTheory = withTopic('paradigmas_lenguajes', [
   mc('par-t-011', 'static y final', 3,
     'En Java, un atributo static…',
     [
-      'Pertenece a la clase (es compartido por todas las instancias), no a cada objeto',
-      'Es siempre una constante inmutable',
-      'Es siempre privado',
-      'No puede modificarse nunca',
+      'Pertenece a la clase y comparte una única copia entre instancias',
+      'Pertenece a cada objeto y se duplica al crear instancias',
+      'Se vuelve constante automáticamente aunque no use final',
+      'Solo puede accederse desde métodos privados de la clase',
     ], 0,
     'Un atributo static tiene una única copia compartida por todas las instancias; se accede mediante la clase (Clase.atributo), sin necesidad de un objeto.'),
 
@@ -502,10 +502,10 @@ export const paradigmasTheory = withTopic('paradigmas_lenguajes', [
   mc('par-t-054', 'Excepciones', 3,
     '¿Cuál es la diferencia entre las excepciones checked y unchecked?',
     [
-      'Las checked deben declararse o capturarse (el compilador lo exige); las unchecked (RuntimeException) no',
-      'Las unchecked deben declararse obligatoriamente',
-      'Son exactamente lo mismo',
-      'Las checked solo ocurren en tiempo de compilación',
+      'Las checked deben capturarse o declararse; las unchecked no lo exige el compilador',
+      'Las unchecked deben declararse con throws en toda firma pública',
+      'Las checked solo aparecen durante compilación y nunca en ejecución',
+      'Ambas se manejan igual y el compilador no distingue categorías',
     ], 0,
     'Las checked (ej. IOException) obligan a manejarlas (try-catch o throws); las unchecked (RuntimeException, ej. NullPointer) no lo exigen, suelen ser errores de programación.'),
 
@@ -757,10 +757,10 @@ export const paradigmasTheory = withTopic('paradigmas_lenguajes', [
   mc('par-t-081', 'Modificadores de acceso', 3,
     'El modificador protected…',
     [
-      'Permite el acceso desde la misma clase, el mismo paquete y las subclases (aun en otros paquetes)',
-      'Solo permite acceso dentro de la propia clase',
-      'Permite el acceso desde cualquier clase',
-      'No permite el acceso desde ningún lado',
+      'Permite acceso desde el paquete y desde subclases, incluso en otro paquete',
+      'Limita el acceso únicamente al cuerpo de la clase que declara el miembro',
+      'Abre el miembro a cualquier clase de cualquier paquete sin restricciones',
+      'Bloquea el acceso desde subclases para proteger la implementación heredada',
     ], 0,
     'protected amplía el acceso a las subclases (incluso en otros paquetes) además del propio paquete, útil para que las clases derivadas reutilicen miembros del padre.'),
 
@@ -973,10 +973,10 @@ export const paradigmasTheory = withTopic('paradigmas_lenguajes', [
   mc('par-t-105', 'Java', 3,
     '¿Por qué no se puede usar this dentro de un método static?',
     [
-      'Porque un método static pertenece a la clase (no a una instancia) y this referencia a una instancia',
-      'Porque this es una palabra reservada para constructores únicamente',
-      'Porque static no existe en Java',
-      'Porque this solo puede usarse en interfaces',
+      'Porque static pertenece a la clase y this necesita una instancia actual',
+      'Porque this se reserva para constructores y no puede aparecer en métodos comunes',
+      'Porque static pertenece a cada objeto y this apuntaría a una copia compartida',
+      'Porque this solo puede utilizarse dentro de interfaces con métodos default',
     ], 0,
     'Un método static se invoca sobre la clase, sin un objeto asociado; como this apunta a la instancia actual y no hay ninguna, no puede usarse allí.'),
 

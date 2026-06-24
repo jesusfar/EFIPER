@@ -55,7 +55,12 @@ export const basesDatos = withTopic('base_de_datos', [
     false, 'Falso. La desnormalización mejora la lectura pero INTRODUCE redundancia (no la elimina), a costa de más espacio y mayor riesgo de inconsistencia.'),
   mc('bd-c-015', 'SQL', 3,
     'La diferencia entre WHERE y HAVING es que…',
-    ['Son sinónimos', 'WHERE filtra filas antes de agrupar; HAVING filtra grupos después de GROUP BY', 'HAVING se usa solo en INSERT', 'WHERE solo funciona con funciones de agregado'],
+    [
+      'WHERE y HAVING filtran en el mismo momento, pero HAVING exige alias de columna',
+      'WHERE filtra filas antes de agrupar; HAVING filtra grupos después de GROUP BY',
+      'WHERE filtra grupos ya calculados y HAVING filtra registros antes de agregarlos',
+      'HAVING reemplaza al WHERE cuando la consulta usa JOIN entre varias tablas',
+    ],
     1, 'WHERE actúa fila por fila ANTES del agrupamiento; HAVING filtra los grupos ya formados y puede usar agregados (COUNT, SUM, etc.).'),
   mc('bd-c-016', 'Modelo relacional', 2,
     'Una relación N:M (muchos a muchos) en el modelo relacional se implementa…',

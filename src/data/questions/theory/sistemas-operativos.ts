@@ -32,10 +32,10 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
   mc('so-t-004', 'Planificación', 3,
     'Sobre el tamaño del quantum en Round Robin, ¿cuál afirmación es correcta?',
     [
-      'Si el quantum es muy grande, RR tiende a comportarse como FIFO; si es muy chico, domina el overhead de los cambios de contexto',
-      'Cuanto más chico sea el quantum, mejor es siempre el rendimiento',
-      'El tamaño del quantum no afecta el rendimiento del sistema',
-      'Un quantum grande elimina por completo los cambios de contexto',
+      'Quantum grande se parece a FIFO; quantum chico aumenta cambios de contexto',
+      'Quantum más chico mejora rendimiento porque reduce todo tiempo de espera',
+      'El tamaño del quantum no afecta latencia ni sobrecarga del sistema',
+      'Quantum grande elimina los cambios de contexto aunque haya varios procesos',
     ], 0,
     'Un quantum grande hace que los procesos terminen antes de agotarlo (se parece a FIFO); uno muy chico gasta demasiado tiempo en cambios de contexto. Hay que equilibrar.'),
 
@@ -151,10 +151,10 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
   mc('so-t-017', 'Memoria', 3,
     '¿Cuál es la diferencia entre paginación y segmentación?',
     [
-      'La paginación divide la memoria en bloques de tamaño FIJO (páginas); la segmentación en bloques de tamaño VARIABLE (segmentos)',
-      'La paginación usa bloques variables y la segmentación bloques fijos',
-      'Ambas usan exclusivamente bloques de tamaño fijo',
-      'Ninguna de las dos divide la memoria en bloques',
+      'Paginación usa bloques fijos; segmentación usa bloques lógicos variables',
+      'Paginación usa bloques variables y segmentación usa marcos fijos',
+      'Ambas dividen memoria en bloques fijos del mismo tamaño',
+      'Ninguna divide memoria; ambas asignan procesos completos sin particiones',
     ], 0,
     'Las páginas son de tamaño fijo e iguales; los segmentos, de tamaño variable según la parte lógica del proceso (código, datos, pila).'),
 
@@ -223,10 +223,10 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
   mc('so-t-025', 'Memoria', 3,
     '¿Cuál afirmación sobre los algoritmos de reemplazo de páginas es correcta?',
     [
-      'El algoritmo óptimo reemplaza la página que tardará más en volver a usarse, pero no es implementable porque requeriría conocer el futuro',
-      'FIFO siempre produce menos fallos de página que LRU',
-      'LRU reemplaza la página recién cargada en memoria',
-      'El algoritmo óptimo se usa en todos los sistemas operativos reales',
+      'El óptimo reemplaza la página cuyo próximo uso está más lejano',
+      'FIFO siempre reduce fallos frente a LRU al agregar más marcos',
+      'LRU reemplaza la página cargada más recientemente en memoria',
+      'El óptimo se implementa tal cual en sistemas operativos reales',
     ], 0,
     'El óptimo es una referencia teórica (necesita ver el futuro). FIFO incluso puede empeorar al darle más marcos (anomalía de Belady). LRU descarta la menos usada recientemente, no la recién cargada.'),
 
@@ -290,10 +290,10 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
   mc('so-t-032', 'Planificación', 3,
     'La planificación "por el comportamiento" busca…',
     [
-      'Garantizar a cada usuario cierta prestación (por ejemplo 1/n de la CPU), comparando lo consumido con lo prometido',
-      'Ejecutar siempre la ráfaga de mayor duración',
-      'Darle toda la CPU al primer proceso que llega hasta que termine',
-      'Eliminar la multiprogramación del sistema',
+      'Ajustar prioridades comparando CPU consumida contra la prestación prometida',
+      'Ejecutar primero las ráfagas largas para mejorar el uso de CPU',
+      'Mantener el primer proceso en CPU hasta que termine su ejecución',
+      'Separar procesos por dispositivo de entrada/salida antes de planificar',
     ], 0,
     'Con n usuarios, se garantiza a cada uno ~1/n del procesador; la prioridad surge del cociente entre lo que consumió y lo que se le prometió consumir.'),
 
@@ -488,10 +488,10 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
   mc('so-t-054', 'Concurrencia', 3,
     '¿Cuál es la diferencia entre inanición (starvation) y deadlock?',
     [
-      'En el deadlock los procesos se bloquean mutuamente y ninguno avanza; en la inanición un proceso no progresa porque otros tienen siempre prioridad, aunque el sistema sí avanza',
-      'Son exactamente el mismo fenómeno',
-      'La inanición bloquea por completo todo el sistema',
-      'El deadlock siempre se resuelve por sí solo',
+      'Deadlock bloquea un grupo; inanición posterga un proceso mientras el sistema avanza',
+      'Ambos describen espera por baja prioridad con el sistema todavía ejecutando trabajo',
+      'Inanición detiene todos los procesos porque cada uno retiene un recurso circular',
+      'Deadlock se corrige cuando el planificador aumenta la prioridad del proceso',
     ], 0,
     'En el deadlock nadie del grupo avanza (espera circular). En la inanición el sistema progresa, pero un proceso concreto queda postergado indefinidamente por baja prioridad.'),
 
@@ -590,10 +590,10 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
   mc('so-t-065', 'Planificación', 3,
     'En una planificación con colas multinivel (multilevel queue)…',
     [
-      'Hay varias colas con distinta prioridad y política, y los procesos se asignan según su tipo (interactivo, batch, sistema)',
-      'Hay una única cola FIFO para todos los procesos',
-      'Todos los procesos tienen la misma prioridad fija',
-      'No se utiliza la CPU en absoluto',
+      'Cada tipo de proceso entra en una cola con prioridad y política propia',
+      'Todos los procesos comparten una cola FIFO sin distinguir su categoría',
+      'Cada proceso cambia de cola en cada quantum aunque no cambie su tipo',
+      'Las colas solo ordenan archivos y no participan en la planificación',
     ], 0,
     'Las colas multinivel separan los procesos por categoría, cada cola con su propia política (p. ej. RR para interactivos, FIFO para batch) y prioridad entre colas.'),
 
@@ -719,10 +719,10 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
   mc('so-t-079', 'Sistemas de archivos', 2,
     '"Montar" un sistema de archivos significa…',
     [
-      'Asociar un sistema de archivos (de un dispositivo o partición) a un punto del árbol de directorios para poder acceder a él',
-      'Formatear el disco por completo',
-      'Cifrar todos los archivos',
-      'Desfragmentar el disco',
+      'Asociar un sistema de archivos a un punto del árbol de directorios',
+      'Inicializar la partición creando una estructura nueva y borrando datos',
+      'Aplicar cifrado al contenido para restringir el acceso no autorizado',
+      'Reorganizar bloques físicos para mejorar accesos en discos mecánicos',
     ], 0,
     'El montaje conecta el sistema de archivos de un dispositivo a un punto de montaje del árbol de directorios; recién entonces se puede leer/escribir en él.'),
 
@@ -868,10 +868,10 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
   mc('so-t-095', 'Memoria', 3,
     'En memoria paginada, una dirección virtual se divide en…',
     [
-      'Número de página + desplazamiento (offset); la tabla traduce la página a un marco y el offset se mantiene',
-      'Únicamente un desplazamiento, sin número de página',
-      'Solo un número de segmento',
-      'La dirección física directa, sin ninguna traducción',
+      'Número de página y desplazamiento; la tabla traduce página a marco',
+      'Solo desplazamiento dentro del proceso, sin identificar página alguna',
+      'Número de segmento y límite, propio de memoria segmentada',
+      'Dirección física directa calculada sin tabla de páginas intermedia',
     ], 0,
     'La parte alta (número de página) se traduce a marco vía la tabla de páginas; la parte baja (offset) no cambia y ubica el byte dentro de la página/marco.'),
 
@@ -945,10 +945,10 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
   mc('so-t-103', 'Sistemas de archivos', 3,
     '¿Cuál es la diferencia entre acceso secuencial y acceso directo (aleatorio) a un archivo?',
     [
-      'El secuencial lee/escribe en orden de principio a fin; el directo accede a cualquier posición por su dirección/registro',
-      'El secuencial accede a cualquier posición y el directo solo en orden',
-      'Ambos solo permiten leer en orden estricto',
-      'Ninguno de los dos permite escribir datos',
+      'Secuencial recorre en orden; directo salta a una posición o registro',
+      'Secuencial salta a cualquier posición y directo recorre desde el inicio',
+      'Ambos obligan a recorrer registros anteriores antes de cada lectura',
+      'Ambos impiden escritura y solo permiten consultar metadatos del archivo',
     ], 0,
     'El acceso secuencial recorre el archivo en orden; el directo (random) salta a cualquier registro/posición sin recorrer lo anterior, útil para bases de datos e índices.'),
 
@@ -1074,10 +1074,10 @@ export const sistemasOperativosTheory = withTopic('sistemas_operativos', [
   mc('so-t-117', 'Multiprogramación', 2,
     'La multiprogramación mejora el uso de la CPU porque…',
     [
-      'Mientras un proceso espera una E/S, la CPU ejecuta otro proceso, en lugar de quedar ociosa',
-      'Ejecuta un solo proceso a la vez hasta que termine por completo',
-      'Elimina la necesidad de usar memoria',
-      'Reduce la cantidad total de procesos del sistema',
+      'Cuando un proceso espera E/S, la CPU puede ejecutar otro listo',
+      'Mantiene un solo proceso cargado hasta que termina toda su ejecución',
+      'Sustituye la memoria principal por almacenamiento secundario permanente',
+      'Reduce procesos activos para evitar cambios de contexto del planificador',
     ], 0,
     'Teniendo varios procesos en memoria, cuando uno se bloquea por E/S el SO le da la CPU a otro, aprovechando los tiempos muertos y subiendo la utilización.'),
 

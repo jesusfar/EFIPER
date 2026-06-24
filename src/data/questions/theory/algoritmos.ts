@@ -665,10 +665,10 @@ export const algoritmosTheory = withTopic('algoritmos_estructuras', [
   mc('alg-t-072', 'Notaciones', 3,
     'La notación Θ (theta) representa…',
     [
-      'Una cota ajustada: el algoritmo crece exactamente a ese orden (cota inferior y superior a la vez)',
-      'Únicamente una cota superior',
-      'Únicamente una cota inferior',
-      'El tiempo de ejecución en segundos',
+      'Una cota ajustada: acota por arriba y por abajo el mismo orden de crecimiento',
+      'Una cota superior: indica un máximo asintótico sin asegurar límite inferior',
+      'Una cota inferior: indica un mínimo asintótico sin asegurar límite superior',
+      'Una medida empírica: expresa segundos reales para una entrada determinada',
     ], 0,
     'Θ(g(n)) significa que el costo está acotado por arriba Y por abajo por g(n) (salvo constantes): describe el crecimiento exacto del algoritmo.'),
 
@@ -851,10 +851,10 @@ export const algoritmosTheory = withTopic('algoritmos_estructuras', [
   mc('alg-t-092', 'Ordenamiento', 3,
     'El InsertionSort (ordenamiento por inserción)…',
     [
-      'Inserta cada elemento en su lugar dentro de la parte ya ordenada; es eficiente para arreglos casi ordenados',
-      'Es O(n log n) en todos los casos',
-      'Requiere O(n) de memoria adicional',
-      'Nunca es estable',
+      'Inserta cada elemento dentro de la parte ya ordenada y rinde bien si casi está ordenado',
+      'Divide el arreglo en mitades y luego combina subarreglos previamente ordenados',
+      'Selecciona el mínimo restante en cada pasada y lo envía al inicio',
+      'Cuenta frecuencias de claves enteras dentro de un rango acotado',
     ], 0,
     'InsertionSort construye el orden insertando de a uno; si el arreglo está casi ordenado, hace pocos desplazamientos (mejor caso O(n)). Es estable e in-place.'),
 
@@ -871,10 +871,10 @@ export const algoritmosTheory = withTopic('algoritmos_estructuras', [
   mc('alg-t-094', 'Ordenamiento', 3,
     'El CountingSort logra ordenar en O(n + k)…',
     [
-      'Contando las ocurrencias de cada valor, sin comparar elementos; sirve para enteros en un rango acotado k',
-      'Comparando todos los pares de elementos',
-      'Únicamente para cadenas de texto',
-      'En O(n²) por comparaciones',
+      'Cuenta ocurrencias de cada valor y reconstruye el orden sin comparar elementos',
+      'Compara pares vecinos en pasadas sucesivas hasta que no queden inversiones',
+      'Divide el arreglo, ordena mitades y mezcla resultados ordenados',
+      'Inserta cada elemento en una zona previa ya ordenada',
     ], 0,
     'CountingSort cuenta cuántas veces aparece cada valor (en un rango k) y reconstruye el orden; al no comparar, supera el límite O(n log n), logrando O(n + k).'),
 
@@ -995,10 +995,10 @@ export const algoritmosTheory = withTopic('algoritmos_estructuras', [
   mc('alg-t-107', 'Recursividad', 3,
     'La recursión de cola (tail recursion)…',
     [
-      'Es aquella cuya llamada recursiva es la última operación; algunos compiladores la optimizan a iteración (sin crecer la pila)',
-      'Usa siempre más memoria que la recursión normal',
-      'No necesita un caso base',
-      'Es imposible de optimizar',
+      'La llamada recursiva queda como última operación y puede optimizarse como bucle',
+      'La llamada recursiva aparece antes de procesar cualquier caso base',
+      'La función guarda trabajo pendiente después de cada llamada recursiva',
+      'La función duplica cada llamada para recorrer dos ramas independientes',
     ], 0,
     'En la recursión de cola no queda trabajo pendiente tras la llamada recursiva, así que puede reemplazarse por un bucle (tail-call optimization), evitando crecer la pila.'),
 

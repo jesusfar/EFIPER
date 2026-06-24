@@ -597,10 +597,10 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
   mc('ad-t-063', 'Principios de diseño', 3,
     'El principio de Sustitución de Liskov (LSP) dice que…',
     [
-      'Un objeto de una subclase debe poder usarse donde se espera la superclase sin romper el comportamiento',
-      'Las subclases no pueden sobrescribir métodos',
-      'Toda clase debe declararse final',
-      'La herencia múltiple es obligatoria',
+      'La subclase debe poder sustituir a la superclase sin cambiar el contrato esperado',
+      'La subclase debe impedir que la superclase defina métodos heredables',
+      'Toda jerarquía debe marcar sus clases como final para evitar cambios',
+      'La herencia múltiple debe usarse para compartir comportamiento entre objetos',
     ], 0,
     'El LSP exige que las subclases respeten el contrato de la superclase: si una subclase no puede sustituir a la base sin alterar la corrección, la herencia está mal planteada.'),
 
@@ -664,10 +664,10 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
   mc('ad-t-070', 'Calidad de diseño', 3,
     '"Preferir composición sobre herencia" significa…',
     [
-      'Construir comportamiento combinando objetos (relación tiene-un) en vez de heredar, para más flexibilidad y menos acoplamiento',
-      'No usar objetos en absoluto',
-      'Usar siempre herencia múltiple',
-      'Eliminar las clases del diseño',
+      'Combinar objetos colaboradores en una relación tiene-un antes que crear jerarquías rígidas',
+      'Reemplazar todos los objetos por funciones globales para reducir dependencias',
+      'Usar herencia múltiple cada vez que haya comportamiento reutilizable',
+      'Eliminar clases de dominio y dejar la lógica en la interfaz',
     ], 0,
     'La composición permite cambiar/intercambiar partes en tiempo de ejecución y evita el acoplamiento fuerte y la fragilidad de las jerarquías de herencia profundas.'),
 
@@ -699,10 +699,10 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
   mc('ad-t-074', 'Patrones', 3,
     'El patrón GRASP "Controlador" sugiere…',
     [
-      'Asignar la responsabilidad de manejar los eventos del sistema a una clase controladora, no a la interfaz de usuario',
-      'Que la interfaz de usuario contenga toda la lógica de negocio',
-      'Eliminar los casos de uso del análisis',
-      'Usar siempre herencia múltiple',
+      'Asignar los eventos del sistema a una clase controladora, separada de la interfaz',
+      'Ubicar la lógica de negocio directamente en los botones y formularios',
+      'Eliminar los casos de uso y modelar solo clases de entidad',
+      'Centralizar todos los métodos del sistema en una única clase global',
     ], 0,
     'El Controlador desacopla la UI de la lógica: un objeto controlador recibe los eventos del sistema y coordina su atención, manteniendo la interfaz "delgada".'),
 
@@ -875,10 +875,10 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
   mc('ad-t-092', 'Diagrama de clases', 3,
     'Una clase asociativa se utiliza cuando…',
     [
-      'Una relación (típicamente N:M) tiene atributos propios (ej. Inscripción con nota y fecha entre Alumno y Materia)',
-      'Una clase no tiene ningún atributo',
-      'Se quiere heredar de dos clases a la vez',
-      'Se desea eliminar una asociación',
+      'Una asociación tiene datos propios, como nota y fecha en una inscripción',
+      'Una clase carece de atributos y solo conserva operaciones del dominio',
+      'Una jerarquía necesita heredar implementación desde dos clases distintas',
+      'Una relación debe eliminarse porque duplica información del modelo',
     ], 0,
     'La clase asociativa modela los datos que pertenecen a la relación en sí (la nota es de la inscripción, no del alumno ni de la materia por separado).'),
 

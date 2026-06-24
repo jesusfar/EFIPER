@@ -265,10 +265,10 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
   mc('arq-t-029', 'Interrupciones', 3,
     'Una interrupción permite que…',
     [
-      'Un dispositivo avise a la CPU de un evento sin que ésta tenga que consultarlo constantemente (evita el polling)',
-      'La CPU ejecute siempre las instrucciones en orden estricto',
-      'Se borren todos los registros de la CPU',
-      'El programa se compile más rápido',
+      'Un dispositivo avise a la CPU de un evento sin consulta constante',
+      'La CPU ejecute instrucciones en orden estricto sin atender eventos externos',
+      'El sistema borre registros para liberar espacio antes de cada operación',
+      'El compilador reduzca el tiempo de traducción del programa fuente',
     ], 0,
     'La interrupción evita el "polling" (consulta continua): el dispositivo interrumpe a la CPU cuando ocurre el evento, liberándola para otras tareas mientras tanto.'),
 
@@ -464,10 +464,10 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
   mc('arq-t-050', 'Caché', 3,
     '¿Cuál es la diferencia entre las políticas write-through y write-back en una caché?',
     [
-      'Write-through escribe a la vez en caché y memoria; write-back escribe en memoria solo al desalojar la línea (más rápido, pero necesita un bit "sucio")',
-      'Write-back escribe siempre en memoria de inmediato',
-      'Write-through nunca escribe en la memoria principal',
-      'Son políticas idénticas',
+      'Write-through actualiza caché y memoria; write-back posterga memoria hasta desalojar la línea',
+      'Write-through posterga memoria hasta desalojar y marca líneas modificadas',
+      'Write-back escribe en caché y memoria principal en cada operación',
+      'Ambas políticas actualizan memoria principal en el mismo instante',
     ], 0,
     'Write-through mantiene memoria y caché siempre coherentes (más tráfico); write-back posterga la escritura a memoria hasta desalojar la línea modificada, reduciendo accesos.'),
 
