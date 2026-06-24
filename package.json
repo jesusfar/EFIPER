@@ -11,7 +11,8 @@
     "build:single": "tsc -b && vite build --config vite.config.single.ts",
     "deploy:cloudflare": "npm run build && wrangler pages deploy dist",
     "db:migrate:remote": "wrangler d1 migrations apply efiper --remote",
-    "db:migrate:local": "wrangler d1 migrations apply efiper --local"
+    "db:migrate:local": "wrangler d1 migrations apply efiper --local",
+    "audit:questions": "node scripts/audit-question-options.mjs"
   },
   "dependencies": {
     "dexie": "^4.0.8",
