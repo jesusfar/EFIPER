@@ -4,7 +4,7 @@ import { Button } from '../../components/Button';
 import { getCloudUser } from '../../lib/api/cloud';
 import { CloudAuthPanel } from './CloudAuthPanel';
 
-const PROMPT_SEEN_KEY = 'efiper.authPrompt.seen.v1';
+const PROMPT_SEEN_KEY = 'efiper.authPrompt.seen.v2';
 
 export function AuthFirstVisitPrompt() {
   const location = useLocation();
@@ -17,7 +17,12 @@ export function AuthFirstVisitPrompt() {
       if (location.pathname === '/cuenta') return;
       if (window.localStorage.getItem(PROMPT_SEEN_KEY) === '1') return;
 
-      const res = await getCloudUser();
+      const res = await Promise.race([
+        getCloudUser(),
+        new Promise<Awaited<ReturnType<typeof getCloudUser>>>((resolve) => {
+          window.setTimeout(() => resolve({ data: null, error: 'timeout' }), 1500);
+        }),
+      ]);
       if (cancelled) return;
       if (res.data?.user) {
         window.localStorage.setItem(PROMPT_SEEN_KEY, '1');
