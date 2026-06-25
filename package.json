@@ -12,7 +12,8 @@
     "deploy:cloudflare": "npm run build && wrangler pages deploy dist",
     "db:migrate:remote": "wrangler d1 migrations apply efiper --remote",
     "db:migrate:local": "wrangler d1 migrations apply efiper --local",
-    "audit:questions": "node scripts/audit-question-options.mjs"
+    "audit:questions": "node scripts/audit-question-options.mjs",
+    "audit:oral": "node scripts/audit-oral-content.mjs"
   },
   "dependencies": {
     "dexie": "^4.0.8",
