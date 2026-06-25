@@ -97,7 +97,7 @@
     @apply w-full rounded-xl border border-accent/40 bg-white px-4 py-2.5 text-sm text-ink outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20;
   }
   .auth-first-overlay {
-    @apply fixed inset-0 z-[70] grid place-items-center overflow-y-auto px-4 py-6;
+    @apply fixed inset-0 z-[70] grid items-start justify-items-center overflow-y-auto px-3 py-3 sm:px-4 sm:py-4;
     background:
       linear-gradient(135deg, rgba(0,63,58,0.72), rgba(0,94,80,0.5)),
       radial-gradient(circle at 18% 18%, rgba(0,159,146,0.24), transparent 34%),
@@ -105,17 +105,17 @@
     backdrop-filter: blur(10px);
   }
   .auth-first-shell {
-    @apply w-full max-w-3xl overflow-hidden rounded-2xl border border-accent/40 bg-white/95 p-5 shadow-panel sm:p-6;
+    @apply w-full max-w-4xl max-h-[calc(100dvh-1.5rem)] overflow-y-auto rounded-2xl border border-accent/40 bg-white/95 p-4 shadow-panel sm:p-5;
     animation: rise 0.28s ease-out both;
   }
   .auth-first-copy {
-    @apply mb-5 rounded-2xl border border-line bg-panel-2/70 p-5;
+    @apply mb-4 rounded-2xl border border-line bg-panel-2/70 p-4;
     background-image:
       linear-gradient(180deg, rgba(0,159,146,0.12), transparent 42%),
       linear-gradient(120deg, rgba(0,94,80,0.1), transparent 58%);
   }
   .auth-first-actions {
-    @apply mt-4 flex justify-end border-t border-line pt-4;
+    @apply mt-3 flex justify-end border-t border-line pt-3;
   }
   .auth-panel-primary,
   .auth-panel-social {

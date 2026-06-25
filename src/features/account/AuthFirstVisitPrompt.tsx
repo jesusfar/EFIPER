@@ -50,10 +50,10 @@ export function AuthFirstVisitPrompt() {
       <section className="auth-first-shell">
         <div className="auth-first-copy">
           <p className="label">EFIPER Cloud</p>
-          <h2 id="auth-first-title" className="font-display text-3xl md:text-4xl text-ink mt-1">
+          <h2 id="auth-first-title" className="font-display text-2xl md:text-3xl text-ink mt-1">
             Guarda tu progreso desde el primer intento
           </h2>
-          <p className="mt-3 text-sm md:text-base text-ink/75">
+          <p className="mt-2 text-sm text-ink/75">
             Inicia sesion o crea una cuenta para sincronizar tus respuestas, repasos y avances. Si ya iniciaste sesion, EFIPER no te va a sacar de tu cuenta.
           </p>
         </div>

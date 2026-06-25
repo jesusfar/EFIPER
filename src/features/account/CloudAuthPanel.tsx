@@ -49,15 +49,21 @@ export function CloudAuthPanel({ onAuthenticated, initialMessage = '', compact =
     window.location.href = `/api/auth/oauth/${provider}/start${params}`;
   }
 
+  const wrapperClass = compact
+    ? 'grid gap-4 md:grid-cols-[minmax(0,1.05fr)_minmax(260px,0.95fr)]'
+    : 'grid lg:grid-cols-[1.08fr_0.92fr] gap-6';
+  const panelClass = compact ? 'p-4' : 'p-5 sm:p-6';
+  const formClass = compact ? 'space-y-3' : 'space-y-4';
+
   return (
-    <div className={compact ? 'space-y-5' : 'grid lg:grid-cols-[1.08fr_0.92fr] gap-6'}>
-      <div className="panel auth-panel-primary p-5 sm:p-6">
+    <div className={wrapperClass}>
+      <div className={`panel auth-panel-primary ${panelClass}`}>
         <div className="flex gap-2 mb-5">
           <Button variant={mode === 'login' ? 'primary' : 'ghost'} onClick={() => setMode('login')}>Ingresar</Button>
           <Button variant={mode === 'register' ? 'primary' : 'ghost'} onClick={() => setMode('register')}>Crear cuenta</Button>
         </div>
 
-        <form className="space-y-4" onSubmit={submit}>
+        <form className={formClass} onSubmit={submit}>
           {mode === 'register' && (
             <label className="block">
               <span className="label">Nombre</span>
@@ -83,13 +89,13 @@ export function CloudAuthPanel({ onAuthenticated, initialMessage = '', compact =
         {message && <p className="mt-4 rounded-lg bg-panel-2 border border-accent/30 px-4 py-3 text-sm text-ink/80">{message}</p>}
       </div>
 
-      <div className="panel auth-panel-social p-5 sm:p-6">
+      <div className={`panel auth-panel-social ${panelClass}`}>
         <p className="label">Opcional</p>
-        <h2 className="font-display text-2xl text-ink mt-1">Entrar con redes</h2>
+        <h2 className="font-display text-xl sm:text-2xl text-ink mt-1">Entrar con redes</h2>
         <p className="mt-2 text-sm text-ink/70">
           Si preferis no crear contrasena, podes usar una cuenta existente.
         </p>
-        <div className="mt-5 grid gap-3">
+        <div className={compact ? 'mt-4 grid gap-2.5' : 'mt-5 grid gap-3'}>
           <Button className="w-full auth-social-button" type="button" onClick={() => social('google')}>
             <span className="auth-social-mark google-mark">G</span>
             Continuar con Google
