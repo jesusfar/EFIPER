@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect } from 'react';
+import { type MouseEvent, type PointerEvent, type ReactNode, useEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { playSfx, playLogoHover } from '../lib/audio/soundManager';
 import { useStore } from '../store/useStore';
@@ -21,6 +21,7 @@ export function Layout({ children }: { children: ReactNode }) {
   const isTheoryReader = location.pathname.startsWith('/teoria/');
   const levelUpNotice = useStore((s) => s.levelUpNotice);
   const dismissLevelUpNotice = useStore((s) => s.dismissLevelUpNotice);
+  const lastTouchLogoAt = useRef(0);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
@@ -31,6 +32,23 @@ export function Layout({ children }: { children: ReactNode }) {
     const id = window.setTimeout(dismissLevelUpNotice, 6200);
     return () => window.clearTimeout(id);
   }, [dismissLevelUpNotice, levelUpNotice]);
+
+  function handleLogoPointerDown(event: PointerEvent<HTMLAnchorElement>) {
+    if (event.pointerType === 'mouse') return;
+    lastTouchLogoAt.current = Date.now();
+    playLogoHover();
+  }
+
+  function handleLogoMouseEnter() {
+    if (Date.now() - lastTouchLogoAt.current < 800) return;
+    playLogoHover();
+  }
+
+  function handleLogoClick(event: MouseEvent<HTMLAnchorElement>) {
+    if (Date.now() - lastTouchLogoAt.current < 800) {
+      event.preventDefault();
+    }
+  }
 
   return (
     <div className="min-h-full flex flex-col">
@@ -53,7 +71,14 @@ export function Layout({ children }: { children: ReactNode }) {
       {!isTheoryReader && (
         <header className="sticky top-0 z-20 backdrop-blur border-b border-accent/40 bg-[linear-gradient(135deg,#003F3A,#005E50_58%,#324A4D)] shadow-stud">
           <div className="max-w-5xl mx-auto px-4 py-2 lg:min-h-20 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2 lg:gap-4">
-            <NavLink to="/" className="brand-logo-link" aria-label="Ir al inicio de EFIPER" onMouseEnter={playLogoHover}>
+            <NavLink
+              to="/"
+              className="brand-logo-link"
+              aria-label="Reproducir sonido del logo de EFIPER"
+              onPointerDown={handleLogoPointerDown}
+              onMouseEnter={handleLogoMouseEnter}
+              onClick={handleLogoClick}
+            >
               <img src={efiperLogo} alt="EFIPER" className="brand-logo" />
               <span
                 className="brand-logo-shine"

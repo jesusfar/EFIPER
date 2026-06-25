@@ -80,11 +80,17 @@ const LOGO_HOVER_SFXS: Array<{ url: string; volumeBoost?: number }> = [
   })),
 ];
 
+const activeMp3s = new Set<HTMLAudioElement>();
+
 function playMp3(url: string, volumeBoost = 1): void {
   try {
     const el = new Audio(url);
     el.volume = Math.max(0.05, Math.min(1, volume * volumeBoost));
-    void el.play();
+    activeMp3s.add(el);
+    const cleanup = () => activeMp3s.delete(el);
+    el.addEventListener('ended', cleanup, { once: true });
+    el.addEventListener('error', cleanup, { once: true });
+    void el.play().catch(cleanup);
   } catch { /* audio no disponible */ }
 }
 
