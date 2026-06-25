@@ -38,11 +38,11 @@ export async function getCloudUser(): Promise<ApiResult<{ user: CloudUser }>> {
   return api('auth/me');
 }
 
-export async function registerCloudAccount(input: { email: string; password: string; displayName: string }): Promise<ApiResult<{ user: CloudUser }>> {
+export async function registerCloudAccount(input: { email: string; password: string; displayName: string; remember?: boolean }): Promise<ApiResult<{ user: CloudUser }>> {
   return api('auth/register', { method: 'POST', body: JSON.stringify(input) });
 }
 
-export async function loginCloudAccount(input: { email: string; password: string }): Promise<ApiResult<{ user: CloudUser }>> {
+export async function loginCloudAccount(input: { email: string; password: string; remember?: boolean }): Promise<ApiResult<{ user: CloudUser }>> {
   return api('auth/login', { method: 'POST', body: JSON.stringify(input) });
 }
 

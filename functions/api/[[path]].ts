@@ -12,7 +12,9 @@ type Provider = 'google' | 'facebook';
 
 const SESSION_COOKIE = 'efiper_session';
 const OAUTH_STATE_COOKIE = 'efiper_oauth_state';
+const OAUTH_REMEMBER_COOKIE = 'efiper_oauth_remember';
 const SESSION_DAYS = 30;
+const REMEMBER_SESSION_DAYS = 180;
 
 export async function onRequest(context: any): Promise<Response> {
   const { request, env } = context as { request: Request; env: Env };
@@ -64,6 +66,7 @@ async function register(request: Request, env: Env): Promise<Response> {
   const email = normalizeEmail(body.email);
   const password = String(body.password ?? '');
   const displayName = cleanText(body.displayName, 80);
+  const remember = Boolean(body.remember);
 
   if (!email) return json({ error: 'Email invalido.' }, 400);
   if (password.length < 8) return json({ error: 'La contrasena debe tener al menos 8 caracteres.' }, 400);
@@ -81,13 +84,14 @@ async function register(request: Request, env: Env): Promise<Response> {
      VALUES (?, ?, ?, ?, ?, 'password', ?, ?, ?)`
   ).bind(userId, email, displayName || null, passwordHash, salt, now, now, now).run();
 
-  return issueSession(env, userId, { id: userId, email, displayName, avatarUrl: null });
+  return issueSession(env, userId, { id: userId, email, displayName, avatarUrl: null }, remember);
 }
 
 async function login(request: Request, env: Env): Promise<Response> {
   const body = await readJson(request);
   const email = normalizeEmail(body.email);
   const password = String(body.password ?? '');
+  const remember = Boolean(body.remember);
   if (!email || !password) return json({ error: 'Email o contrasena invalidos.' }, 400);
 
   const user = await env.DB.prepare(
@@ -104,7 +108,7 @@ async function login(request: Request, env: Env): Promise<Response> {
   await env.DB.prepare('UPDATE users SET last_login_at = ?, updated_at = ? WHERE id = ?')
     .bind(Date.now(), Date.now(), user.id).run();
 
-  return issueSession(env, user.id, userDto(user));
+  return issueSession(env, user.id, userDto(user), remember);
 }
 
 async function logout(env: Env): Promise<Response> {
@@ -148,6 +152,7 @@ async function oauthStart(request: Request, env: Env, provider: Provider): Promi
   const url = new URL(request.url);
   const origin = appOrigin(request, env);
   const state = randomId(32);
+  const remember = url.searchParams.get('remember') === '1';
   const callbackUrl = `${origin}/api/auth/oauth/${provider}/callback`;
 
   const config = providerConfig(env, provider);
@@ -166,7 +171,7 @@ async function oauthStart(request: Request, env: Env, provider: Provider): Promi
   authUrl.searchParams.set('scope', provider === 'google' ? 'openid email profile' : 'email,public_profile');
   if (provider === 'google') authUrl.searchParams.set('prompt', 'select_account');
 
-  return new Response(null, {
+  const response = new Response(null, {
     status: 302,
     headers: {
       Location: authUrl.toString(),
@@ -175,6 +180,8 @@ async function oauthStart(request: Request, env: Env, provider: Provider): Promi
       'X-EFIPER-Origin': url.origin,
     },
   });
+  response.headers.append('Set-Cookie', cookie(OAUTH_REMEMBER_COOKIE, remember ? '1' : '0', env, { maxAge: 600, path: '/api/auth/oauth' }));
+  return response;
 }
 
 async function oauthCallback(request: Request, env: Env, provider: Provider): Promise<Response> {
@@ -183,6 +190,7 @@ async function oauthCallback(request: Request, env: Env, provider: Provider): Pr
   const receivedState = url.searchParams.get('state');
   const code = url.searchParams.get('code');
   const origin = appOrigin(request, env);
+  const remember = getCookie(request, OAUTH_REMEMBER_COOKIE) === '1';
 
   if (!code || !expectedState || expectedState !== receivedState) {
     return redirectToAccount(origin, 'oauth_error');
@@ -219,8 +227,9 @@ async function oauthCallback(request: Request, env: Env, provider: Provider): Pr
       user = { id: userId, email: profile.email, display_name: profile.displayName, avatar_url: profile.avatarUrl };
     }
 
-    const response = await createSessionRedirect(env, user.id, `${origin}/#/cuenta?cloud=connected`);
+    const response = await createSessionRedirect(env, user.id, `${origin}/#/cuenta?cloud=connected`, remember);
     response.headers.append('Set-Cookie', cookie(OAUTH_STATE_COOKIE, '', env, { maxAge: 0, path: '/api/auth/oauth' }));
+    response.headers.append('Set-Cookie', cookie(OAUTH_REMEMBER_COOKIE, '', env, { maxAge: 0, path: '/api/auth/oauth' }));
     return response;
   } catch (error) {
     const message = error instanceof Error ? error.message : 'OAuth callback failed';
@@ -276,32 +285,34 @@ async function facebookProfile(env: Env, code: string, redirectUri: string) {
   };
 }
 
-async function issueSession(env: Env, userId: string, user: any): Promise<Response> {
+async function issueSession(env: Env, userId: string, user: any, remember = false): Promise<Response> {
   const token = randomId(48);
   const tokenHash = await hmac(token, env.SESSION_SECRET);
   const now = Date.now();
-  const expiresAt = now + SESSION_DAYS * 24 * 60 * 60 * 1000;
+  const days = remember ? REMEMBER_SESSION_DAYS : SESSION_DAYS;
+  const expiresAt = now + days * 24 * 60 * 60 * 1000;
 
   await env.DB.prepare('INSERT INTO sessions (id, user_id, token_hash, created_at, expires_at) VALUES (?, ?, ?, ?, ?)')
     .bind(crypto.randomUUID(), userId, tokenHash, now, expiresAt).run();
 
   return json({ user }, 200, {
-    'Set-Cookie': cookie(SESSION_COOKIE, token, env, { maxAge: SESSION_DAYS * 24 * 60 * 60, path: '/' }),
+    'Set-Cookie': cookie(SESSION_COOKIE, token, env, { maxAge: days * 24 * 60 * 60, path: '/' }),
   });
 }
 
-async function createSessionRedirect(env: Env, userId: string, location: string): Promise<Response> {
+async function createSessionRedirect(env: Env, userId: string, location: string, remember = false): Promise<Response> {
   const token = randomId(48);
   const tokenHash = await hmac(token, env.SESSION_SECRET);
   const now = Date.now();
-  const expiresAt = now + SESSION_DAYS * 24 * 60 * 60 * 1000;
+  const days = remember ? REMEMBER_SESSION_DAYS : SESSION_DAYS;
+  const expiresAt = now + days * 24 * 60 * 60 * 1000;
   await env.DB.prepare('INSERT INTO sessions (id, user_id, token_hash, created_at, expires_at) VALUES (?, ?, ?, ?, ?)')
     .bind(crypto.randomUUID(), userId, tokenHash, now, expiresAt).run();
   return new Response(null, {
     status: 302,
     headers: {
       Location: location,
-      'Set-Cookie': cookie(SESSION_COOKIE, token, env, { maxAge: SESSION_DAYS * 24 * 60 * 60, path: '/' }),
+      'Set-Cookie': cookie(SESSION_COOKIE, token, env, { maxAge: days * 24 * 60 * 60, path: '/' }),
     },
   });
 }

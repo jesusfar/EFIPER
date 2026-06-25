@@ -3,6 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { playSfx, playLogoHover } from '../lib/audio/soundManager';
 import { useStore } from '../store/useStore';
 import efiperLogo from '../assets/logo-efiper-cropped.png';
+import { AuthFirstVisitPrompt } from '../features/account/AuthFirstVisitPrompt';
 
 const NAV = [
   { to: '/', label: 'Inicio', end: true },
@@ -33,6 +34,8 @@ export function Layout({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-full flex flex-col">
+      <AuthFirstVisitPrompt />
+
       {levelUpNotice && (
         <div className="level-up-toast" role="status" aria-live="polite">
           <div className="level-up-orbit" aria-hidden="true" />
