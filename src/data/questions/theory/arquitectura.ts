@@ -80,9 +80,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     '¿Cuál es la función de la Unidad de Control (UC)?',
     [
       'Decodificar las instrucciones y generar las señales que coordinan la ALU, los registros y los buses',
-      'Realizar las operaciones aritméticas y lógicas',
-      'Almacenar datos de forma permanente',
-      'Conectar la CPU con los periféricos de E/S',
+      'Ejecutar operaciones aritméticas y lógicas dentro de la ALU usando señales ya generadas',
+      'Guardar instrucciones y datos de forma persistente cuando el equipo se apaga',
+      'Administrar periféricos de entrada/salida y resolver interrupciones del sistema operativo',
     ], 0,
     'La UC interpreta cada instrucción y emite las señales de control que dirigen al resto de la CPU. Las operaciones las ejecuta la ALU.'),
 
@@ -147,9 +147,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'Un "cache miss" (fallo de caché) ocurre cuando…',
     [
       'El dato buscado NO está en la caché y hay que traerlo de un nivel más lento (RAM/disco)',
-      'El dato buscado SÍ está en la caché',
-      'La caché se borra por completo',
-      'La memoria RAM se llena',
+      'El dato buscado está en la caché y puede entregarse sin consultar niveles inferiores',
+      'La línea de caché se invalida por política de reemplazo antes de cualquier búsqueda',
+      'La memoria principal queda sin espacio libre y obliga a ampliar almacenamiento secundario',
     ], 0,
     'El "miss" obliga a buscar el dato en un nivel inferior (más lento). El "hit" es cuando el dato sí está en la caché (acceso rápido).'),
 
@@ -219,9 +219,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     '¿Cuál es la diferencia central entre la arquitectura Von Neumann y la Harvard?',
     [
       'Harvard separa la memoria y el bus de datos del de instrucciones; Von Neumann los comparte',
-      'Von Neumann separa datos e instrucciones en memorias distintas',
-      'Harvard no utiliza memoria',
-      'Son arquitecturas idénticas',
+      'Von Neumann separa datos e instrucciones en buses independientes para permitir acceso simultáneo',
+      'Harvard comparte memoria principal, pero separa registros internos de datos e instrucciones',
+      'Ambas usan una única memoria y un único bus, variando únicamente el repertorio de instrucciones',
     ], 0,
     'En Harvard hay memorias y buses separados para datos e instrucciones (permite acceso simultáneo); en Von Neumann ambos comparten la misma memoria y bus.'),
 
@@ -351,9 +351,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'El código BCD (Decimal Codificado en Binario) representa…',
     [
       'Cada dígito decimal por separado con 4 bits (ej. 25 = 0010 0101)',
-      'El número completo en binario puro',
-      'Caracteres de texto',
-      'Números de punto flotante',
+      'El número completo convertido a binario puro, usando todos los bits como una magnitud única',
+      'Caracteres de texto codificados como bytes, siguiendo una tabla como ASCII o Unicode',
+      'Números reales con signo, mantisa y exponente, como en la representación de punto flotante',
     ], 0,
     'BCD codifica dígito por dígito en grupos de 4 bits, lo que facilita mostrar decimales pero usa más bits que el binario puro.'),
 
@@ -371,9 +371,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'Un bit de paridad sirve para…',
     [
       'Detectar errores simples de transmisión (verifica que la cantidad de unos sea par o impar)',
-      'Corregir cualquier error de transmisión',
-      'Cifrar los datos transmitidos',
-      'Aumentar la velocidad de transmisión',
+      'Corregir automáticamente varios bits alterados durante la transmisión sin reenviar el bloque',
+      'Cifrar los datos transmitidos para que solo el receptor autorizado pueda interpretarlos',
+      'Aumentar la velocidad efectiva del enlace reduciendo el tamaño de cada trama enviada',
     ], 0,
     'El bit de paridad ajusta el total de unos a par (o impar); si en la recepción no cuadra, hubo un error. Solo detecta, no corrige.'),
 
@@ -408,9 +408,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     '¿Cuál es la diferencia entre la RAM estática (SRAM) y la dinámica (DRAM)?',
     [
       'La SRAM es más rápida y no necesita refresco (usa flip-flops); la DRAM es más lenta, densa y barata, y requiere refresco periódico',
-      'La DRAM es más rápida que la SRAM',
-      'La SRAM necesita refresco constante de sus celdas',
-      'Son tecnologías idénticas',
+      'La DRAM es más rápida y costosa porque usa flip-flops; la SRAM usa capacitores, refresco periódico y mayor densidad',
+      'La SRAM necesita refresco periódico de sus celdas, por eso se usa como memoria principal de gran capacidad',
+      'Ambas tienen igual costo, densidad y velocidad; se diferencian por el controlador que decide dónde instalarlas',
     ], 0,
     'La SRAM (rápida, cara) se usa en la caché; la DRAM (densa, barata, con refresco) se usa como memoria principal. El refresco de la DRAM es por sus condensadores.'),
 
@@ -423,9 +423,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'En un mapeo de caché DIRECTO…',
     [
       'Cada bloque de memoria puede ubicarse en una única línea de caché determinada (por su dirección, módulo el nº de líneas)',
-      'Cada bloque puede ir a cualquier línea de la caché',
-      'No se utilizan líneas de caché',
-      'Cada bloque va a un conjunto de líneas a elección',
+      'Cada bloque puede ubicarse en cualquier línea disponible de toda la caché, usando búsqueda asociativa',
+      'Los bloques se guardan directamente en memoria principal y la caché solo almacena etiquetas',
+      'Cada bloque elige libremente entre varias líneas dentro de cualquier conjunto disponible',
     ], 0,
     'El mapeo directo es simple y rápido de buscar, pero como cada bloque tiene una sola línea posible, sufre fallos por conflicto cuando varios bloques compiten por la misma línea.'),
 
@@ -443,9 +443,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'El mapeo asociativo por conjuntos (set-associative)…',
     [
       'Es un punto medio: un bloque va a un conjunto específico y, dentro de él, a cualquier línea',
-      'Es idéntico al mapeo directo',
-      'No utiliza conjuntos',
-      'Permite un único bloque por toda la caché',
+      'Es idéntico al mapeo directo: cada bloque queda forzado a una sola línea exacta',
+      'No utiliza conjuntos; cada bloque puede ocupar cualquier línea de toda la caché',
+      'Permite almacenar un único bloque en toda la caché para simplificar las etiquetas',
     ], 0,
     'El set-associative equilibra costo y flexibilidad: el bloque se restringe a un conjunto (como el directo) pero puede ir a cualquier vía dentro de él (como el asociativo).'),
 
@@ -564,9 +564,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     '¿Cuál es la diferencia entre las arquitecturas RISC y CISC?',
     [
       'RISC tiene un conjunto reducido de instrucciones simples (ejecución rápida, más registros); CISC tiene instrucciones complejas y variadas',
-      'RISC tiene instrucciones complejas y CISC instrucciones simples',
-      'RISC no utiliza registros',
-      'Son arquitecturas idénticas',
+      'RISC usa instrucciones complejas de longitud variable; CISC reduce el repertorio a operaciones simples',
+      'RISC evita registros internos y trabaja casi exclusivamente con operandos almacenados en memoria',
+      'Ambas arquitecturas tienen el mismo repertorio; solo cambia la frecuencia del reloj del procesador',
     ], 0,
     'RISC (Reduced) usa instrucciones simples de tamaño fijo, fáciles de canalizar (pipeline). CISC (Complex) ofrece instrucciones potentes pero más difíciles de optimizar.'),
 
@@ -606,9 +606,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'En el direccionamiento INDIRECTO…',
     [
       'La instrucción indica una dirección que contiene, a su vez, la dirección del operando (un puntero)',
-      'El operando es una constante incluida en la instrucción',
-      'El operando está siempre en un registro',
-      'No se accede a la memoria',
+      'El operando aparece como una constante literal dentro de la propia instrucción ejecutada',
+      'El operando se encuentra en un registro indicado directamente por el campo de la instrucción',
+      'La dirección efectiva se calcula sin consultar memoria, usando solo desplazamientos y registros base',
     ], 0,
     'En el indirecto se hace un "doble salto": la dirección de la instrucción guarda otra dirección, y allí está el operando. Es la base de los punteros.'),
 
@@ -675,9 +675,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'La predicción de saltos (branch prediction) sirve para…',
     [
       'Adivinar el resultado de un salto y seguir ejecutando, reduciendo el costo de los riesgos de control',
-      'Cifrar las instrucciones del programa',
-      'Aumentar la memoria disponible',
-      'Eliminar la memoria caché',
+      'Cifrar instrucciones antes de cargarlas al pipeline para impedir lectura externa del programa',
+      'Aumentar memoria disponible moviendo bloques poco usados desde caché hacia almacenamiento secundario',
+      'Eliminar la memoria caché para evitar inconsistencias entre instrucciones especulativas y datos reales',
     ], 0,
     'El predictor apuesta por el camino más probable de un salto; si acierta, el pipeline no se detiene. Si falla, se descartan las instrucciones especulativas.'),
 
@@ -695,9 +695,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'El multithreading simultáneo (SMT / Hyper-Threading)…',
     [
       'Permite que un núcleo físico ejecute varios hilos, aprovechando mejor sus unidades de ejecución',
-      'Agrega núcleos físicos adicionales',
-      'Es exactamente lo mismo que tener varios núcleos físicos',
-      'Reduce la cantidad de hilos que se pueden ejecutar',
+      'Agrega núcleos físicos completos al chip, cada uno con unidades de ejecución independientes',
+      'Equivale a duplicar núcleos reales, con la misma mejora garantizada en cualquier carga',
+      'Reduce los hilos disponibles para que cada proceso use la CPU sin compartir recursos internos',
     ], 0,
     'El SMT presenta un núcleo como varios lógicos: cuando un hilo se detiene (ej. esperando memoria), otro usa las unidades libres, mejorando la utilización.'),
 
@@ -710,9 +710,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     '¿Cuál es la diferencia principal entre una GPU y una CPU?',
     [
       'La GPU tiene miles de núcleos simples optimizados para paralelismo masivo de datos; la CPU tiene pocos núcleos potentes para tareas variadas y secuenciales',
-      'La CPU tiene muchos más núcleos que la GPU',
-      'La GPU no puede realizar cálculos',
-      'Son procesadores idénticos',
+      'La CPU está formada por miles de núcleos simples para datos masivos; la GPU usa pocos núcleos complejos para control general',
+      'La GPU se limita a mostrar imágenes y no ejecuta operaciones aritméticas ni programas paralelos de propósito general',
+      'CPU y GPU tienen la misma organización interna; la diferencia práctica depende solo de la cantidad de memoria instalada',
     ], 0,
     'La GPU paraleliza la misma operación sobre muchos datos (gráficos, IA); la CPU es versátil y rápida en lógica secuencial y de control.'),
 
@@ -732,9 +732,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'La ley de Amdahl indica que…',
     [
       'La mejora máxima por paralelizar está limitada por la fracción del programa que sigue siendo secuencial',
-      'Duplicar la cantidad de núcleos siempre duplica el rendimiento',
-      'El rendimiento crece de forma ilimitada al agregar núcleos',
-      'No tiene relación con el paralelismo',
+      'Duplicar la cantidad de núcleos duplica el rendimiento aunque existan partes secuenciales del programa',
+      'El rendimiento crece de forma ilimitada al agregar núcleos, porque toda tarea puede dividirse por completo',
+      'La mejora depende únicamente de la frecuencia del reloj y no se relaciona con el paralelismo disponible',
     ], 0,
     'Si una parte del programa es inherentemente secuencial, por más núcleos que se agreguen el speedup tiene un techo (definido por esa fracción no paralelizable).'),
 
@@ -772,9 +772,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     '¿Cuál es la diferencia entre un microcontrolador y un microprocesador?',
     [
       'El microcontrolador integra CPU, memoria y periféricos en un solo chip (para sistemas embebidos); el microprocesador es solo la CPU y requiere componentes externos',
-      'El microprocesador integra todo en un solo chip',
-      'Son exactamente lo mismo',
-      'El microcontrolador no posee CPU',
+      'El microprocesador integra CPU, RAM, ROM, temporizadores y puertos de E/S en el mismo chip',
+      'Ambos integran los mismos bloques internos; el nombre cambia según si se usan en PC o en embebidos',
+      'El microcontrolador no posee CPU propia y depende de un procesador externo para ejecutar instrucciones',
     ], 0,
     'El microcontrolador es un "sistema completo" en un chip (ideal para embebidos); el microprocesador es la CPU central de una PC y necesita RAM, chipset, etc. aparte.'),
 
@@ -849,9 +849,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'Sobre los niveles de caché L1, L2 y L3, ¿cuál afirmación es correcta?',
     [
       'L1 es la más pequeña y rápida (cerca del núcleo); L3 es la más grande y lenta, a menudo compartida entre núcleos',
-      'L3 es la más rápida y pequeña, y L1 la más grande',
-      'L1 es compartida entre todos los núcleos y L3 es privada de cada uno',
-      'No hay diferencias de velocidad ni tamaño entre los niveles',
+      'L3 es la más rápida y pequeña porque está lejos de memoria; L1 es mayor para guardar más bloques',
+      'L1 suele compartirse entre todos los núcleos, mientras L3 queda privada dentro de cada núcleo físico',
+      'Los niveles tienen tamaño y latencia equivalentes; solo se separan para ordenar instrucciones y datos',
     ], 0,
     'Al alejarse del núcleo, la caché crece y se vuelve más lenta: L1 (chica/rápida, por núcleo) → L2 → L3 (grande/lenta, suele compartirse entre núcleos).'),
 
@@ -936,9 +936,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'Un problema típico de la representación en punto flotante (IEEE 754) es…',
     [
       'Que muchos decimales no se representan de forma exacta, generando errores de redondeo (ej. 0,1 + 0,2)',
-      'Que no puede representar números negativos',
-      'Que solo puede representar números enteros',
-      'Que tiene precisión infinita',
+      'Que no puede representar números negativos, por lo que requiere complemento a dos para cualquier valor menor que cero',
+      'Que representa únicamente enteros exactos, y por eso las fracciones decimales deben almacenarse como texto',
+      'Que ofrece precisión infinita mientras haya suficiente memoria principal para guardar la mantisa completa',
     ], 0,
     'Con bits finitos, valores como 0,1 no tienen representación exacta en binario; por eso las sumas de flotantes acumulan pequeños errores de redondeo.'),
 
@@ -971,9 +971,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'En la E/S mapeada en memoria (memory-mapped I/O)…',
     [
       'Los registros de los dispositivos se acceden con direcciones del mismo espacio de memoria, usando las instrucciones normales de load/store',
-      'Se usan instrucciones de E/S especiales y un espacio de direcciones separado',
-      'No es posible acceder a los dispositivos',
-      'Los dispositivos no tienen registros accesibles',
+      'Se usan instrucciones IN/OUT especiales y un espacio de direcciones separado, como en la E/S por puertos',
+      'Los dispositivos quedan fuera del espacio direccionable y solo el sistema operativo puede leerlos mediante archivos',
+      'Los dispositivos no exponen registros; transfieren datos únicamente por interrupciones sin direcciones asociadas',
     ], 0,
     'En memory-mapped I/O, los registros de los dispositivos ocupan direcciones del espacio de memoria; se leen/escriben con load/store comunes, sin instrucciones especiales.'),
 
@@ -1003,9 +1003,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'Un procesador superescalar…',
     [
       'Tiene varias unidades de ejecución y puede lanzar/completar más de una instrucción por ciclo',
-      'Ejecuta una instrucción cada varios ciclos',
-      'No utiliza pipeline',
-      'Posee un único registro',
+      'Ejecuta una instrucción completa cada varios ciclos porque tiene una sola unidad funcional disponible',
+      'Evita el pipeline y lanza instrucciones estrictamente de a una para mantener el orden original',
+      'Posee un único registro visible, por lo que debe resolver todo paralelismo usando memoria principal',
     ], 0,
     'El superescalar replica unidades de ejecución para emitir varias instrucciones por ciclo (más allá del pipeline simple, que apunta a una por ciclo).'),
 
@@ -1063,9 +1063,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     'En un procesador, una "palabra" (word) es…',
     [
       'La unidad de datos que la CPU procesa de una vez (ej. 32 o 64 bits); define el ancho de registros y del bus interno',
-      'Siempre exactamente 8 bits',
-      'El tamaño total de la memoria caché',
-      'Un carácter de texto',
+      'Una unidad fija de 8 bits, equivalente al byte, sin depender del diseño interno del procesador',
+      'El tamaño total de la memoria caché disponible para instrucciones, datos y traducciones de direcciones',
+      'Un carácter de texto codificado en memoria, normalmente asociado a una tabla ASCII o Unicode',
     ], 0,
     'La palabra es el tamaño "natural" de datos del procesador (32 o 64 bits en CPU modernas); determina el ancho de los registros y de las operaciones internas.'),
 
@@ -1085,9 +1085,9 @@ export const arquitecturaTheory = withTopic('arquitectura_computadoras', [
     '¿Por qué la jerarquía de memoria usa varios niveles en lugar de una sola memoria grande y rápida?',
     [
       'Porque no existe una memoria que sea, a la vez, muy grande, muy rápida y barata; la jerarquía combina velocidad (cerca) con capacidad (lejos) a costo razonable',
-      'Porque el procesador no puede acceder directamente a la RAM',
-      'Porque la caché es más barata por byte que el disco',
-      'Porque la ROM reemplaza la función de la RAM',
+      'Porque el procesador no puede acceder directamente a la RAM y necesita pasar siempre por disco o ROM',
+      'Porque la caché es más barata por byte que el disco, entonces conviene hacerla grande y persistente',
+      'Porque la ROM reemplaza la función de la RAM cuando el sistema ya cargó el programa principal',
     ], 0,
     'Hay un compromiso costo/velocidad/capacidad: poca memoria rápida y cara cerca de la CPU (registros, caché) y mucha lenta y barata más lejos (RAM, disco).'),
 

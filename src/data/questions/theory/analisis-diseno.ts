@@ -489,9 +489,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'El diagrama de despliegue (deployment) muestra…',
     [
       'La distribución física del software en nodos de hardware (servidores, dispositivos) y sus conexiones',
-      'Las clases del sistema y sus métodos',
-      'El flujo de actividades de un proceso',
-      'Los requerimientos no funcionales',
+      'La organización lógica de clases, atributos, operaciones y asociaciones del dominio',
+      'La secuencia temporal de mensajes entre objetos durante un caso de uso',
+      'Las restricciones de calidad del sistema, como rendimiento, seguridad y disponibilidad',
     ], 0,
     'El diagrama de despliegue representa la arquitectura física: en qué nodos (servidores, clientes) se ejecutan los artefactos y cómo se comunican.'),
 
@@ -546,9 +546,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     '¿Cuál es la diferencia entre un diagrama de clases (UML) y un DER?',
     [
       'El diagrama de clases modela clases con atributos y métodos (comportamiento); el DER modela entidades y relaciones de datos para la base, sin métodos',
-      'Son artefactos idénticos',
-      'El DER incluye métodos y el de clases no',
-      'El DER es un diagrama de comportamiento',
+      'El DER modela objetos con operaciones; el diagrama de clases se limita a tablas, claves primarias y claves foráneas',
+      'El diagrama de clases solo se usa en análisis; el DER solo documenta pantallas y navegación',
+      'El DER describe interacciones temporales entre objetos; el diagrama de clases describe exclusivamente datos persistentes',
     ], 0,
     'El diagrama de clases incluye comportamiento (métodos) y es de diseño orientado a objetos; el DER se enfoca en los datos persistentes (entidades, atributos, relaciones), sin métodos.'),
 
@@ -568,9 +568,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'La trazabilidad de requerimientos permite…',
     [
       'Seguir un requerimiento a lo largo del desarrollo: de dónde surge y dónde se diseña, implementa y prueba',
-      'Cifrar los requerimientos para protegerlos',
-      'Eliminar la documentación del proyecto',
-      'Programar el sistema sin etapa de análisis',
+      'Priorizar requerimientos según costo estimado, sin relacionarlos con diseño, código ni pruebas',
+      'Convertir automáticamente cada requerimiento funcional en una tabla de base de datos',
+      'Reemplazar el análisis por prototipos, sin registrar decisiones ni cobertura de pruebas',
     ], 0,
     'La trazabilidad vincula cada requerimiento con su origen y con los artefactos que lo realizan y verifican, facilitando el control de cambios y la cobertura.'),
 
@@ -608,9 +608,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'El principio de Segregación de Interfaces (ISP)…',
     [
       'Prefiere muchas interfaces específicas antes que una interfaz general que obligue a implementar métodos que no se usan',
-      'Obliga a definir una única interfaz gigante para todo',
-      'Prohíbe el uso de interfaces',
-      'Es exactamente lo mismo que el SRP',
+      'Prefiere una interfaz central amplia para reducir archivos, aunque algunas clases implementen operaciones vacías',
+      'Indica que las interfaces deben heredar entre sí hasta formar una jerarquía única',
+      'Se enfoca en separar responsabilidades de clases, sin hablar del tamaño de las interfaces',
     ], 0,
     'El ISP evita "interfaces gordas": es mejor varias interfaces chicas y cohesivas que una grande que fuerce a las clases a implementar métodos irrelevantes.'),
 
@@ -618,9 +618,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'El principio de Inversión de Dependencias (DIP) establece que…',
     [
       'Los módulos de alto nivel no deben depender de los de bajo nivel; ambos deben depender de abstracciones',
-      'El alto nivel debe depender de los detalles concretos',
-      'Hay que eliminar todas las interfaces',
-      'Es un patrón de creación de objetos',
+      'Los casos de uso deben llamar directamente a clases concretas de infraestructura para simplificar el flujo',
+      'Las abstracciones deben depender de detalles técnicos para que el diseño refleje la implementación real',
+      'Las clases de bajo nivel deben conocer la interfaz gráfica para coordinar mejor las acciones del usuario',
     ], 0,
     'El DIP invierte la dependencia hacia abstracciones (interfaces): así el alto nivel no se acopla a implementaciones concretas, que pueden cambiar o intercambiarse.'),
 
@@ -680,9 +680,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'En el diseño orientado a objetos, el polimorfismo permite…',
     [
       'Tratar de manera uniforme objetos de distintas clases que comparten una interfaz/superclase, variando el comportamiento según el tipo real',
-      'Que una clase tenga varios constructores',
-      'Ocultar los atributos de una clase',
-      'Heredar de varias clases a la vez',
+      'Definir varios constructores con distinta cantidad de parámetros para crear el mismo tipo de objeto en distintos contextos',
+      'Restringir el acceso a atributos internos mediante encapsulamiento, sin cambiar el comportamiento visible del objeto',
+      'Reutilizar implementación heredando simultáneamente de varias superclases concretas en una misma jerarquía de clases',
     ], 0,
     'El polimorfismo permite invocar la misma operación sobre objetos de distintas clases y que cada uno responda a su manera, reduciendo condicionales por tipo.'),
 
@@ -764,9 +764,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'El diagrama de comunicación (colaboración)…',
     [
       'Muestra la interacción entre objetos enfatizando sus enlaces/estructura, con los mensajes numerados según su orden',
-      'Representa el hardware del sistema',
-      'Es un diagrama estructural estático sin mensajes',
-      'No incluye intercambio de mensajes',
+      'Representa nodos físicos, artefactos desplegados y enlaces de comunicación entre servidores',
+      'Describe clases, atributos y asociaciones permanentes, sin ordenar mensajes de un escenario',
+      'Modela estados posibles de un objeto y transiciones disparadas por eventos del dominio',
     ], 0,
     'El diagrama de comunicación modela la misma interacción que el de secuencia, pero destacando la estructura de enlaces; el orden se indica numerando los mensajes.'),
 
@@ -799,9 +799,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'La Segunda Forma Normal (2FN) elimina…',
     [
       'Las dependencias parciales (atributos que dependen solo de parte de una clave compuesta)',
-      'Las dependencias transitivas entre atributos no clave',
-      'Los atributos multivaluados',
-      'Las claves foráneas redundantes',
+      'Las dependencias transitivas entre atributos no clave, aun cuando la clave sea simple',
+      'Los grupos repetitivos y valores multivaluados que impiden que una tabla esté en 1FN',
+      'Las relaciones muchos a muchos, convirtiéndolas siempre en claves foráneas directas',
     ], 0,
     '2FN requiere estar en 1FN y que todo atributo no clave dependa de la clave COMPLETA (no de una parte). Las transitivas se quitan en 3FN.'),
 
@@ -831,9 +831,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'La desnormalización controlada se utiliza para…',
     [
       'Mejorar el rendimiento de lectura agregando redundancia, a costa de más espacio y riesgo de inconsistencia',
-      'Eliminar todas las tablas de la base',
-      'Cumplir con más formas normales',
-      'Quitar las claves primarias',
+      'Reducir redundancia separando datos repetidos en nuevas tablas normalizadas con más JOINs',
+      'Asegurar integridad eliminando copias de datos y aplicando dependencias funcionales más estrictas',
+      'Reemplazar claves primarias por índices no únicos para acelerar todas las consultas',
     ], 0,
     'La desnormalización introduce redundancia a propósito para evitar JOINs costosos y acelerar lecturas, sacrificando algo de integridad/espacio.'),
 
@@ -841,9 +841,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'Si se intenta borrar un Cliente que tiene Pedidos asociados, para mantener la integridad referencial se puede…',
     [
       'Impedir el borrado, o usar borrado en cascada, o poner la FK en NULL, según la política definida',
-      'Borrar toda la base de datos',
-      'Ignorar la integridad referencial',
-      'Duplicar el cliente en otra tabla',
+      'Borrar primero la tabla Cliente completa y luego reconstruir los pedidos desde copias externas',
+      'Permitir el borrado dejando pedidos con claves foráneas apuntando a filas inexistentes',
+      'Duplicar el cliente en otra tabla para que los pedidos conserven una referencia alternativa',
     ], 0,
     'Las políticas ON DELETE (RESTRICT/NO ACTION, CASCADE, SET NULL) definen qué pasa con las filas hijas al borrar la padre, preservando la integridad referencial.'),
 
@@ -866,9 +866,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'En UML, un estereotipo (escrito entre «guillemets») sirve para…',
     [
       'Extender el vocabulario de UML marcando un elemento con un significado especial (ej. «interface», «include»)',
-      'Indicar la multiplicidad de una asociación',
-      'Representar un actor del sistema',
-      'Definir la clave primaria de una tabla',
+      'Indicar cuántas instancias participan en una asociación mediante valores como 1, 0..1 o *',
+      'Representar un rol externo que interactúa con el sistema dentro de un diagrama de casos de uso',
+      'Marcar el atributo que identifica de forma única una fila dentro del modelo relacional',
     ], 0,
     'Los estereotipos («…») permiten especializar el significado de un elemento UML, agregando semántica como «interface», «include», «extend» o «entity».'),
 
@@ -965,9 +965,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'Una prueba unitaria verifica…',
     [
       'El correcto funcionamiento de la unidad más pequeña (un método o clase) de forma aislada',
-      'Todo el sistema integrado y desplegado',
-      'La aceptación final por parte del cliente',
-      'El rendimiento del hardware',
+      'La colaboración entre varios subsistemas reales, usando base de datos, red y servicios externos',
+      'La validación del producto por usuarios finales según criterios de negocio acordados',
+      'La capacidad del hardware para sostener carga, latencia y consumo de recursos',
     ], 0,
     'La prueba unitaria aísla la unidad mínima (método/clase) y comprueba su lógica, normalmente con dependencias simuladas (mocks).'),
 
@@ -1049,9 +1049,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'Los puntos de función son una técnica para…',
     [
       'Estimar el tamaño/esfuerzo de un sistema según su funcionalidad (entradas, salidas, consultas, archivos), independiente del lenguaje',
-      'Medir la velocidad del procesador',
-      'Contar las líneas de código exactas del programa',
-      'Calcular la latencia de la red',
+      'Medir el rendimiento del procesador ejecutando operaciones por segundo bajo una misma carga',
+      'Contar líneas de código fuente ya escritas para comparar productividad entre lenguajes',
+      'Calcular tiempos de respuesta de red entre clientes, servidores y bases de datos',
     ], 0,
     'Los puntos de función miden la funcionalidad entregada al usuario, sirviendo para estimar esfuerzo y comparar proyectos sin depender del lenguaje de implementación.'),
 
@@ -1064,9 +1064,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'Los casos de uso, respecto de los requerimientos funcionales,…',
     [
       'Son una forma de capturar y organizar los requerimientos funcionales desde la interacción con el actor',
-      'No tienen ninguna relación con los requerimientos',
-      'Reemplazan a los requerimientos no funcionales',
-      'Describen el hardware del sistema',
+      'Documentan restricciones de calidad como rendimiento, seguridad y disponibilidad sin describir funciones',
+      'Sustituyen el modelo de datos, porque cada caso de uso define tablas y claves',
+      'Describen componentes físicos, nodos de ejecución y artefactos desplegados',
     ], 0,
     'Los casos de uso expresan los RF como interacciones actor-sistema con objetivos concretos, ayudando a estructurarlos y comunicarlos.'),
 
@@ -1074,9 +1074,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     'Un diagrama de paquetes sirve para…',
     [
       'Agrupar elementos relacionados (clases, casos de uso) en paquetes y mostrar sus dependencias, organizando el modelo',
-      'Mostrar instancias concretas de objetos',
-      'Modelar los estados de un objeto',
-      'Representar el hardware del sistema',
+      'Mostrar objetos concretos con valores de atributos y enlaces existentes en un instante',
+      'Modelar estados, eventos y transiciones por las que puede pasar un objeto',
+      'Representar servidores, dispositivos, artefactos instalados y conexiones de red',
     ], 0,
     'El diagrama de paquetes organiza el modelo en módulos lógicos y visualiza sus dependencias, ayudando a manejar la complejidad de sistemas grandes.'),
 
@@ -1121,9 +1121,9 @@ export const analisisDisenoTheory = withTopic('analisis_diseno', [
     '¿Cuál es la diferencia entre dependencia y asociación en UML?',
     [
       'La dependencia es un uso puntual/temporal (línea punteada); la asociación es una relación más estable y estructural (línea continua)',
-      'Son exactamente lo mismo',
-      'La asociación es temporal y la dependencia es estable',
-      'La dependencia se dibuja con un rombo relleno',
+      'Ambas son relaciones estructurales permanentes; solo cambia el nombre usado por la herramienta UML',
+      'La asociación expresa un uso ocasional; la dependencia mantiene referencias persistentes entre objetos',
+      'La dependencia representa composición fuerte y se dibuja con rombo relleno del lado del todo',
     ], 0,
     'La dependencia indica que un cambio en una clase puede afectar a otra que la usa momentáneamente (p. ej. como parámetro); la asociación representa un vínculo estructural duradero.'),
 

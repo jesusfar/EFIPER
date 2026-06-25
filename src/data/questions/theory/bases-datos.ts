@@ -70,9 +70,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     '¿Cuál es la diferencia entre WHERE y HAVING?',
     [
       'WHERE filtra filas antes de agrupar; HAVING filtra grupos después de GROUP BY (puede usar agregados)',
-      'Son sinónimos intercambiables',
-      'HAVING filtra antes de agrupar y WHERE después',
-      'WHERE solo funciona con funciones de agregado',
+      'WHERE y HAVING pueden usarse indistintamente si la consulta tiene SELECT y FROM',
+      'HAVING filtra filas antes de formar grupos, mientras WHERE trabaja sobre grupos agregados',
+      'WHERE se aplica a resultados agregados, por eso requiere COUNT, SUM u otra función',
     ], 0,
     'WHERE actúa fila por fila ANTES del agrupamiento; HAVING filtra los grupos ya formados y admite agregados como COUNT o SUM.'),
 
@@ -137,9 +137,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'La propiedad de Aislamiento (Isolation) garantiza que…',
     [
       'Las transacciones concurrentes no interfieran entre sí (el resultado es como si se ejecutaran en serie)',
-      'La transacción se ejecute completa o nada',
-      'Se cumplan las reglas de integridad',
-      'Los cambios persistan tras un fallo del sistema',
+      'La transacción se confirme completa o se revierta, sin quedar a mitad de camino',
+      'Cada operación respete claves, dominios y restricciones antes de aceptar el cambio',
+      'Los cambios confirmados queden grabados aunque ocurra una caída posterior del sistema',
     ], 0,
     'El Aislamiento controla la concurrencia: cada transacción se ejecuta como si estuviera sola, evitando que los cambios intermedios de una afecten a otra.'),
 
@@ -231,9 +231,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'En SQL, comparar un valor con NULL usando "columna = NULL"…',
     [
       'No funciona como se espera; hay que usar IS NULL / IS NOT NULL',
-      'Devuelve siempre verdadero',
-      'Es la forma correcta y recomendada',
-      'Convierte el NULL en cero automáticamente',
+      'Devuelve verdadero cuando la columna no tiene valor, igual que una comparación ordinaria',
+      'Es la forma recomendada porque NULL se comporta como cualquier valor almacenado',
+      'Convierte el NULL en cero o cadena vacía antes de evaluar la condición',
     ], 0,
     'NULL representa "desconocido": cualquier comparación con = NULL da UNKNOWN, no TRUE. Para evaluar nulos se usa IS NULL o IS NOT NULL.'),
 
@@ -261,9 +261,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'Una vista (VIEW) en SQL es…',
     [
       'Una tabla virtual definida por una consulta; no almacena datos propios (salvo que sea materializada)',
-      'Una copia física de una tabla',
-      'Un tipo especial de índice',
-      'Un respaldo (backup) de la base de datos',
+      'Una copia física independiente de una tabla, actualizada manualmente por el usuario',
+      'Un índice especial que ordena filas para acelerar búsquedas por una columna',
+      'Un respaldo completo de la base, pensado para restaurar datos después de fallos',
     ], 0,
     'La vista es una consulta almacenada que se comporta como una tabla: al consultarla, obtiene los datos en el momento (las materializadas sí guardan el resultado).'),
 
@@ -271,9 +271,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'Una subconsulta (subquery)…',
     [
       'Es una consulta anidada dentro de otra, cuyo resultado utiliza la consulta externa',
-      'Es un tipo de índice',
-      'Es una restricción de integridad',
-      'Es una transacción',
+      'Es un índice auxiliar que el optimizador consulta para evitar recorrer la tabla',
+      'Es una restricción que valida claves y dominios antes de insertar filas',
+      'Es una transacción independiente que confirma cambios antes de la consulta principal',
     ], 0,
     'La subconsulta se ejecuta dentro de otra (en el WHERE, FROM o SELECT) y su resultado alimenta a la consulta externa, p. ej. para filtrar por un valor calculado.'),
 
@@ -343,9 +343,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'Un bloqueo (lock) en una base de datos sirve para…',
     [
       'Controlar el acceso concurrente a los datos, evitando que dos transacciones los modifiquen a la vez de forma inconsistente',
-      'Cifrar los datos almacenados',
-      'Acelerar las consultas de lectura',
-      'Crear índices automáticamente',
+      'Cifrar datos almacenados para que otras transacciones no puedan leer columnas sensibles',
+      'Acelerar consultas de lectura manteniendo páginas ordenadas como si fuera un índice',
+      'Crear índices automáticamente cuando detecta muchas operaciones concurrentes sobre una tabla',
     ], 0,
     'Los locks coordinan la concurrencia: aseguran que las transacciones no pisen los cambios de otras, manteniendo el aislamiento y la consistencia.'),
 
@@ -378,9 +378,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'Una "lectura no repetible" (non-repeatable read) ocurre cuando…',
     [
       'Una transacción lee la misma fila dos veces y obtiene valores distintos, porque otra la modificó y confirmó entre ambas lecturas',
-      'Aparecen filas nuevas que antes no estaban',
-      'Se lee un dato no confirmado',
-      'No se puede leer la fila',
+      'Una consulta con la misma condición devuelve filas nuevas insertadas por otra transacción confirmada',
+      'Una transacción lee cambios todavía no confirmados y luego esos cambios son revertidos',
+      'El motor bloquea la fila durante toda la transacción y no permite ninguna lectura posterior',
     ], 0,
     'La fila existe en ambas lecturas, pero su valor cambió porque otra transacción la actualizó y confirmó en el medio: la relectura no coincide.'),
 
@@ -388,9 +388,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'Una "lectura fantasma" (phantom read) ocurre cuando…',
     [
       'Una consulta con una condición devuelve un conjunto distinto de filas al repetirse, porque otra transacción insertó o eliminó filas que cumplen esa condición',
-      'Se lee un valor cambiado de una fila existente',
-      'Se lee un dato no confirmado',
-      'Se bloquea toda la tabla',
+      'La misma fila ya leída vuelve a consultarse y aparece con otro valor confirmado',
+      'Una transacción observa datos no confirmados que otra transacción podría revertir después',
+      'El motor bloquea toda la tabla aunque ninguna fila nueva cumpla la condición consultada',
     ], 0,
     'A diferencia de la no repetible (cambia un valor), en la fantasma cambia el CONJUNTO de filas: aparecen o desaparecen filas que cumplen la condición.'),
 
@@ -420,9 +420,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'El nivel de aislamiento Serializable…',
     [
       'Es el más estricto: evita dirty, non-repeatable y phantom reads, a costa de menor concurrencia',
-      'Es el más permisivo de todos',
-      'Permite las lecturas sucias',
-      'No está definido por el estándar SQL',
+      'Es el nivel más permisivo y prioriza concurrencia aunque aparezcan lecturas sucias',
+      'Permite leer cambios no confirmados, pero evita lecturas fantasma mediante bloqueos de rango',
+      'No forma parte del estándar SQL y depende únicamente de cada motor relacional',
     ], 0,
     'Serializable hace que las transacciones se comporten como si se ejecutaran en serie: máxima consistencia, pero más bloqueos y menor rendimiento concurrente.'),
 
@@ -445,9 +445,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     '¿Cuál es la diferencia entre UNION y JOIN?',
     [
       'UNION apila filas de dos consultas (verticalmente); JOIN combina columnas de dos tablas relacionadas (horizontalmente)',
-      'UNION combina columnas y JOIN apila filas',
-      'Son operaciones idénticas',
-      'UNION ordena y JOIN filtra',
+      'UNION combina columnas de tablas relacionadas; JOIN apila resultados compatibles como nuevas filas',
+      'Ambas operaciones hacen lo mismo, pero UNION se escribe entre consultas y JOIN en FROM',
+      'UNION ordena el resultado final automáticamente; JOIN filtra filas sin agregar columnas nuevas',
     ], 0,
     'UNION agrega filas de resultados con las mismas columnas; JOIN enlaza tablas por una condición y amplía las columnas del resultado.'),
 
@@ -455,9 +455,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'El operador IN dentro de un WHERE…',
     [
       'Verifica si un valor está dentro de un conjunto/lista o del resultado de una subconsulta',
-      'Une dos tablas por una clave',
-      'Ordena las filas del resultado',
-      'Cuenta la cantidad de filas',
+      'Une dos tablas por una clave y devuelve columnas combinadas de ambas relaciones',
+      'Ordena las filas del resultado según la posición del valor dentro de la lista',
+      'Cuenta cuántas filas cumplen una condición y devuelve ese número como resultado',
     ], 0,
     'IN comprueba pertenencia: "WHERE ciudad IN (\'Córdoba\',\'Rosario\')" o "IN (SELECT …)". Equivale a varios OR sobre el mismo campo.'),
 
@@ -507,9 +507,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'Un trigger (disparador) es…',
     [
       'Un bloque de código que se ejecuta automáticamente ante un evento (INSERT/UPDATE/DELETE) sobre una tabla',
-      'Una consulta SELECT guardada',
-      'Un índice especial',
-      'Una restricción UNIQUE',
+      'Una consulta SELECT guardada que se consulta como tabla virtual sin ejecutarse por eventos',
+      'Un índice especial que se actualiza automáticamente después de cada INSERT o UPDATE',
+      'Una restricción UNIQUE que impide duplicados y ejecuta código cuando aparece un conflicto',
     ], 0,
     'El trigger reacciona a eventos de datos de forma automática (p. ej. auditar cambios o validar reglas), sin que la aplicación lo invoque explícitamente.'),
 
@@ -517,9 +517,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     'Un procedimiento almacenado (stored procedure)…',
     [
       'Es un conjunto de instrucciones SQL guardado en el servidor que se invoca por su nombre y puede recibir parámetros',
-      'Es una tabla temporal de trabajo',
-      'Es un tipo de índice',
-      'Es un trigger que se dispara solo',
+      'Es una tabla temporal usada por el optimizador para guardar resultados intermedios de consultas',
+      'Es un índice parametrizable que se invoca por nombre para acelerar búsquedas repetidas',
+      'Es un trigger asociado a una tabla que se ejecuta automáticamente ante eventos de datos',
     ], 0,
     'El procedimiento almacenado encapsula lógica en el servidor, reutilizable y parametrizable; se ejecuta explícitamente (CALL/EXEC), a diferencia del trigger.'),
 
@@ -574,9 +574,9 @@ export const basesDatosTheory = withTopic('base_de_datos', [
     '¿Cuál es la diferencia entre el modelo lógico y el modelo físico de datos?',
     [
       'El lógico define entidades, atributos y relaciones independiente del SGBD; el físico define tablas, tipos, índices y almacenamiento para un motor concreto',
-      'El físico es independiente del motor de base de datos',
-      'Son exactamente lo mismo',
-      'El lógico es el que define índices y particiones',
+      'El físico evita detalles del motor y describe entidades, atributos y relaciones conceptuales',
+      'Ambos modelos tienen el mismo nivel de abstracción; solo cambia la herramienta de dibujo usada',
+      'El lógico decide tipos concretos, índices, particiones y estructuras de almacenamiento del motor',
     ], 0,
     'El modelo lógico es conceptual/independiente del motor; el físico baja al detalle de implementación de un SGBD específico (tipos, índices, particiones, almacenamiento).'),
 
