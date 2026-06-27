@@ -109,10 +109,44 @@
     animation: rise 0.28s ease-out both;
   }
   .auth-first-copy {
-    @apply mb-4 rounded-2xl border border-line bg-panel-2/70 p-4;
+    @apply relative mb-4 grid min-h-[180px] overflow-hidden rounded-2xl border border-line bg-panel-2/70 p-4 pr-32 sm:min-h-[190px] sm:pr-44 md:flex md:items-center md:justify-between md:gap-5 md:pr-5;
     background-image:
+      radial-gradient(circle at 84% 34%, rgba(0,159,146,0.22), transparent 28%),
       linear-gradient(180deg, rgba(0,159,146,0.12), transparent 42%),
       linear-gradient(120deg, rgba(0,94,80,0.1), transparent 58%);
+  }
+  .auth-first-copy-text {
+    @apply relative z-10 max-w-xl;
+  }
+  .auth-first-siggy {
+    @apply pointer-events-none absolute bottom-0 right-1 z-0 w-32 sm:right-4 sm:w-40 md:relative md:right-auto md:w-44 md:shrink-0;
+    filter: drop-shadow(0 18px 22px rgba(0, 63, 58, 0.24));
+    animation: auth-siggy-float 3.4s ease-in-out infinite;
+  }
+  .auth-first-siggy::before {
+    content: "";
+    position: absolute;
+    inset: 12% 0 4%;
+    border-radius: 9999px;
+    background: radial-gradient(ellipse at center, rgba(0,255,229,0.28), rgba(0,159,146,0.1) 42%, transparent 70%);
+    filter: blur(12px);
+    transform: translateY(10px) scaleX(0.86);
+  }
+  .auth-first-siggy::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 30% 42% 24% 34%;
+    background: repeating-linear-gradient(180deg, rgba(255,255,255,0.42) 0 1px, transparent 1px 7px);
+    mix-blend-mode: screen;
+    opacity: 0.32;
+    animation: auth-siggy-scan 2.2s linear infinite;
+  }
+  .auth-first-siggy img {
+    @apply relative z-10 block w-full select-none;
+    filter:
+      drop-shadow(0 0 10px rgba(0,255,229,0.42))
+      drop-shadow(0 0 24px rgba(0,159,146,0.28));
   }
   .auth-first-actions {
     @apply mt-3 flex justify-end border-t border-line pt-3;
@@ -140,9 +174,6 @@
   }
   .google-mark {
     color: #1A73E8;
-  }
-  .facebook-mark {
-    color: #1877F2;
   }
   .level-up-toast {
     @apply fixed right-4 top-24 z-50 flex w-[min(360px,calc(100vw-2rem))] items-center gap-3 overflow-hidden rounded-xl border border-accent/50 bg-white/95 px-4 py-3 text-ink shadow-panel backdrop-blur;
@@ -460,6 +491,29 @@
 .mermaid-host .node circle,
 .mermaid-host .node ellipse {
   filter: drop-shadow(0 6px 10px rgba(0,63,58,0.08));
+}
+
+@keyframes auth-siggy-float {
+  0%, 100% {
+    transform: translateY(0) rotate(-1.5deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+}
+
+@keyframes auth-siggy-scan {
+  0% {
+    transform: translateY(-18px);
+    opacity: 0.18;
+  }
+  50% {
+    opacity: 0.38;
+  }
+  100% {
+    transform: translateY(18px);
+    opacity: 0.18;
+  }
 }
 
 @keyframes theory-star-twinkle {

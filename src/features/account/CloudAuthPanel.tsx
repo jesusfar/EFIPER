@@ -44,9 +44,9 @@ export function CloudAuthPanel({ onAuthenticated, initialMessage = '', compact =
     onAuthenticated(res.data.user);
   }
 
-  function social(provider: 'google' | 'facebook') {
+  function continueWithGoogle() {
     const params = remember ? '?remember=1' : '';
-    window.location.href = `/api/auth/oauth/${provider}/start${params}`;
+    window.location.href = `/api/auth/oauth/google/start${params}`;
   }
 
   const wrapperClass = compact
@@ -93,16 +93,12 @@ export function CloudAuthPanel({ onAuthenticated, initialMessage = '', compact =
         <p className="label">Opcional</p>
         <h2 className="font-display text-xl sm:text-2xl text-ink mt-1">Entrar con redes</h2>
         <p className="mt-2 text-sm text-ink/70">
-          Si preferis no crear contrasena, podes usar una cuenta existente.
+          Si preferis no crear contrasena, podes usar tu cuenta de Google.
         </p>
         <div className={compact ? 'mt-4 grid gap-2.5' : 'mt-5 grid gap-3'}>
-          <Button className="w-full auth-social-button" type="button" onClick={() => social('google')}>
+          <Button className="w-full auth-social-button" type="button" onClick={continueWithGoogle}>
             <span className="auth-social-mark google-mark">G</span>
             Continuar con Google
-          </Button>
-          <Button className="w-full auth-social-button" type="button" onClick={() => social('facebook')}>
-            <span className="auth-social-mark facebook-mark">f</span>
-            Continuar con Facebook
           </Button>
         </div>
       </div>

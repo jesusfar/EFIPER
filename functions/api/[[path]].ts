@@ -4,11 +4,9 @@ interface Env {
   APP_ORIGIN?: string;
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
-  FACEBOOK_CLIENT_ID?: string;
-  FACEBOOK_CLIENT_SECRET?: string;
 }
 
-type Provider = 'google' | 'facebook';
+type Provider = 'google';
 
 const SESSION_COOKIE = 'efiper_session';
 const OAUTH_STATE_COOKIE = 'efiper_oauth_state';
@@ -29,8 +27,6 @@ export async function onRequest(context: any): Promise<Response> {
     if (request.method === 'GET' && path === 'auth/me') return me(request, env);
     if (request.method === 'GET' && path === 'auth/oauth/google/start') return oauthStart(request, env, 'google');
     if (request.method === 'GET' && path === 'auth/oauth/google/callback') return oauthCallback(request, env, 'google');
-    if (request.method === 'GET' && path === 'auth/oauth/facebook/start') return oauthStart(request, env, 'facebook');
-    if (request.method === 'GET' && path === 'auth/oauth/facebook/callback') return oauthCallback(request, env, 'facebook');
     if (request.method === 'GET' && path === 'sync/pull') return syncPull(request, env);
     if (request.method === 'POST' && path === 'sync/push') return syncPush(request, env);
 
@@ -53,8 +49,6 @@ async function health(env: Env): Promise<Response> {
       hasSessionSecret: Boolean(env.SESSION_SECRET),
       hasGoogleClientId: Boolean(env.GOOGLE_CLIENT_ID),
       hasGoogleClientSecret: Boolean(env.GOOGLE_CLIENT_SECRET),
-      hasFacebookClientId: Boolean(env.FACEBOOK_CLIENT_ID),
-      hasFacebookClientSecret: Boolean(env.FACEBOOK_CLIENT_SECRET),
     });
   } catch (error) {
     return json({ ok: false, error: error instanceof Error ? error.message : 'Health check failed' }, 500);
@@ -99,7 +93,7 @@ async function login(request: Request, env: Env): Promise<Response> {
   ).bind(email).first<any>();
 
   if (!user?.password_hash || !user?.password_salt) {
-    return json({ error: 'Esta cuenta usa Google o Facebook para iniciar sesion.' }, 401);
+    return json({ error: 'Esta cuenta usa Google para iniciar sesion.' }, 401);
   }
 
   const candidate = await hashPassword(password, user.password_salt);
@@ -160,16 +154,14 @@ async function oauthStart(request: Request, env: Env, provider: Provider): Promi
     return json({ error: `Faltan credenciales OAuth para ${provider}.` }, 500);
   }
 
-  const authUrl = provider === 'google'
-    ? new URL('https://accounts.google.com/o/oauth2/v2/auth')
-    : new URL('https://www.facebook.com/v19.0/dialog/oauth');
+  const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
 
   authUrl.searchParams.set('client_id', config.clientId);
   authUrl.searchParams.set('redirect_uri', callbackUrl);
   authUrl.searchParams.set('response_type', 'code');
   authUrl.searchParams.set('state', state);
-  authUrl.searchParams.set('scope', provider === 'google' ? 'openid email profile' : 'email,public_profile');
-  if (provider === 'google') authUrl.searchParams.set('prompt', 'select_account');
+  authUrl.searchParams.set('scope', 'openid email profile');
+  authUrl.searchParams.set('prompt', 'select_account');
 
   const response = new Response(null, {
     status: 302,
@@ -197,9 +189,7 @@ async function oauthCallback(request: Request, env: Env, provider: Provider): Pr
   }
 
   try {
-    const profile = provider === 'google'
-      ? await googleProfile(env, code, `${origin}/api/auth/oauth/google/callback`)
-      : await facebookProfile(env, code, `${origin}/api/auth/oauth/facebook/callback`);
+    const profile = await googleProfile(env, code, `${origin}/api/auth/oauth/google/callback`);
 
     if (!profile.email) throw new Error(`OAuth profile from ${provider} did not include an email.`);
 
@@ -260,31 +250,6 @@ async function googleProfile(env: Env, code: string, redirectUri: string) {
   };
 }
 
-async function facebookProfile(env: Env, code: string, redirectUri: string) {
-  const config = providerConfig(env, 'facebook');
-  const tokenUrl = new URL('https://graph.facebook.com/v19.0/oauth/access_token');
-  tokenUrl.searchParams.set('client_id', config.clientId);
-  tokenUrl.searchParams.set('client_secret', config.clientSecret);
-  tokenUrl.searchParams.set('redirect_uri', redirectUri);
-  tokenUrl.searchParams.set('code', code);
-  const tokenRes = await fetch(tokenUrl);
-  if (!tokenRes.ok) throw new Error('No se pudo completar login con Facebook.');
-  const token: any = await tokenRes.json();
-
-  const profileUrl = new URL('https://graph.facebook.com/me');
-  profileUrl.searchParams.set('fields', 'id,name,email,picture');
-  profileUrl.searchParams.set('access_token', token.access_token);
-  const profileRes = await fetch(profileUrl);
-  if (!profileRes.ok) throw new Error('No se pudo leer el perfil de Facebook.');
-  const profile: any = await profileRes.json();
-  return {
-    providerUserId: String(profile.id),
-    email: normalizeEmail(profile.email),
-    displayName: cleanText(profile.name, 80),
-    avatarUrl: cleanText(profile.picture?.data?.url, 500),
-  };
-}
-
 async function issueSession(env: Env, userId: string, user: any, remember = false): Promise<Response> {
   const token = randomId(48);
   const tokenHash = await hmac(token, env.SESSION_SECRET);
@@ -340,10 +305,8 @@ function userDto(row: any) {
   };
 }
 
-function providerConfig(env: Env, provider: Provider) {
-  return provider === 'google'
-    ? { clientId: env.GOOGLE_CLIENT_ID || '', clientSecret: env.GOOGLE_CLIENT_SECRET || '' }
-    : { clientId: env.FACEBOOK_CLIENT_ID || '', clientSecret: env.FACEBOOK_CLIENT_SECRET || '' };
+function providerConfig(env: Env, _provider: Provider) {
+  return { clientId: env.GOOGLE_CLIENT_ID || '', clientSecret: env.GOOGLE_CLIENT_SECRET || '' };
 }
 
 async function readJson(request: Request): Promise<any> {
