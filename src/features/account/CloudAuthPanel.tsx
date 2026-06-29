@@ -1,5 +1,6 @@
 import { FormEvent, useState } from 'react';
 import { Button } from '../../components/Button';
+import googleLogo from '../../assets/auth/google-logo.png';
 import {
   type CloudUser,
   loginCloudAccount,
@@ -97,7 +98,9 @@ export function CloudAuthPanel({ onAuthenticated, initialMessage = '', compact =
         </p>
         <div className={compact ? 'mt-4 grid gap-2.5' : 'mt-5 grid gap-3'}>
           <Button className="w-full auth-social-button" type="button" onClick={continueWithGoogle}>
-            <span className="auth-social-mark google-mark">G</span>
+            <span className="auth-social-mark google-mark">
+              <img src={googleLogo} alt="" />
+            </span>
             Continuar con Google
           </Button>
         </div>

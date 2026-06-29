@@ -170,10 +170,10 @@
     @apply flex items-center justify-center gap-2;
   }
   .auth-social-mark {
-    @apply grid h-6 w-6 place-items-center rounded-full bg-white font-display text-sm font-black shadow-sm;
+    @apply grid h-7 w-7 place-items-center rounded-full bg-white shadow-sm;
   }
-  .google-mark {
-    color: #1A73E8;
+  .auth-social-mark img {
+    @apply h-5 w-5 object-contain;
   }
   .level-up-toast {
     @apply fixed right-4 top-24 z-50 flex w-[min(360px,calc(100vw-2rem))] items-center gap-3 overflow-hidden rounded-xl border border-accent/50 bg-white/95 px-4 py-3 text-ink shadow-panel backdrop-blur;
