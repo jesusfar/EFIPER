@@ -8,13 +8,13 @@ import { TOPIC_LABELS } from '../../store/useStore';
 import type { Topic } from '../../types';
 import type { TheoryVisual } from '../../data/theory/modules';
 
-import imgArquitectura from '../../assets/modulos/Siggy Arquitectura del Computador.png';
-import imgSistemasOperativos from '../../assets/modulos/Siggy Sistemas Operativos.png';
-import imgRedes from '../../assets/modulos/Siggy Redes.png';
-import imgBaseDatos from '../../assets/modulos/Siggy Base de Datos.png';
-import imgAlgoritmos from '../../assets/modulos/Algoritmos y Estructura de datos.png';
-import imgParadigmas from '../../assets/modulos/Siggy Paradigmas de Programacion.png';
-import imgAnalisis from '../../assets/modulos/Siggy Analisis y Diseño de sistemas.png';
+import imgArquitectura from '../../assets/modulos/Siggy Arquitectura del Computador.webp';
+import imgSistemasOperativos from '../../assets/modulos/Siggy Sistemas Operativos.webp';
+import imgRedes from '../../assets/modulos/Siggy Redes.webp';
+import imgBaseDatos from '../../assets/modulos/Siggy Base de Datos.webp';
+import imgAlgoritmos from '../../assets/modulos/Algoritmos y Estructura de datos.webp';
+import imgParadigmas from '../../assets/modulos/Siggy Paradigmas de Programacion.webp';
+import imgAnalisis from '../../assets/modulos/Siggy Analisis y Diseño de sistemas.webp';
 
 interface ModuleCard {
   topic: Topic;

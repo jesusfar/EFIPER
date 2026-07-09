@@ -81,6 +81,8 @@
   border-left: 1px solid #00ffb3;
   border-bottom: 1px solid #00ffb3;
   transform: rotate(45deg);
+  box-shadow: none;
+  z-index: -1;
 }
 
 .siggy-text { position: relative; z-index: 1; }

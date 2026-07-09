@@ -2,7 +2,7 @@ import { type MouseEvent, type PointerEvent, type ReactNode, useEffect, useRef }
 import { NavLink, useLocation } from 'react-router-dom';
 import { playSfx, playLogoHover } from '../lib/audio/soundManager';
 import { useStore } from '../store/useStore';
-import efiperLogo from '../assets/logo-efiper-cropped.png';
+import efiperLogo from '../assets/logo-efiper-cropped.webp';
 import { AuthFirstVisitPrompt } from '../features/account/AuthFirstVisitPrompt';
 
 const NAV = [

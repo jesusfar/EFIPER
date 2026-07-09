@@ -29,7 +29,9 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,woff2,json,mp3}'],
+        // Los MP3 (~15 MB) ya no se precachean en la instalación del SW: se cargan
+        // on-demand y quedan en caché con CacheFirst la primera vez que suenan.
+        globPatterns: ['**/*.{js,css,html,svg,png,webp,woff2,json}'],
         maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
         navigateFallbackDenylist: [/^\/api\//],
         runtimeCaching: [
@@ -37,6 +39,16 @@ export default defineConfig({
             urlPattern: /^https:\/\/efiper\.alola\.workers\.dev\/api\//,
             handler: 'NetworkOnly',
             method: 'GET',
+          },
+          {
+            urlPattern: ({ request }) => request.destination === 'audio' || /\.mp3$/i.test(new URL(request.url).pathname),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'efiper-audio',
+              expiration: { maxEntries: 300, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              cacheableResponse: { statuses: [0, 200] },
+              rangeRequests: true,
+            },
           },
         ],
       },
